@@ -1,27 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
-import { AcademicModule } from "@/components/input-modules/academic-module";
-import { ExperienceModule } from "@/components/input-modules/experience-module";
-import { SkillsModule } from "@/components/input-modules/skills-module";
-import { IntentModule } from "@/components/input-modules/intent-module";
+
+// ── Input modules ──────────────────────────────────────────────────────────────
+import IdentityModule from "@/components/input-modules/identity-module";
+import InterestsModule from "@/components/input-modules/interests-module";
+import ExperienceModule from "@/components/input-modules/experience-module";
+import SkillsModule from "@/components/input-modules/skills-module";
+import IntentModule from "@/components/input-modules/intent-module";
+import PersonalityModule from "@/components/input-modules/personality-module";
+
+// ── Result components ─────────────────────────────────────────────────────────
+import InterestProfileCard from "@/components/results/interest-profile";
+import BestFitCareerCard from "@/components/results/best-fit-career";
+import ChosenCareerCard from "@/components/results/chosen-career-analysis";
 import { CRIScore } from "@/components/results/cri-score";
-import { AlignmentVisual } from "@/components/results/alignment-visual";
-import { CareerPrediction } from "@/components/results/career-prediction";
-import { MisalignmentWarning } from "@/components/results/misalignment-warning";
-import { GapRadarChart } from "@/components/results/gap-radar-chart";
-import { AIExecutiveSummary } from "@/components/results/ai-executive-summary";
-import { ExecutionRoadmap } from "@/components/results/execution-roadmap";
 import { JobOpportunities } from "@/components/results/job-opportunities";
+import ExecutiveSummary from "@/components/results/executive-summary";
+import ActionChecklist from "@/components/results/action-checklist";
+
 import type {
-  StudentProfile,
-  AcademicProfile,
+  IdentityProfile,
+  InterestsProfile,
   ExperienceProfile,
   SkillsProfile,
   IntentProfile,
+  PersonalityProfile,
+  StudentProfile,
   AnalysisResponse,
 } from "@/lib/types";
 
