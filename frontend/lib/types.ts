@@ -93,10 +93,22 @@ export interface BestFitCareer {
   third_fit: { role: string; score: number };
 }
 
+export interface Resource {
+  title: string;
+  platform: string;
+  type: "course" | "practice";
+  url: string;
+}
+
+export interface EnrichedAction {
+  action: string;
+  resources: Resource[];
+}
+
 export interface RoadmapPhase {
   title: string;
   duration: string;
-  actions: string[];
+  actions: (string | EnrichedAction)[];
 }
 
 export interface ChosenCareerAnalysis {
@@ -153,4 +165,5 @@ export interface AnalysisResponse {
   jobs: JobResult[];
   executive_summary: string;
   action_checklist: string[];
+  bridge_sentence: string;
 }

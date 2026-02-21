@@ -22,9 +22,10 @@ from modules.profile_processor import (
 from modules.cri_calculator  import calculate_cri
 from modules.ai_engine       import (
     generate_role_description, generate_executive_summary,
-    generate_action_checklist, generate_roadmap,
+    generate_action_checklist, generate_roadmap, generate_bridge_sentence,
 )
 from modules.market_engine   import fetch_jobs, get_market_trends, rank_jobs_by_match
+from modules.resource_map    import enrich_roadmap_with_resources
 
 app = Flask(__name__)
 CORS(app)
@@ -126,6 +127,14 @@ def analyze():
         exp_level,
     )
 
+    # Enrich roadmap actions with curated resources
+    roadmap = enrich_roadmap_with_resources(roadmap, chosen_match["missing_skills"])
+
+    # Bridge sentence between best fit and chosen career
+    bridge_sentence = generate_bridge_sentence(
+        name, best_fit["role"], target_role, processed["personality_scores"]
+    )
+
     chosen_career = {
         "role":              target_role,
         "interest_match":    chosen_match["interest_match"],
@@ -177,6 +186,7 @@ def analyze():
         "jobs":              rank_jobs_by_match(job_results, processed["selected_skills"]),
         "executive_summary": executive_summary,
         "action_checklist":  action_checklist,
+        "bridge_sentence":   bridge_sentence,
     }
     return jsonify(response)
 

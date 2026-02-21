@@ -13,13 +13,9 @@ import IntentModule from "@/components/input-modules/intent-module";
 import PersonalityModule from "@/components/input-modules/personality-module";
 
 // ── Result components ─────────────────────────────────────────────────────────
-import InterestProfileCard from "@/components/results/interest-profile";
-import BestFitCareerCard from "@/components/results/best-fit-career";
-import ChosenCareerCard from "@/components/results/chosen-career-analysis";
-import { CRIScore } from "@/components/results/cri-score";
-import { JobOpportunities } from "@/components/results/job-opportunities";
-import ExecutiveSummary from "@/components/results/executive-summary";
-import Roadmap from "@/components/results/roadmap";
+import ActOneProfile from "@/components/results/act-one-profile";
+import ActTwoAnalysis from "@/components/results/act-two-analysis";
+import ActThreePathForward from "@/components/results/act-three-path";
 
 import type {
   IdentityProfile,
@@ -498,107 +494,86 @@ export default function HomePage() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5 }}
-              className="mx-auto max-w-3xl px-4 sm:px-6 py-6 sm:py-8"
+              className="mx-auto max-w-3xl px-4 sm:px-6 py-6 sm:py-10"
             >
-              {/* ── Report Header ── */}
-              <div className="mb-10 rounded-2xl border border-white/[0.04] bg-zinc-950/80 p-5 sm:p-7 relative overflow-hidden backdrop-blur-sm">
-                {/* Ambient glow */}
-                <div className="absolute -top-20 -right-20 w-60 h-60 bg-blue-600/[0.06] rounded-full blur-[80px] pointer-events-none" />
-                <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-violet-600/[0.04] rounded-full blur-[60px] pointer-events-none" />
-                <div className="relative flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                  <div>
-                    <p className="text-[10px] text-zinc-600 uppercase tracking-[0.2em] mb-3 font-mono">
-                      Intelligence Report · {results.identity.generated_date}
-                    </p>
-                    <h1 className="text-3xl font-bold text-white tracking-tight">
-                      {results.identity.name}
-                    </h1>
-                    <p className="text-zinc-700 text-[11px] mt-1 font-mono">
-                      {results.identity.profile_id}
-                    </p>
-                    <div className="flex flex-wrap gap-2 mt-4">
-                      <span className="text-[11px] px-3 py-1.5 rounded-full bg-emerald-500/8 border border-emerald-500/20 text-emerald-400 font-medium">
-                        Best fit: {results.best_fit.role}
+              {/* ── Report Header — minimal, one line ── */}
+              <div className="mb-12">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+                  <h1 className="text-2xl font-bold text-white tracking-tight">
+                    {results.identity.name}
+                  </h1>
+                  <p className="text-[11px] text-zinc-600 font-mono">
+                    {results.identity.profile_id} ·{" "}
+                    {results.identity.generated_date}
+                  </p>
+                </div>
+                <div className="h-px bg-zinc-800/60 mb-5" />
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+                    <span className="text-zinc-500">
+                      Best Fit →{" "}
+                      <span className="text-emerald-400 font-medium">
+                        {results.best_fit.role}
                       </span>
-                      <span className="text-[11px] px-3 py-1.5 rounded-full bg-blue-500/8 border border-blue-500/20 text-blue-400 font-medium">
-                        Goal: {results.chosen_career.role}
+                    </span>
+                    <span className="text-zinc-500">
+                      Your Goal →{" "}
+                      <span className="text-blue-400 font-medium">
+                        {results.chosen_career.role}
                       </span>
-                    </div>
+                    </span>
                   </div>
-                  <button
-                    onClick={handleReset}
-                    className="flex-shrink-0 rounded-lg border border-white/[0.06] bg-white/[0.03] px-4 py-2 text-[11px] font-medium text-zinc-500 hover:text-white hover:bg-white/[0.06] transition-all duration-200"
-                  >
-                    New Assessment
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleReset}
+                      className="rounded-lg border border-white/[0.06] bg-white/[0.03] px-4 py-2 text-[11px] font-medium text-zinc-500 hover:text-white hover:bg-white/[0.06] transition-all duration-200"
+                    >
+                      New Assessment
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-10">
-                {/* Section 1 — AI Intelligence Summary (TOP) */}
-                <ExecutiveSummary
-                  summary={results.executive_summary}
-                  name={results.identity.name}
-                />
+              {/* ── ACT 1 — Who You Are ── */}
+              <ActOneProfile
+                summary={results.executive_summary}
+                personality={results.interest_profile.personality}
+              />
 
-                <div className="border-t border-zinc-800/60" />
+              <div className="h-px bg-zinc-800/40 my-12" />
 
-                {/* Section 2 — Interest Profile */}
-                <InterestProfileCard data={results.interest_profile} />
+              {/* ── ACT 2 — The Analysis ── */}
+              <ActTwoAnalysis
+                bestFit={results.best_fit}
+                chosen={results.chosen_career}
+                cri={results.cri}
+                bridgeSentence={results.bridge_sentence || ""}
+              />
 
-                <div className="border-t border-zinc-800/60" />
+              <div className="h-px bg-zinc-800/40 my-12" />
 
-                {/* Section 3 — Best Fit */}
-                <BestFitCareerCard data={results.best_fit} />
+              {/* ── ACT 3 — Your Path Forward ── */}
+              <ActThreePathForward
+                jobs={results.jobs}
+                roadmap={results.chosen_career.roadmap}
+                actionChecklist={results.action_checklist}
+                targetRole={results.chosen_career.role}
+              />
 
-                <div className="border-t border-zinc-800/60" />
-
-                {/* Section 4 — Chosen Career */}
-                <ChosenCareerCard data={results.chosen_career} />
-
-                <div className="border-t border-zinc-800/60" />
-
-                {/* Section 5 — CRI */}
-                <CRIScore data={results.cri} />
-
-                <div className="border-t border-zinc-800/60" />
-
-                {/* Section 6 — Personalised Roadmap (combined roadmap + action checklist) */}
-                <Roadmap
-                  roadmap={results.chosen_career.roadmap}
-                  actionChecklist={results.action_checklist}
-                  targetRole={results.chosen_career.role}
-                />
-
-                <div className="border-t border-zinc-800/60" />
-
-                {/* Section 7 — Jobs */}
-                <div className="space-y-4">
-                  <div>
-                    <h2 className="text-xl font-semibold text-white">
-                      Live Opportunities
-                    </h2>
-                    <p className="text-zinc-500 text-sm mt-1">
-                      Active listings closest to your target role and location.
-                    </p>
-                  </div>
-                  <JobOpportunities jobs={results.jobs} />
-                </div>
-
-                {/* Report Footer */}
-                <div className="pt-6 border-t border-white/[0.04]">
-                  <div className="text-center space-y-3">
-                    <p className="text-[10px] text-zinc-700 font-mono tracking-wide">
-                      ALIGNIQ · {results.identity.profile_id} ·{" "}
-                      {results.identity.generated_date}
-                    </p>
-                    <button
-                      onClick={handleReset}
-                      className="text-[11px] text-zinc-600 hover:text-zinc-400 transition-colors"
-                    >
-                      Start a new assessment →
-                    </button>
-                  </div>
+              {/* ── Report Footer ── */}
+              <div className="mt-16 pt-8 border-t border-zinc-800/30">
+                <div className="text-center space-y-4">
+                  <p className="text-xs text-zinc-700 leading-relaxed max-w-md mx-auto">
+                    This analysis uses ML career prediction, cosine alignment
+                    scoring, and live Adzuna market data. It is an intelligence
+                    tool — your decisions are your own.
+                  </p>
+                  <button
+                    onClick={handleReset}
+                    className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
+                  >
+                    Start New Assessment →
+                  </button>
                 </div>
               </div>
             </motion.div>

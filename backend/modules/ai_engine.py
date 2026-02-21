@@ -128,3 +128,26 @@ Each phase title should be 3–5 words. Durations should be realistic (e.g. "0�
         "phase_2": {"title": "Apply & Create", "duration": d2, "actions": ["Build a real project using your new skills", f"Pursue an internship or freelance gig in {role.lower()} work", "Participate in a hackathon, competition, or workshop"]},
         "phase_3": {"title": "Position & Launch", "duration": d3, "actions": ["Refine your resume and LinkedIn for this role", "Apply to 10+ targeted roles with personalized applications", "Get feedback from 2 professionals in the field"]},
     }
+
+
+def generate_bridge_sentence(name: str, best_fit_role: str, chosen_role: str,
+                              personality: dict) -> str:
+    """Generate one insightful sentence bridging the best-fit and chosen career paths."""
+    prompt = f"""You are a career intelligence analyst. Write exactly ONE sentence that bridges {name}'s best-fit career ({best_fit_role}) and their chosen career ({chosen_role}).
+
+Personality data: analytical_creative={personality.get('analytical_creative')}, independent_collaborative={personality.get('independent_collaborative')}, theoretical_practical={personality.get('theoretical_practical')}.
+
+The sentence should:
+- Be specific to these two careers
+- Reference a personality trait that connects or differentiates them
+- Sound like insight, not motivation
+- Be under 30 words
+
+Return ONLY the sentence. No quotes, no labels, no explanation."""
+    try:
+        return _call_groq(prompt).strip('"').strip("'")
+    except Exception:
+        return (
+            f"Your analytical disposition serves both paths — the difference is whether "
+            f"you apply it inside an organization as a {chosen_role} or build one as a {best_fit_role}."
+        )
