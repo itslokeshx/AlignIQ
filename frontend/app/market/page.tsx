@@ -12,7 +12,6 @@ import {
   Cell,
 } from "recharts";
 import { Navbar } from "@/components/layout/navbar";
-import { Footer } from "@/components/layout/footer";
 import { UNIVERSAL_DOMAINS } from "@/lib/constants";
 import { API_URL } from "@/lib/config";
 
@@ -161,11 +160,12 @@ export default function MarketPage() {
               Live · Adzuna API · India
             </div>
             <h1 className="text-3xl font-bold tracking-tight text-foreground">
-              Market Intelligence
+              Career Insights
             </h1>
             <p className="mt-2 text-sm text-muted-foreground max-w-lg">
-              Real-time demand signals from live job listings. Choose domain →
-              choose roles → analyze.
+              Role-level career demand signals from live job listings. Choose a
+              domain → select roles → run analysis, then turn the top skills
+              into your execution roadmap.
             </p>
           </motion.div>
 
@@ -250,7 +250,7 @@ export default function MarketPage() {
                 ? "Scanning…"
                 : selectedRoles.length === 0
                   ? "Select roles first"
-                  : `Analyze ${selectedRoles.length} role${selectedRoles.length > 1 ? "s" : ""}`}
+                  : `Run Career Insights for ${selectedRoles.length} role${selectedRoles.length > 1 ? "s" : ""}`}
             </button>
             {(selectedDomain || selectedRoles.length > 0 || trends) && (
               <button
@@ -293,6 +293,16 @@ export default function MarketPage() {
             </div>
           )}
 
+          {trends && !analyzing && (
+            <div className="mb-8 rounded-xl border border-indigo-500/20 bg-indigo-500/[0.04] px-4 py-3">
+              <p className="text-xs font-medium text-indigo-300">Roadmap tip</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Use the top 3–5 skills below as your Phase 1 priorities, then
+                move to tools, projects, and interview prep in later phases.
+              </p>
+            </div>
+          )}
+
           {/* Analyzing pulse */}
           {analyzing && (
             <div className="flex items-center justify-center py-32 gap-1.5">
@@ -332,7 +342,7 @@ export default function MarketPage() {
               </p>
               <p className="text-xs text-muted-foreground max-w-xs">
                 Select a domain above, pick the roles you care about, then hit{" "}
-                <span className="text-foreground">Analyze Market</span>.
+                <span className="text-foreground">Run Career Insights</span>.
               </p>
             </motion.div>
           )}
@@ -370,7 +380,7 @@ export default function MarketPage() {
               {/* Skills bar chart */}
               <section>
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-4">
-                  Top Demanded Skills
+                  Most In-Demand Skills
                 </p>
                 {chartData.length === 0 ? (
                   <div className="rounded-xl border border-border bg-card px-5 py-12 flex flex-col items-center gap-2 text-center">
@@ -438,7 +448,11 @@ export default function MarketPage() {
               {chartData.length > 0 && (
                 <section>
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-4">
-                    Learning Resources
+                    Roadmap Learning Resources
+                  </p>
+                  <p className="text-xs text-muted-foreground mb-4 -mt-2">
+                    Curated links to help you execute the skill roadmap from
+                    this analysis.
                   </p>
                   {loadingResources ? (
                     <div className="rounded-xl border border-border bg-card px-5 py-8 flex items-center justify-center gap-1.5">
@@ -535,8 +549,6 @@ export default function MarketPage() {
           )}
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

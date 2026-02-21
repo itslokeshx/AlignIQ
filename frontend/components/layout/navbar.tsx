@@ -48,7 +48,7 @@ export function Navbar() {
             onClick={closeMobile}
             className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-1.5 text-xs font-medium text-zinc-400 transition-all hover:bg-white/[0.06] hover:text-zinc-200"
           >
-            Market Analysis
+            Career Insights
           </Link>
           <Link
             href="/methodology"
@@ -102,7 +102,7 @@ export function Navbar() {
             onClick={closeMobile}
             className="rounded-xl border border-white/[0.04] bg-white/[0.02] px-4 py-3 text-sm font-medium text-zinc-300 transition-all hover:bg-white/[0.05] hover:text-white"
           >
-            Market Analysis
+            Career Insights
           </Link>
           <Link
             href="/methodology"
