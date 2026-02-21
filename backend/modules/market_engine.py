@@ -77,6 +77,7 @@ DOMAIN_SKILL_MAP = {
     "Technology & Engineering": [
         "Python", "JavaScript", "Java", "Machine Learning", "Docker",
         "SQL", "AWS", "Git", "Linux", "Embedded Systems",
+        "Rust", "TensorFlow", "PyTorch", "TypeScript", "React",
     ],
     "Business & Management": [
         "Business Analysis", "Project Management", "MS Excel",
@@ -122,6 +123,21 @@ DOMAIN_SKILL_MAP = {
         "Event Planning", "Culinary Arts", "Hospitality Management",
         "Real Estate", "CNC Machining",
     ],
+}
+
+PUBLIC_DOMAIN_FROM_HINT = {
+    "tech": "Technology & Engineering",
+    "business": "Business & Management",
+    "creative": "Creative & Design",
+    "science": "Science & Research",
+    "healthcare": "Healthcare & Medicine",
+    "law": "Law & Policy",
+    "education": "Education & Social",
+    "media": "Media & Communication",
+    "finance": "Finance & Economics",
+    "arts": "Arts & Culture",
+    "sports": "Sports & Wellness",
+    "trades": "Trades & Skilled Work",
 }
 
 # ── Role → domain keyword hints (for role-aware mock descriptions) ─────────────
@@ -377,6 +393,14 @@ def get_market_trends(roles: list | None = None) -> dict:
         if score > 0:
             domain_scores[domain] = min(100, score * 8)  # Scale to 0-100
 
+    # Fallback for sparse/odd real API data (e.g. one-off terms like only "Rust")
+    # so single-role queries don't look empty in UI.
+    if not domain_scores and roles_to_scan:
+        inferred = _infer_public_domain_from_roles(roles_to_scan)
+        if inferred:
+            total_mentions = sum(count for _, count in top_skills) if top_skills else 1
+            domain_scores[inferred] = min(100, max(20, total_mentions * 12))
+
     return {
         "top_skills": top_skills,
         "domain_competitiveness": domain_scores,
@@ -391,6 +415,18 @@ def _detect_domain(role: str) -> str:
         if keyword in role_lower:
             return domain
     return "tech"  # safe fallback
+
+
+def _infer_public_domain_from_roles(roles: list[str]) -> str | None:
+    """Infer the most likely public domain label from selected roles."""
+    hint_counts = Counter()
+    for role in roles:
+        hint = _detect_domain(role)
+        hint_counts[hint] += 1
+    if not hint_counts:
+        return None
+    top_hint = hint_counts.most_common(1)[0][0]
+    return PUBLIC_DOMAIN_FROM_HINT.get(top_hint)
 
 
 def _mock_jobs(role: str) -> list:

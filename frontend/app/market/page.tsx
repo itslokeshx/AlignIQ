@@ -105,7 +105,7 @@ export default function MarketPage() {
     : [];
 
   const topSkill = chartData[0];
-  const topDomain = domainScores[0];
+  const topDomainLabel = domainScores[0]?.[0] ?? selectedDomain ?? "—";
   const rolesScanned = trends?.analyzed_roles?.length ?? 0;
 
   return (
@@ -129,8 +129,8 @@ export default function MarketPage() {
               Market Intelligence
             </h1>
             <p className="mt-2 text-sm text-muted-foreground max-w-lg">
-              Real-time skill demand from job listings. Pick a domain and roles,
-              or run a default scan.
+              Real-time demand signals from live job listings. Choose domain →
+              choose roles → analyze.
             </p>
           </motion.div>
 
@@ -237,6 +237,27 @@ export default function MarketPage() {
             )}
           </div>
 
+          {trends && !analyzing && (
+            <div className="mb-8 rounded-xl border border-border bg-card px-4 py-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs text-muted-foreground">Analyzed:</span>
+                {trends.analyzed_roles.map((role) => (
+                  <span
+                    key={role}
+                    className="rounded-full border border-border px-2.5 py-0.5 text-xs text-foreground/90"
+                  >
+                    {role}
+                  </span>
+                ))}
+                {rolesScanned === 1 && (
+                  <span className="ml-auto rounded-full bg-indigo-500/10 px-2.5 py-0.5 text-[11px] text-indigo-300 border border-indigo-500/20">
+                    Focused single-role scan
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Analyzing pulse */}
           {analyzing && (
             <div className="flex items-center justify-center py-32 gap-1.5">
@@ -294,7 +315,7 @@ export default function MarketPage() {
                 <div className="grid grid-cols-3 gap-4">
                   {[
                     { label: "Top skill", value: topSkill.skill },
-                    { label: "Top domain", value: topDomain?.[0] ?? "—" },
+                    { label: "Top domain", value: topDomainLabel },
                     { label: "Roles scanned", value: String(rolesScanned) },
                   ].map(({ label, value }) => (
                     <div
