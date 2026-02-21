@@ -72,7 +72,7 @@ function LoadingScreen() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="flex min-h-[calc(100vh-73px)] flex-col items-center justify-center gap-6 px-6"
+      className="flex min-h-[calc(100vh-57px)] flex-col items-center justify-center gap-6 px-6"
     >
       <div className="flex items-center gap-1.5">
         {[0, 1, 2].map((i) => (
@@ -295,53 +295,66 @@ export default function HomePage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4 }}
-              className="relative flex min-h-[calc(100vh-73px)] flex-col items-center justify-center px-6"
+              transition={{ duration: 0.5 }}
+              className="relative flex min-h-[calc(100vh-57px)] flex-col items-center justify-center px-6"
             >
-              <div className="dot-grid-bg pointer-events-none absolute inset-0" />
+              {/* Background effects */}
+              <div className="pointer-events-none absolute inset-0">
+                <div className="dot-grid-bg absolute inset-0" />
+                <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-blue-600/[0.04] rounded-full blur-[120px]" />
+                <div className="absolute bottom-1/4 left-1/3 w-[300px] h-[300px] bg-violet-600/[0.03] rounded-full blur-[100px]" />
+              </div>
+
               <div className="relative z-10 max-w-2xl text-center">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
                 >
-                  <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/50 px-3 py-1 text-xs text-muted-foreground mb-6">
+                  <span className="inline-flex items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.03] px-3.5 py-1.5 text-[11px] text-zinc-500 mb-8 backdrop-blur-sm">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    Universal Career Intelligence — v2
+                    Adaptive Career Intelligence
                   </span>
                 </motion.div>
                 <motion.h1
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
-                  className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl"
+                  className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-[3.5rem] leading-[1.1]"
                 >
                   Your career,
                   <br />
-                  <span className="text-primary">intelligently mapped.</span>
+                  <span className="bg-gradient-to-r from-blue-400 via-violet-400 to-blue-400 bg-clip-text text-transparent">
+                    intelligently mapped.
+                  </span>
                 </motion.h1>
                 <motion.p
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.35 }}
-                  className="mt-4 text-base text-muted-foreground sm:text-lg max-w-lg mx-auto"
+                  className="mt-5 text-[15px] text-zinc-500 sm:text-base max-w-md mx-auto leading-relaxed"
                 >
-                  Works for every field — engineering, arts, medicine, law,
-                  design, commerce, and more. 6-module assessment. Dual-track
-                  analysis. One precise report.
+                  6-module assessment. Dual-track analysis. One precise
+                  intelligence report — for every field.
                 </motion.p>
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
-                  className="mt-8 flex items-center justify-center gap-4"
+                  className="mt-10 flex items-center justify-center"
                 >
                   <button
                     onClick={() => setView("input")}
-                    className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#4F46E5]"
+                    className="group inline-flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 px-7 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 hover:scale-[1.02] active:scale-[0.98]"
                   >
-                    Begin Free Assessment
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    Start Assessment
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      className="transition-transform group-hover:translate-x-0.5"
+                    >
                       <path
                         d="M6 3L11 8L6 13"
                         stroke="currentColor"
@@ -356,19 +369,16 @@ export default function HomePage() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.7 }}
-                  className="mt-10 flex items-center justify-center gap-6 text-xs text-zinc-600"
+                  className="mt-12 flex items-center justify-center gap-8 text-[11px] text-zinc-600"
                 >
-                  {[
-                    "6 modules",
-                    "Dual-track report",
-                    "AI-powered roadmap",
-                    "Live job data",
-                  ].map((f) => (
-                    <span key={f} className="flex items-center gap-1.5">
-                      <span className="w-1 h-1 rounded-full bg-zinc-700" />
-                      {f}
-                    </span>
-                  ))}
+                  {["AI-powered", "Dual-track report", "Live market data"].map(
+                    (f) => (
+                      <span key={f} className="flex items-center gap-2">
+                        <span className="w-1 h-1 rounded-full bg-zinc-700" />
+                        {f}
+                      </span>
+                    ),
+                  )}
                 </motion.div>
               </div>
             </motion.div>
@@ -382,14 +392,14 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4 }}
-              className="mx-auto max-w-2xl px-6 py-10"
+              className="mx-auto max-w-2xl px-6 py-8"
             >
               {/* Back button */}
               <button
                 onClick={handleBack}
-                className="text-sm text-zinc-500 hover:text-white transition-colors mb-6 flex items-center gap-1"
+                className="text-xs text-zinc-600 hover:text-zinc-300 transition-colors mb-5 flex items-center gap-1.5"
               >
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
                   <path
                     d="M10 3L5 8L10 13"
                     stroke="currentColor"
@@ -398,81 +408,44 @@ export default function HomePage() {
                     strokeLinejoin="round"
                   />
                 </svg>
-                {step === 1 ? "Back to home" : "Previous"}
+                {step === 1 ? "Home" : "Back"}
               </button>
 
-              {/* Step circles + connector lines */}
-              <div className="flex items-center justify-between mb-4">
-                {STEPS.map((s, i) => (
-                  <div key={s.num} className="flex items-center">
-                    <span
-                      className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold border transition-all ${
-                        s.num < step
-                          ? "border-emerald-500 bg-emerald-500 text-white"
-                          : s.num === step
-                            ? "border-blue-500 bg-blue-500 text-white"
-                            : "border-zinc-700 bg-zinc-900 text-zinc-600"
-                      }`}
-                    >
-                      {s.num < step ? (
-                        <svg
-                          width="10"
-                          height="10"
-                          viewBox="0 0 10 10"
-                          fill="none"
-                        >
-                          <path
-                            d="M2 5L4.5 7.5L8 3"
-                            stroke="white"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      ) : (
-                        s.num
-                      )}
-                    </span>
-                    {i < STEPS.length - 1 && (
-                      <div
-                        className={`h-px w-6 sm:w-8 mx-1 transition-colors ${s.num < step ? "bg-emerald-500/40" : "bg-zinc-800"}`}
-                      />
-                    )}
-                  </div>
+              {/* Step indicator - minimal dots */}
+              <div className="flex items-center gap-1.5 mb-5">
+                {STEPS.map((s) => (
+                  <div
+                    key={s.num}
+                    className={`h-1 rounded-full transition-all duration-300 ${
+                      s.num < step
+                        ? "w-6 bg-emerald-500/60"
+                        : s.num === step
+                          ? "w-8 bg-blue-500"
+                          : "w-4 bg-zinc-800"
+                    }`}
+                  />
                 ))}
+                <span className="ml-auto text-[11px] text-zinc-600 tabular-nums">
+                  {step}/{STEPS.length}
+                </span>
               </div>
-
-              {/* Progress bar */}
-              <div className="h-1 w-full rounded-full bg-zinc-800 mb-6">
-                <motion.div
-                  className="h-full rounded-full bg-blue-500"
-                  animate={{
-                    width: `${((step - 1) / (STEPS.length - 1)) * 100}%`,
-                  }}
-                  transition={{ duration: 0.4, ease: "easeInOut" }}
-                />
-              </div>
-
-              <p className="text-xs text-zinc-600 uppercase tracking-wider mb-1">
-                Step {step} of {STEPS.length}
-              </p>
 
               {error && (
-                <div className="mb-5 rounded-lg border border-red-800/50 bg-red-900/20 p-4 text-sm text-red-400">
+                <div className="mb-4 rounded-xl border border-red-800/40 bg-red-900/10 px-4 py-3 text-sm text-red-400">
                   {error}
                 </div>
               )}
 
               {/* Animated step content */}
-              <div className="rounded-2xl border border-zinc-800 bg-zinc-950/60 p-6 overflow-hidden">
+              <div className="rounded-2xl border border-white/[0.04] bg-zinc-950/70 p-6 backdrop-blur-sm">
                 <AnimatePresence mode="wait" custom={direction}>
                   <motion.div
                     key={step}
                     custom={direction}
-                    initial={{ opacity: 0, x: direction * 40 }}
+                    initial={{ opacity: 0, x: direction * 30 }}
                     animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: direction * -40 }}
-                    transition={{ duration: 0.28, ease: "easeInOut" }}
+                    exit={{ opacity: 0, x: direction * -30 }}
+                    transition={{ duration: 0.25, ease: "easeInOut" }}
                   >
                     {stepContent[step - 1]}
                   </motion.div>
@@ -480,11 +453,11 @@ export default function HomePage() {
               </div>
 
               {/* Navigation */}
-              <div className="mt-5 flex gap-3">
+              <div className="mt-4 flex gap-2.5">
                 {step > 1 && (
                   <button
                     onClick={handleBack}
-                    className="flex-1 rounded-xl border border-zinc-700 bg-zinc-900 py-3 text-sm font-semibold text-zinc-300 hover:bg-zinc-800 transition-colors"
+                    className="flex-1 rounded-xl border border-white/[0.06] bg-white/[0.02] py-3 text-sm font-medium text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.04] transition-all"
                   >
                     ← Back
                   </button>
@@ -493,7 +466,7 @@ export default function HomePage() {
                   <button
                     onClick={handleNext}
                     disabled={!canProceed()}
-                    className="flex-1 rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    className="flex-1 rounded-xl bg-white/[0.08] py-3 text-sm font-semibold text-white hover:bg-white/[0.12] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                   >
                     Continue →
                   </button>
@@ -501,14 +474,14 @@ export default function HomePage() {
                   <button
                     onClick={handleAnalyze}
                     disabled={!canProceed()}
-                    className="flex-1 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 py-3.5 text-sm font-semibold text-white hover:from-blue-500 hover:to-violet-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                    className="flex-1 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 py-3.5 text-sm font-semibold text-white hover:shadow-lg hover:shadow-blue-500/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300"
                   >
-                    Generate My Intelligence Report →
+                    Generate Report →
                   </button>
                 )}
               </div>
               {!canProceed() && gateMsg() && (
-                <p className="text-xs text-zinc-600 mt-2 text-center">
+                <p className="text-[11px] text-zinc-600 mt-2 text-center">
                   {gateMsg()}
                 </p>
               )}
@@ -526,36 +499,36 @@ export default function HomePage() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5 }}
-              className="mx-auto max-w-3xl px-6 py-10"
+              className="mx-auto max-w-3xl px-6 py-8"
             >
               {/* ── Report Header ── */}
-              <div className="mb-10 rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900/80 to-zinc-950 p-6 relative overflow-hidden">
-                {/* Subtle gradient accent */}
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-transparent to-violet-500/5 pointer-events-none" />
+              <div className="mb-10 rounded-2xl border border-white/[0.04] bg-zinc-950/80 p-7 relative overflow-hidden backdrop-blur-sm">
+                {/* Ambient glow */}
+                <div className="absolute -top-20 -right-20 w-60 h-60 bg-blue-600/[0.06] rounded-full blur-[80px] pointer-events-none" />
+                <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-violet-600/[0.04] rounded-full blur-[60px] pointer-events-none" />
                 <div className="relative flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-[11px] text-zinc-600 uppercase tracking-widest mb-2 font-mono">
-                      ALIGNIQ Intelligence Report ·{" "}
-                      {results.identity.generated_date}
+                    <p className="text-[10px] text-zinc-600 uppercase tracking-[0.2em] mb-3 font-mono">
+                      Intelligence Report · {results.identity.generated_date}
                     </p>
                     <h1 className="text-3xl font-bold text-white tracking-tight">
                       {results.identity.name}
                     </h1>
-                    <p className="text-zinc-600 text-xs mt-1 font-mono">
+                    <p className="text-zinc-700 text-[11px] mt-1 font-mono">
                       {results.identity.profile_id}
                     </p>
                     <div className="flex flex-wrap gap-2 mt-4">
-                      <span className="text-xs px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 font-medium">
+                      <span className="text-[11px] px-3 py-1.5 rounded-full bg-emerald-500/8 border border-emerald-500/20 text-emerald-400 font-medium">
                         Best fit: {results.best_fit.role}
                       </span>
-                      <span className="text-xs px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/25 text-blue-400 font-medium">
+                      <span className="text-[11px] px-3 py-1.5 rounded-full bg-blue-500/8 border border-blue-500/20 text-blue-400 font-medium">
                         Goal: {results.chosen_career.role}
                       </span>
                     </div>
                   </div>
                   <button
                     onClick={handleReset}
-                    className="flex-shrink-0 rounded-lg border border-zinc-700 bg-zinc-800/80 px-4 py-2 text-xs font-medium text-zinc-400 hover:text-white hover:border-zinc-500 hover:bg-zinc-700 transition-all duration-200"
+                    className="flex-shrink-0 rounded-lg border border-white/[0.06] bg-white/[0.03] px-4 py-2 text-[11px] font-medium text-zinc-500 hover:text-white hover:bg-white/[0.06] transition-all duration-200"
                   >
                     New Assessment
                   </button>
@@ -614,17 +587,17 @@ export default function HomePage() {
                 </div>
 
                 {/* Report Footer */}
-                <div className="pt-4 border-t border-zinc-800/60">
+                <div className="pt-6 border-t border-white/[0.04]">
                   <div className="text-center space-y-3">
-                    <p className="text-[11px] text-zinc-700 font-mono">
-                      Generated by ALIGNIQ · {results.identity.profile_id} ·{" "}
+                    <p className="text-[10px] text-zinc-700 font-mono tracking-wide">
+                      ALIGNIQ · {results.identity.profile_id} ·{" "}
                       {results.identity.generated_date}
                     </p>
                     <button
                       onClick={handleReset}
-                      className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors underline underline-offset-4"
+                      className="text-[11px] text-zinc-600 hover:text-zinc-400 transition-colors"
                     >
-                      Start a new assessment
+                      Start a new assessment →
                     </button>
                   </div>
                 </div>

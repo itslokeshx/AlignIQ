@@ -97,17 +97,23 @@
 @keyframes dotFloat {
   0%,
   100% {
-    opacity: 0.03;
+    opacity: 0.015;
   }
   50% {
-    opacity: 0.06;
+    opacity: 0.035;
   }
 }
 
 .dot-grid-bg {
-  background-image: radial-gradient(circle, #ffffff 1px, transparent 1px);
-  background-size: 24px 24px;
-  animation: dotFloat 8s ease-in-out infinite;
+  background-image: radial-gradient(circle, #ffffff 0.5px, transparent 0.5px);
+  background-size: 28px 28px;
+  animation: dotFloat 12s ease-in-out infinite;
+}
+
+/* Selection color */
+::selection {
+  background: rgba(99, 102, 241, 0.3);
+  color: #fff;
 }
 
 /* Custom scrollbar */
