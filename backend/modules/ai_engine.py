@@ -1,175 +1,126 @@
 """
-ALIGNIQ — AI Engine Module
-Groq API integration for generating executive summaries and execution roadmaps.
-
-For viva: The AI does NOT do the analysis. Our ML model and CRI formulas do the analysis.
-Groq receives structured, already-computed results and formats them into professional
-readable text. The intelligence is in the backend logic, not the AI.
+ALIGNIQ v2 — AI Engine
+Uses Groq's llama-3.3-70b-versatile to generate:
+  - role_description  (3–4 factual sentences about the chosen career)
+  - executive_summary (5–6 analytical sentences, no motivation)
+  - action_checklist  (6 specific, actionable items)
 """
-
 import os
 import json
+import re
 from groq import Groq
 
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+MODEL  = "llama-3.3-70b-versatile"
 
-def generate_analysis(context: dict) -> dict:
-    """
-    Generate AI-powered executive summary and execution roadmap using Groq.
 
-    Args:
-        context: Pre-computed analysis data (CRI, ML predictions, alignment scores, etc.)
+def _call_groq(prompt: str) -> str:
+    response = client.chat.completions.create(
+        model=MODEL,
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.3,
+        max_tokens=1200,
+    )
+    return response.choices[0].message.content.strip()
 
-    Returns:
-        Structured AI response with summary, roadmap, and skill prescriptions
-    """
-    api_key = os.getenv("GROQ_API_KEY")
 
-    if not api_key:
-        print("[AI] Groq API key not configured. Using fallback response.")
-        return _fallback_analysis(context)
-
-    client = Groq(api_key=api_key)
-
-    structured_prompt = f"""
-You are ALIGNIQ's career intelligence engine. Analyze this student's profile data and return a JSON response only.
-
-Student Profile Context:
-- CRI Score: {context.get('cri_total', 0)}/100
-- Predicted Career: {context.get('predicted_career', 'Unknown')} (confidence: {context.get('confidence', 0)*100:.0f}%)
-- Target Role: {context.get('target_role', 'Unknown')}
-- Passion vs Choice Alignment: {context.get('passion_vs_choice_score', 0)}%
-- Skill Match with Market: {context.get('match_percentage', 0)}%
-- Missing Skills: {', '.join(context.get('missing_skills', []))}
-- Is Misaligned: {context.get('is_misaligned', False)}
-- Academic Score: {context.get('academic_reliability_index', 0)}/100
-- Skill Score: {context.get('skill_depth_index', 0)}/100
-- Experience Score: {context.get('experience_adequacy_index', 0)}/100
-
-Return ONLY this JSON structure, no extra text:
-{{
-  "executive_summary": "3-4 sentence professional analytical summary, not motivational, purely diagnostic",
-  "roadmap": {{
-    "phase_1": {{
-      "title": "Structural Correction",
-      "duration": "X weeks",
-      "actions": ["action1", "action2", "action3"]
-    }},
-    "phase_2": {{
-      "title": "Industry Simulation",
-      "duration": "X weeks",
-      "actions": ["action1", "action2", "action3"]
-    }},
-    "phase_3": {{
-      "title": "Market Entry",
-      "duration": "X weeks",
-      "actions": ["action1", "action2", "action3"]
-    }}
-  }},
-  "skill_prescriptions": [
-    {{"skill": "SkillName", "why": "Reason based on data", "priority": "High"}},
-    {{"skill": "SkillName2", "why": "Reason based on data", "priority": "Medium"}}
-  ],
-  "projected_cri_after_roadmap": 88,
-  "probability_increase": "{context.get('confidence', 0)*100:.0f}% → 91%"
-}}
-"""
-
+def generate_role_description(role: str, domain: str) -> str:
+    """Generate 3–4 factual sentences about what a role actually involves."""
+    prompt = f"""Write 3-4 concise, factual sentences describing what a {role} in the {domain} domain actually does day-to-day, including the scope of work, key responsibilities, typical environment, and career trajectory. Be professional and informative. No hype or motivation. No bullet points."""
     try:
-        response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=[{"role": "user", "content": structured_prompt}],
-            temperature=0.3,
+        return _call_groq(prompt)
+    except Exception:
+        return f"A {role} operates within the {domain} domain, applying specialized knowledge and skills to deliver measurable outcomes. The role involves strategic thinking, technical execution, and collaborative work across cross-functional teams. Career progression typically follows increasing levels of responsibility, expertise, and leadership."
+
+
+def generate_executive_summary(name: str, best_fit: dict, chosen: dict,
+                               cri: dict, personality: dict) -> str:
+    """Generate a 5–6 sentence analytical executive summary of the student's profile."""
+    prompt = f"""You are an unbiased career analyst writing a professional assessment of {name}'s career intelligence profile.
+
+Key data:
+- Best fit career: {best_fit.get('role')} (score: {best_fit.get('score')}%)
+- Chosen career: {chosen.get('role')} (alignment: {chosen.get('alignment_score')}%)
+- CRI score: {cri.get('cri_total')}/100
+- Interest match for chosen role: {chosen.get('interest_match')}%
+- Skill match: {chosen.get('skill_match')}%
+- Experience match: {chosen.get('experience_match')}%
+- Gap severity: {chosen.get('gap_severity')}
+- Personality: analytical_creative={personality.get('analytical_creative')}, independent_collaborative={personality.get('independent_collaborative')}, theoretical_practical={personality.get('theoretical_practical')}
+
+Write 5–6 analytical sentences about this person's career intelligence. Focus on what the data shows. Be objective—neither overly positive nor negative. Do NOT use motivational language. No bullet points. Return only the paragraph text."""
+    try:
+        return _call_groq(prompt)
+    except Exception:
+        return (
+            f"{name}'s career intelligence profile reveals a CRI score of {cri.get('cri_total')}/100, "
+            f"reflecting a solid but developing readiness foundation. "
+            f"The alignment between their interest profile and their chosen path as a {chosen.get('role')} "
+            f"stands at {chosen.get('alignment_score')}%, indicating {chosen.get('gap_severity', 'moderate').lower()} gaps that require deliberate action. "
+            f"Their best statistical fit is {best_fit.get('role')}, driven by personality and activity pattern convergence. "
+            f"The primary development area lies in skill depth—bridging the gap between {chosen.get('skill_match')}% current match and full role competency."
         )
-        raw = response.choices[0].message.content
-
-        # Try to extract JSON from the response
-        # Sometimes LLMs wrap in ```json ... ```
-        if "```" in raw:
-            json_match = raw.split("```json")[-1].split("```")[0] if "```json" in raw else raw.split("```")[1]
-            raw = json_match.strip()
-
-        return json.loads(raw)
-
-    except json.JSONDecodeError as e:
-        print(f"[AI] JSON parse error: {e}")
-        return _fallback_analysis(context)
-    except Exception as e:
-        print(f"[AI] Groq API error: {e}")
-        return _fallback_analysis(context)
 
 
-def _fallback_analysis(context: dict) -> dict:
-    """
-    Fallback response when Groq API is unavailable.
-    Uses template-based generation from computed data.
-    """
-    cri = context.get("cri_total", 0)
-    predicted = context.get("predicted_career", "Software Engineer")
-    target = context.get("target_role", "Software Engineer")
-    confidence = context.get("confidence", 0)
-    missing = context.get("missing_skills", [])
-    is_misaligned = context.get("is_misaligned", False)
-    match_pct = context.get("match_percentage", 0)
+def generate_action_checklist(role: str, missing_skills: list,
+                               gap_timeline: str, field: str) -> list:
+    """Generate 6 specific, actionable items for the student."""
+    skills_str = ", ".join(missing_skills[:4]) if missing_skills else "core domain skills"
+    prompt = f"""Generate exactly 6 specific, actionable career development tasks for someone pursuing {role}, coming from a {field} background, with these missing skills: {skills_str}. The estimated timeline is {gap_timeline}.
 
-    # Generate contextual summary
-    readiness = "strong" if cri >= 70 else "moderate" if cri >= 50 else "developing"
-    alignment_note = (
-        f"There is a significant misalignment between stated interests and target role — the skill pattern suggests {predicted} rather than {target}."
-        if is_misaligned
-        else f"Skills and interests are reasonably aligned with the target role of {target}."
-    )
+Requirements:
+- Each item must be a concrete action (not generic advice)
+- Include: 1 certification or course, 1 project idea, 1 networking action, 1 online presence step, 2 skill-building tasks
+- Return ONLY a JSON array of 6 strings. Example: ["Complete AWS Cloud Practitioner certification", "Build a portfolio project using React"]
+- No numbering, no explanation."""
+    try:
+        raw = _call_groq(prompt)
+        match = re.search(r'\[.*?\]', raw, re.DOTALL)
+        if match:
+            return json.loads(match.group())
+        return [line.strip().strip('"').strip("'").lstrip("0123456789. -") for line in raw.split('\n') if line.strip()][:6]
+    except Exception:
+        return [
+            f"Complete an introductory course in {missing_skills[0] if missing_skills else 'your target field'}",
+            f"Build one end-to-end project demonstrating {role.lower()} capabilities",
+            "Connect with 3 professionals in your target role via LinkedIn",
+            "Update your LinkedIn headline and about section to reflect your career direction",
+            f"Join a community or group related to {role} and engage weekly",
+            "Document your existing projects with measurable outcomes for your portfolio",
+        ]
 
-    summary = (
-        f"The student demonstrates a {readiness} career readiness profile with a CRI of {cri}/100. "
-        f"ML analysis predicts {predicted} as the optimal career path with {confidence*100:.0f}% confidence. "
-        f"{alignment_note} "
-        f"Market skill match stands at {match_pct}%, with {len(missing)} critical skill gaps identified."
-    )
 
-    # Build prescriptions from missing skills
-    prescriptions = []
-    for i, skill in enumerate(missing[:4]):
-        priority = "High" if i < 2 else "Medium"
-        prescriptions.append({
-            "skill": skill,
-            "why": f"Demanded in {60 - i*10}% of {target} job listings",
-            "priority": priority,
-        })
+def generate_roadmap(role: str, missing_skills: list, gap_severity: str,
+                     field: str, experience_level: str) -> dict:
+    """Generate a 3-phase roadmap for reaching the target role."""
+    skills_str = ", ".join(missing_skills[:5]) if missing_skills else "core skills"
+    prompt = f"""Generate a 3-phase career roadmap for someone who wants to become a {role}, coming from {field} background (level: {experience_level}), needing to build: {skills_str}. Gap severity: {gap_severity}.
 
-    projected_cri = min(100, round(cri * 1.2))
-
+Return ONLY a JSON object with this exact structure:
+{{
+  "phase_1": {{"title": "...", "duration": "...", "actions": ["action1", "action2", "action3"]}},
+  "phase_2": {{"title": "...", "duration": "...", "actions": ["action1", "action2", "action3"]}},
+  "phase_3": {{"title": "...", "duration": "...", "actions": ["action1", "action2", "action3"]}}
+}}
+Each phase title should be 3–5 words. Durations should be realistic (e.g. "0–2 months"). Actions must be specific and concrete."""
+    try:
+        raw = _call_groq(prompt)
+        match = re.search(r'\{.*\}', raw, re.DOTALL)
+        if match:
+            return json.loads(match.group())
+    except Exception:
+        pass
+    # Fallback
+    if gap_severity == "Minimal":
+        d1, d2, d3 = "0–1 months", "1–2 months", "2–4 months"
+    elif gap_severity == "Minor":
+        d1, d2, d3 = "0–1 months", "1–3 months", "3–6 months"
+    elif gap_severity == "Moderate":
+        d1, d2, d3 = "0–2 months", "2–4 months", "4–8 months"
+    else:
+        d1, d2, d3 = "0–2 months", "2–6 months", "6–12 months"
     return {
-        "executive_summary": summary,
-        "roadmap": {
-            "phase_1": {
-                "title": "Structural Correction",
-                "duration": "4 weeks",
-                "actions": [
-                    f"Complete online certification in {missing[0] if missing else 'core skill'}",
-                    "Build 2 portfolio projects demonstrating target role competencies",
-                    "Strengthen weak sub-indices through focused practice",
-                ],
-            },
-            "phase_2": {
-                "title": "Industry Simulation",
-                "duration": "6 weeks",
-                "actions": [
-                    "Contribute to 2-3 open source projects in target domain",
-                    "Complete a capstone project solving a real industry problem",
-                    "Practice system design and technical interview patterns",
-                ],
-            },
-            "phase_3": {
-                "title": "Market Entry",
-                "duration": "4 weeks",
-                "actions": [
-                    "Apply to top 5 matched job opportunities from ALIGNIQ",
-                    "Optimize resume with keyword alignment to job descriptions",
-                    "Prepare for behavioral + technical interview rounds",
-                ],
-            },
-        },
-        "skill_prescriptions": prescriptions,
-        "projected_cri_after_roadmap": projected_cri,
-        "probability_increase": f"{confidence*100:.0f}% → {min(95, round(confidence*100 + 15))}%",
+        "phase_1": {"title": "Build Core Foundation", "duration": d1, "actions": [f"Learn {missing_skills[0] if missing_skills else 'foundational skill'}", "Complete one structured online course", "Set up your portfolio or work samples"]},
+        "phase_2": {"title": "Apply & Create", "duration": d2, "actions": ["Build a real project using your new skills", f"Pursue an internship or freelance gig in {role.lower()} work", "Participate in a hackathon, competition, or workshop"]},
+        "phase_3": {"title": "Position & Launch", "duration": d3, "actions": ["Refine your resume and LinkedIn for this role", "Apply to 10+ targeted roles with personalized applications", "Get feedback from 2 professionals in the field"]},
     }

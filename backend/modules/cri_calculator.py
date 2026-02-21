@@ -1,117 +1,88 @@
 """
-ALIGNIQ — CRI Calculator Module
-Computes Career Readiness Index (CRI) — the custom innovation metric.
-
-Formula:
-CRI = (Academic Score × 0.25) + (Skill Score × 0.30) + (Experience Score × 0.25) + (Market Match Score × 0.20)
+ALIGNIQ v2 — CRI Calculator
+Career Readiness Index formula for universal profiles across all fields.
 """
 
-
-def calculate_academic_score(cgpa: float, aptitude_score: float, backlogs: int, consistency: str) -> float:
+def calculate_cri(processed: dict) -> dict:
     """
-    Academic Score (out of 100):
-    = (cgpa/10 × 50) + (aptitude_score/100 × 30) + backlog_penalty + consistency_bonus
+    Compute Career Readiness Index for any field/domain.
+
+    Sub-indices:
+    ┌────────────────────────────────┬────────┐
+    │ Academic Reliability Index     │  25 pts│  CGPA + consistency + no backlogs
+    │ Skill Depth Index              │  30 pts│  skill count + proficiency + languages
+    │ Experience Adequacy Index      │  30 pts│  internships + projects + leadership + competitions
+    │ Market Alignment Score         │  15 pts│  target role realism vs salary expectation
+    └────────────────────────────────┴────────┘
     """
-    base = (cgpa / 10.0) * 50.0
-    aptitude = (aptitude_score / 100.0) * 30.0
+    # ─── 1. Academic Reliability Index (0–25) ─────────────────────────────────
+    cgpa_norm  = processed.get('cgpa_norm', 0.6)          # 0–1
+    consistency= processed.get('consistency', 'medium')
+    backlogs   = processed.get('backlogs', 0)
 
-    # Backlog penalty: -10 per backlog, max -30
-    backlog_penalty = max(-30, backlogs * -10)
+    consistency_score = {'high': 10, 'medium': 6, 'low': 2}.get(consistency, 6)
+    backlog_penalty   = min(backlogs * 2, 8)
+    ari = round(cgpa_norm * 15 + consistency_score - backlog_penalty, 2)
+    ari = max(0, min(25, ari))
 
-    # Consistency bonus: high=20, medium=10, low=0
-    consistency_bonus_map = {"high": 20, "medium": 10, "low": 0}
-    consistency_bonus = consistency_bonus_map.get(consistency, 10)
+    # ─── 2. Skill Depth Index (0–30) ─────────────────────────────────────────
+    skills_selected  = processed.get('selected_skills', [])
+    proficiency      = processed.get('proficiency_rating', 5)    # 1–10
+    languages_known  = processed.get('languages_known', [])
 
-    score = base + aptitude + backlog_penalty + consistency_bonus
-    return max(0, min(100, score))
+    skill_count_score = min(len(skills_selected) * 1.5, 15)      # max 15
+    proficiency_score = (proficiency / 10) * 10                   # max 10
+    language_score    = min(len(languages_known) * 1.5, 5)        # max 5
+    sdi = round(skill_count_score + proficiency_score + language_score, 2)
+    sdi = max(0, min(30, sdi))
 
+    # ─── 3. Experience Adequacy Index (0–30) ─────────────────────────────────
+    internships       = processed.get('internships', 0)
+    projects          = processed.get('projects', [])
+    competitions      = processed.get('competitions', '')
+    leadership        = processed.get('leadership', False)
+    volunteer         = processed.get('volunteer', False)
+    earned_from_skill = processed.get('earned_from_skill', False)
+    readiness_rating  = processed.get('readiness_rating', 5)
 
-def calculate_skill_score(languages: list, frameworks: list, tools: list, self_rating: int) -> float:
-    """
-    Skill Score (out of 100):
-    = (len(languages) × 5) + (len(frameworks) × 7) + (len(tools) × 5) + (self_rating × 3)
-    Capped at 100.
-    """
-    score = (len(languages) * 5) + (len(frameworks) * 7) + (len(tools) * 5) + (self_rating * 3)
-    return min(100, max(0, score))
+    internship_score  = min(internships * 6, 12)
+    project_score     = min(len([p for p in projects if p and len(p.strip()) > 3]) * 3, 9)
+    extra_score       = 0
+    if competitions and len(competitions.strip()) > 2: extra_score += 2
+    if leadership:        extra_score += 2
+    if volunteer:         extra_score += 1
+    if earned_from_skill: extra_score += 2
+    readiness_bonus   = (readiness_rating / 10) * 5                # max 5
+    eai = round(internship_score + project_score + extra_score + readiness_bonus, 2)
+    eai = max(0, min(30, eai))
 
+    # ─── 4. Market Alignment Score (0–15) ────────────────────────────────────
+    # Higher if the target role has strong market demand and student's skills match it
+    from backend.modules.profile_processor import ROLE_REQUIREMENTS, calculate_skill_overlap
+    target_role   = processed.get('target_role', '')
+    req           = ROLE_REQUIREMENTS.get(target_role, {})
+    role_skills   = req.get('skills', [])
+    demand        = req.get('market_demand', 'Moderate')
+    demand_score  = {'Very Strong': 8, 'Always High': 8, 'Strong': 7, 'Growing': 6, 'Moderate': 5, 'Stable': 5, 'Changing': 3, 'Niche': 2, 'Variable': 2}.get(demand, 5)
+    skill_align   = calculate_skill_overlap(processed.get('selected_skills', []), role_skills) * 7 if role_skills else 3.5
+    mas = round(demand_score + skill_align, 2)
+    mas = max(0, min(15, mas))
 
-def calculate_experience_score(internships: int, projects: int, hackathons: int, leadership: bool) -> float:
-    """
-    Experience Score (out of 100):
-    = (internships × 20) + (projects × 10) + (hackathons × 8) + (leadership × 12)
-    Capped at 100.
-    """
-    score = (internships * 20) + (projects * 10) + (hackathons * 8) + (12 if leadership else 0)
-    return min(100, max(0, score))
+    # ─── Total CRI ────────────────────────────────────────────────────────────
+    cri_total = round(ari + sdi + eai + mas, 1)
+    cri_total = max(0, min(100, cri_total))
 
-
-def calculate_cri(data: dict, market_match_percentage: float) -> dict:
-    """
-    Calculate the full CRI breakdown.
-
-    Args:
-        data: Raw student profile from frontend
-        market_match_percentage: Percentage from market analysis
-
-    Returns:
-        Full CRI result with sub-indices
-    """
-    academic = data.get("academic", {})
-    experience = data.get("experience", {})
-    skills = data.get("skills", {})
-
-    # Calculate sub-scores
-    academic_score = calculate_academic_score(
-        cgpa=academic.get("cgpa", 0),
-        aptitude_score=academic.get("aptitude_score", 0),
-        backlogs=academic.get("backlogs", 0),
-        consistency=academic.get("consistency", "medium"),
-    )
-
-    # For skill score, we categorize selected_skills into languages/frameworks/tools
-    # Simplified: split selected_skills into categories
-    all_selected = skills.get("selected_skills", [])
-    known_languages = ["Python", "JavaScript", "C++", "Java", "TypeScript", "R", "C", "SQL"]
-    known_frameworks = ["React", "Node.js", "TensorFlow", "PyTorch", "scikit-learn", "Flask",
-                        "Django", "FastAPI", "Vue", "Next.js", "Flutter", "Firebase", "Pandas",
-                        "Keras", "GraphQL"]
-    known_tools = ["Git", "Docker", "Kubernetes", "AWS", "Linux", "MongoDB", "Redis",
-                   "Figma", "MATLAB", "Tableau", "Azure"]
-
-    languages = [s for s in all_selected if s in known_languages]
-    frameworks = [s for s in all_selected if s in known_frameworks]
-    tools = [s for s in all_selected if s in known_tools]
-
-    skill_score = calculate_skill_score(
-        languages=languages,
-        frameworks=frameworks,
-        tools=tools,
-        self_rating=skills.get("self_rating", 5),
-    )
-
-    experience_score = calculate_experience_score(
-        internships=experience.get("internships", 0),
-        projects=experience.get("projects", 0),
-        hackathons=experience.get("hackathons", 0),
-        leadership=experience.get("leadership", False),
-    )
-
-    market_score = market_match_percentage
-
-    # CRI Formula: weighted sum
-    cri_total = round(
-        (academic_score * 0.25) +
-        (skill_score * 0.30) +
-        (experience_score * 0.25) +
-        (market_score * 0.20),
-        1
-    )
+    # ─── Projected CRI (if 1 internship + 3 skills added) ────────────────────
+    projected_sdi = min(sdi + 4.5, 30)
+    projected_eai = min(eai + 6.0, 30)
+    projected_cri = round(ari + projected_sdi + projected_eai + mas, 1)
+    projected_cri = max(0, min(100, projected_cri))
 
     return {
-        "cri_total": cri_total,
-        "academic_reliability_index": round(academic_score, 1),
-        "skill_depth_index": round(skill_score, 1),
-        "experience_adequacy_index": round(experience_score, 1),
-        "market_alignment_score": round(market_score, 1),
+        'cri_total':                  cri_total,
+        'academic_reliability_index': ari,
+        'skill_depth_index':          sdi,
+        'experience_adequacy_index':  eai,
+        'market_alignment_score':     mas,
+        'projected_cri':              projected_cri,
     }

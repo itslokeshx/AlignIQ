@@ -1,98 +1,156 @@
-export interface AcademicProfile {
-  cgpa: number
-  backlogs: number
-  aptitude_score: number
-  consistency: "low" | "medium" | "high"
+// ─── Input Types ──────────────────────────────────────────────────────────────
+export interface IdentityProfile {
+  name: string;
+  age: number;
+  education_level: string;
+  field_of_study: string;
+  cgpa: number;
+  consistency: "low" | "medium" | "high";
+  backlogs: number;
+}
+
+export interface InterestsProfile {
+  activities: string[];
+  work_environments: string[];
+  motivators: string[];
+  topics: string[];
 }
 
 export interface ExperienceProfile {
-  internships: number
-  projects: number
-  hackathons: number
-  leadership: boolean
+  internships: number;
+  projects: string[];
+  competitions: string;
+  leadership: boolean;
+  leadership_desc: string;
+  volunteer: boolean;
+  volunteer_desc: string;
+  clubs: string;
+  awards: string;
+  readiness_rating: number;
+  earned_from_skill: boolean;
+  earned_desc: string;
 }
 
 export interface SkillsProfile {
-  selected_skills: string[]
-  self_rating: number
+  selected_skills: string[];
+  proficiency_rating: number;
+  languages_known: string[];
 }
 
 export interface IntentProfile {
-  interested_domains: string[]
-  target_role: string
-  salary_expectation: number
-  work_style: "remote" | "hybrid" | "onsite"
-  risk_tolerance: "low" | "medium" | "high"
+  target_domain: string;
+  target_role: string;
+  reasons: string[];
+  salary_expectation: number;
+  work_location: string;
+  open_to_education: string;
+}
+
+export interface PersonalityProfile {
+  answers: Record<string, "A" | "B">;
 }
 
 export interface StudentProfile {
-  academic: AcademicProfile
-  experience: ExperienceProfile
-  skills: SkillsProfile
-  intent: IntentProfile
+  identity: IdentityProfile;
+  interests: InterestsProfile;
+  experience: ExperienceProfile;
+  skills: SkillsProfile;
+  intent: IntentProfile;
+  personality: PersonalityProfile;
+}
+
+// ─── Response Types ────────────────────────────────────────────────────────────
+export interface PersonalityScores {
+  analytical_creative: number;
+  independent_collaborative: number;
+  theoretical_practical: number;
+  stable_adaptive: number;
+  specialist_generalist: number;
+}
+
+export interface InterestCluster {
+  cluster: string;
+  signal: "strong" | "moderate" | "emerging";
+  activities: string[];
+}
+
+export interface InterestProfileResult {
+  personality: PersonalityScores;
+  interest_clusters: InterestCluster[];
+  motivators: string[];
+}
+
+export interface BestFitCareer {
+  role: string;
+  score: number;
+  why: string;
+  strengths: string[];
+  skills_to_develop: string[];
+  salary_range: string;
+  growth_trajectory: string;
+  market_demand: string;
+  second_fit: { role: string; score: number };
+  third_fit: { role: string; score: number };
+}
+
+export interface RoadmapPhase {
+  title: string;
+  duration: string;
+  actions: string[];
+}
+
+export interface ChosenCareerAnalysis {
+  role: string;
+  interest_match: number;
+  skill_match: number;
+  experience_match: number;
+  alignment_score: number;
+  role_description: string;
+  market_data: {
+    top_skills: [string, number][];
+    avg_experience: string;
+    entry_salary: string;
+  };
+  you_have: string[];
+  missing_skills: string[];
+  gap_severity: string;
+  gap_timeline: string;
+  roadmap: {
+    phase_1: RoadmapPhase;
+    phase_2: RoadmapPhase;
+    phase_3: RoadmapPhase;
+  };
 }
 
 export interface CRIResult {
-  cri_total: number
-  academic_reliability_index: number
-  skill_depth_index: number
-  experience_adequacy_index: number
-  market_alignment_score: number
-}
-
-export interface MLPrediction {
-  predicted_career: string
-  confidence: number
-  top_3_predictions: { role: string; probability: number }[]
-  feature_importance: Record<string, number>
-}
-
-export interface AlignmentResult {
-  passion_alignment_score: number
-  role_alignment_score: number
-  passion_vs_choice_score: number
-  is_misaligned: boolean
-}
-
-export interface MarketResult {
-  match_percentage: number
-  matched_skills: string[]
-  missing_skills: string[]
-  top_demanded_skills: [string, number][]
+  cri_total: number;
+  academic_reliability_index: number;
+  skill_depth_index: number;
+  experience_adequacy_index: number;
+  market_alignment_score: number;
+  projected_cri: number;
 }
 
 export interface JobResult {
-  title: string
-  company: string
-  location: string
-  apply_url: string
-  match_percentage: number
-  salary: string | number
-}
-
-export interface AIRoadmapPhase {
-  title: string
-  duration: string
-  actions: string[]
-}
-
-export interface AIResult {
-  executive_summary: string
-  roadmap: {
-    phase_1: AIRoadmapPhase
-    phase_2: AIRoadmapPhase
-    phase_3: AIRoadmapPhase
-  }
-  skill_prescriptions: { skill: string; why: string; priority: string }[]
-  projected_cri_after_roadmap: number
-  probability_increase: string
+  title: string;
+  company: string;
+  location: string;
+  apply_url: string;
+  match_percentage: number;
+  salary: string | number;
 }
 
 export interface AnalysisResponse {
-  cri: CRIResult
-  ml: MLPrediction
-  alignment: AlignmentResult
-  market: MarketResult
-  jobs: JobResult[]
-  ai: AIResult
+  identity: {
+    name: string;
+    profile_id: string;
+    generated_date: string;
+  };
+  interest_profile: InterestProfileResult;
+  best_fit: BestFitCareer;
+  chosen_career: ChosenCareerAnalysis;
+  cri: CRIResult;
+  jobs: JobResult[];
+  executive_summary: string;
+  action_checklist: string[];
 }
