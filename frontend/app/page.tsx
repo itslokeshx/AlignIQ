@@ -96,6 +96,11 @@ export default function HomePage() {
   const [results, setResults] = useState<AnalysisResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Scroll to top on step or view change (mobile stays at scroll position otherwise)
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [step, view]);
+
   // ── 4-step state ─────────────────────────────────────────────────────────
   const [academic, setAcademic] = useState<AcademicProfile>({
     name: "",
