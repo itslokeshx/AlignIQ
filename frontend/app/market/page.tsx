@@ -446,8 +446,15 @@ export default function MarketPage() {
                         <motion.div
                           key={i}
                           className="h-1.5 w-1.5 rounded-full bg-indigo-500"
-                          animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1, 0.8] }}
-                          transition={{ duration: 1.1, repeat: Infinity, delay: i * 0.18 }}
+                          animate={{
+                            opacity: [0.3, 1, 0.3],
+                            scale: [0.8, 1, 0.8],
+                          }}
+                          transition={{
+                            duration: 1.1,
+                            repeat: Infinity,
+                            delay: i * 0.18,
+                          }}
                         />
                       ))}
                     </div>
@@ -486,7 +493,8 @@ export default function MarketPage() {
                                     className="h-1.5 w-1.5 rounded-full shrink-0"
                                     style={{
                                       backgroundColor:
-                                        PLATFORM_COLORS[r.platform] ?? "#6366f1",
+                                        PLATFORM_COLORS[r.platform] ??
+                                        "#6366f1",
                                     }}
                                   />
                                   <span className="text-foreground/90 group-hover:text-foreground truncate max-w-[200px] sm:max-w-xs">
