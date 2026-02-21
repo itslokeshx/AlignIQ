@@ -130,9 +130,7 @@ export default function ActThreePathForward({
           <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-amber-400/80">
             Act III
           </p>
-          <p className="text-sm font-medium text-zinc-300">
-            Your Path Forward
-          </p>
+          <p className="text-sm font-medium text-zinc-300">Your Path Forward</p>
         </div>
       </div>
 
