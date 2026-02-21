@@ -48,7 +48,7 @@ from modules.market_engine   import fetch_jobs, get_market_trends, rank_jobs_by_
 from modules.resource_map    import enrich_roadmap_with_resources
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:3000", os.environ.get("FRONTEND_URL", "*")])
+CORS(app)  # Allow all origins — public API
 
 
 # ─── Health ────────────────────────────────────────────────────────────────────
