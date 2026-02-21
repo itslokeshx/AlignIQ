@@ -16,7 +16,7 @@ from collections import Counter
 ALL_KNOWN_SKILLS = [
     # Technology & Engineering
     "Python", "JavaScript", "TypeScript", "React", "Node.js", "Vue", "Next.js",
-    "HTML", "CSS", "SQL", "NoSQL", "Java", "C++", "C#", "Go", "Rust", "Swift",
+    "HTML", "CSS", "SQL", "NoSQL", "Java", "C++", "C#", "Golang", "Rust", "Swift",
     "AWS", "Azure", "GCP", "Docker", "Kubernetes", "Linux", "Git", "CI/CD",
     "Machine Learning", "Deep Learning", "TensorFlow", "PyTorch", "scikit-learn",
     "Pandas", "NumPy", "MongoDB", "PostgreSQL", "Redis", "GraphQL",
@@ -273,19 +273,32 @@ def fetch_jobs(role: str, location: str = "India", count: int = 10) -> list:
         return _mock_jobs(role)
 
 
+def _strip_html(text: str) -> str:
+    """Remove HTML tags from a string."""
+    return re.sub(r"<[^>]+>", " ", text)
+
+
 def extract_skills_from_jobs(jobs: list) -> list:
     """
     Extract and count skill mentions from job descriptions.
-    Uses word-boundary matching to avoid false positives (e.g. 'R' matching everywhere).
+    Uses simple substring matching after stripping HTML.
+    Skills shorter than 3 chars use word-boundary matching to avoid false positives.
     Returns top 10 most demanded skills as [(skill, count), ...].
     """
     skill_counter = Counter()
     for job in jobs:
-        desc = job.get("description", "").lower()
+        raw = job.get("description", "") + " " + job.get("title", "")
+        desc = _strip_html(raw).lower()
         for skill in ALL_KNOWN_SKILLS:
-            pattern = r"\b" + re.escape(skill.lower()) + r"\b"
-            if re.search(pattern, desc):
-                skill_counter[skill] += 1
+            skill_lower = skill.lower()
+            # Short skills (<=3 chars like SQL, CSS, Git) use word-boundary
+            # to avoid false positives; longer skills use simple substring
+            if len(skill_lower) <= 3:
+                if re.search(r"\b" + re.escape(skill_lower) + r"\b", desc):
+                    skill_counter[skill] += 1
+            else:
+                if skill_lower in desc:
+                    skill_counter[skill] += 1
     return skill_counter.most_common(10)
 
 

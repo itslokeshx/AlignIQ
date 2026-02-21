@@ -317,50 +317,66 @@ export default function MarketPage() {
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-4">
                   Top Demanded Skills
                 </p>
-                <div className="rounded-xl border border-border bg-card px-5 py-5">
-                  <ResponsiveContainer width="100%" height={340}>
-                    <BarChart
-                      data={chartData}
-                      layout="vertical"
-                      margin={{ top: 0, right: 16, left: 0, bottom: 0 }}
+                {chartData.length === 0 ? (
+                  <div className="rounded-xl border border-border bg-card px-5 py-12 flex flex-col items-center gap-2 text-center">
+                    <p className="text-sm text-muted-foreground">
+                      No skill data matched for these roles.
+                    </p>
+                    <p className="text-xs text-muted-foreground/60">
+                      This can happen when job listings are limited or use
+                      non-standard terminology. Try selecting more roles or
+                      different domains.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="rounded-xl border border-border bg-card px-5 py-5">
+                    <ResponsiveContainer
+                      width="100%"
+                      height={Math.max(220, chartData.length * 34)}
                     >
-                      <XAxis
-                        type="number"
-                        tick={{ fill: "#555", fontSize: 11 }}
-                        axisLine={false}
-                        tickLine={false}
-                      />
-                      <YAxis
-                        type="category"
-                        dataKey="skill"
-                        tick={{ fill: "#888", fontSize: 12 }}
-                        axisLine={false}
-                        tickLine={false}
-                        width={110}
-                      />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: "#111",
-                          border: "1px solid #222",
-                          borderRadius: "8px",
-                          fontSize: "12px",
-                          color: "#fff",
-                        }}
-                        cursor={{ fill: "rgba(99,102,241,0.05)" }}
-                        formatter={(v: number) => [`${v} mentions`, "Demand"]}
-                      />
-                      <Bar
-                        dataKey="demand"
-                        radius={[0, 4, 4, 0]}
-                        maxBarSize={20}
+                      <BarChart
+                        data={chartData}
+                        layout="vertical"
+                        margin={{ top: 0, right: 16, left: 0, bottom: 0 }}
                       >
-                        {chartData.map((_, i) => (
-                          <Cell key={i} fill={getBarFill(i)} />
-                        ))}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
+                        <XAxis
+                          type="number"
+                          tick={{ fill: "#555", fontSize: 11 }}
+                          axisLine={false}
+                          tickLine={false}
+                        />
+                        <YAxis
+                          type="category"
+                          dataKey="skill"
+                          tick={{ fill: "#888", fontSize: 12 }}
+                          axisLine={false}
+                          tickLine={false}
+                          width={110}
+                        />
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: "#111",
+                            border: "1px solid #222",
+                            borderRadius: "8px",
+                            fontSize: "12px",
+                            color: "#fff",
+                          }}
+                          cursor={{ fill: "rgba(99,102,241,0.05)" }}
+                          formatter={(v: number) => [`${v} mentions`, "Demand"]}
+                        />
+                        <Bar
+                          dataKey="demand"
+                          radius={[0, 4, 4, 0]}
+                          maxBarSize={20}
+                        >
+                          {chartData.map((_, i) => (
+                            <Cell key={i} fill={getBarFill(i)} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                )}
               </section>
 
               {/* Domain competitiveness */}
