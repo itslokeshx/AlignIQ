@@ -6,13 +6,33 @@ GET  /api/market-trends → market overview data
 """
 import os
 import uuid
+import threading
+import time
+import logging
 from datetime import datetime
 
+import requests as http_requests
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# ─── Keep-Alive (prevents Render free-tier sleep) ─────────────────────────────
+def _keep_alive():
+    """Ping own /api/health every 14 minutes to prevent Render spin-down."""
+    url = os.environ.get("RENDER_EXTERNAL_URL")
+    if not url:
+        return                       # not deployed on Render — skip
+    health = f"{url}/api/health"
+    while True:
+        time.sleep(14 * 60)         # 14 minutes
+        try:
+            http_requests.get(health, timeout=10)
+        except Exception:
+            logging.warning("Keep-alive ping failed")
+
+threading.Thread(target=_keep_alive, daemon=True).start()
 
 from modules.profile_processor import (
     process_profile, predict_best_fit_careers,
@@ -28,7 +48,7 @@ from modules.market_engine   import fetch_jobs, get_market_trends, rank_jobs_by_
 from modules.resource_map    import enrich_roadmap_with_resources
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["http://localhost:3000", os.environ.get("FRONTEND_URL", "*")])
 
 
 # ─── Health ────────────────────────────────────────────────────────────────────
@@ -231,4 +251,5 @@ def _extract_market_skills(job_results: list, role: str) -> list:
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=os.environ.get("FLASK_ENV") == "development", host="0.0.0.0", port=port)
