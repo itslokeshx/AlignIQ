@@ -88,7 +88,7 @@ export default function ChosenCareerCard({ data }: Props) {
       {/* Role title + description */}
       <div className="rounded-2xl border border-zinc-700/70 bg-zinc-900/50 p-6 space-y-3">
         <h3 className="text-2xl font-bold text-white">{data.role}</h3>
-        <div className="grid grid-cols-3 gap-3 text-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
           <div className="rounded-xl bg-zinc-800/50 border border-zinc-800 p-3">
             <div className="text-xs text-zinc-600 mb-1">Salary range</div>
             <div className="font-medium text-zinc-200">
@@ -139,8 +139,8 @@ export default function ChosenCareerCard({ data }: Props) {
               <YAxis
                 type="category"
                 dataKey="skill"
-                width={130}
-                tick={{ fill: "#a1a1aa", fontSize: 12 }}
+                width={95}
+                tick={{ fill: "#a1a1aa", fontSize: 11 }}
                 axisLine={false}
                 tickLine={false}
               />
@@ -173,7 +173,7 @@ export default function ChosenCareerCard({ data }: Props) {
         <h4 className="text-sm font-medium text-zinc-300">
           Skills gap analysis
         </h4>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <p className="text-xs text-zinc-600 mb-2 uppercase tracking-wide">
               You have

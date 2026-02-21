@@ -33,14 +33,14 @@ export default function BestFitCareerCard({ data }: Props) {
       {/* Primary Card */}
       <div className="rounded-2xl border border-zinc-700/70 bg-gradient-to-br from-zinc-900 to-zinc-950 p-6 space-y-5">
         {/* Role + score */}
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
           <div>
             <h3 className="text-2xl font-bold text-white">{data.role}</h3>
             <p className="text-sm text-zinc-400 mt-1.5 leading-relaxed max-w-xl">
               {data.why}
             </p>
           </div>
-          <div className="flex-shrink-0 text-right">
+          <div className="flex-shrink-0 sm:text-right">
             <div className="text-3xl font-bold text-emerald-400">
               {data.score}%
             </div>
@@ -49,7 +49,7 @@ export default function BestFitCareerCard({ data }: Props) {
         </div>
 
         {/* Market stats */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {[
             { label: "Salary Range", value: data.salary_range, icon: "₹" },
             { label: "Growth", value: data.growth_trajectory, icon: "↑" },
@@ -110,7 +110,7 @@ export default function BestFitCareerCard({ data }: Props) {
 
       {/* Secondary fits */}
       {(data.second_fit?.role || data.third_fit?.role) && (
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {[data.second_fit, data.third_fit]
             .filter((f) => f?.role)
             .map((fit, i) => (

@@ -63,7 +63,7 @@ export default function Roadmap({
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2">
           <h2 className="text-xl font-semibold text-white">
             Your Personalised Roadmap
           </h2>
@@ -92,14 +92,14 @@ export default function Roadmap({
                     initial={{ opacity: 0, x: -12 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.12 }}
-                    className={`relative rounded-xl border ${PHASE_ACCENTS[i].border} ${PHASE_ACCENTS[i].bg} p-5 ml-10`}
+                    className={`relative rounded-xl border ${PHASE_ACCENTS[i].border} ${PHASE_ACCENTS[i].bg} p-4 sm:p-5 ml-10`}
                   >
                     {/* Timeline dot */}
                     <div
                       className={`absolute -left-[2.85rem] top-5 w-3 h-3 rounded-full ${PHASE_ACCENTS[i].dotColor} ring-4 ring-zinc-950`}
                     />
 
-                    <div className="flex items-center justify-between mb-3">
+                    <div className="flex flex-wrap items-start justify-between mb-3 gap-1.5">
                       <div className="flex items-center gap-2.5">
                         <span
                           className={`text-[11px] font-bold uppercase tracking-wider ${PHASE_ACCENTS[i].numColor}`}

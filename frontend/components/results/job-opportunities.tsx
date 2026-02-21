@@ -57,7 +57,7 @@ export function JobOpportunities({ jobs }: Props) {
                 </span>
               </div>
 
-              <div className="flex items-center gap-2.5 text-xs text-zinc-500">
+              <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-zinc-500">
                 <span className="font-medium text-zinc-400">{job.company}</span>
                 <span className="h-1 w-1 rounded-full bg-zinc-700" />
                 <span>{job.location}</span>
@@ -79,7 +79,7 @@ export function JobOpportunities({ jobs }: Props) {
               href={job.apply_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="ml-4 shrink-0 rounded-lg bg-zinc-800 border border-zinc-700 px-4 py-2 text-xs font-medium text-zinc-300 transition-all duration-200 hover:bg-blue-600 hover:border-blue-600 hover:text-white group-hover:border-zinc-600"
+              className="ml-3 sm:ml-4 shrink-0 rounded-lg bg-zinc-800 border border-zinc-700 px-3 sm:px-4 py-2 text-xs font-medium text-zinc-300 transition-all duration-200 hover:bg-blue-600 hover:border-blue-600 hover:text-white group-hover:border-zinc-600"
             >
               Apply →
             </a>

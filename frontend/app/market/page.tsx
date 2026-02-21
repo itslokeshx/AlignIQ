@@ -113,7 +113,7 @@ export default function MarketPage() {
       <Navbar />
 
       <main className="flex-1">
-        <div className="mx-auto max-w-4xl px-6 py-14">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8 sm:py-14">
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -205,7 +205,7 @@ export default function MarketPage() {
           </AnimatePresence>
 
           {/* Action bar */}
-          <div className="flex items-center gap-3 mb-10">
+          <div className="flex flex-wrap items-center gap-3 mb-10">
             <button
               onClick={() => fetchTrends(selectedRoles)}
               disabled={analyzing || selectedRoles.length === 0}
@@ -312,7 +312,7 @@ export default function MarketPage() {
             >
               {/* Stat row */}
               {topSkill && (
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {[
                     { label: "Top skill", value: topSkill.skill },
                     { label: "Top domain", value: topDomainLabel },
@@ -369,10 +369,10 @@ export default function MarketPage() {
                         <YAxis
                           type="category"
                           dataKey="skill"
-                          tick={{ fill: "#888", fontSize: 12 }}
+                          tick={{ fill: "#888", fontSize: 11 }}
                           axisLine={false}
                           tickLine={false}
-                          width={110}
+                          width={90}
                         />
                         <Tooltip
                           contentStyle={{
@@ -413,12 +413,12 @@ export default function MarketPage() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: i * 0.04 }}
-                        className="flex items-center gap-4 px-5 py-3.5"
+                        className="flex items-center gap-2 sm:gap-4 px-3 sm:px-5 py-3.5"
                       >
                         <span className="text-base w-6 shrink-0">
                           {DOMAIN_ICONS[domain] ?? "◆"}
                         </span>
-                        <span className="text-sm text-foreground w-40 shrink-0 truncate">
+                        <span className="text-xs sm:text-sm text-foreground w-24 sm:w-40 shrink-0 truncate">
                           {domain}
                         </span>
                         <div className="flex-1 h-1 rounded-full bg-secondary overflow-hidden">

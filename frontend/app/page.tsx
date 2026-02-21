@@ -298,10 +298,10 @@ export default function HomePage() {
               className="relative flex min-h-[calc(100vh-57px)] flex-col items-center justify-center px-6"
             >
               {/* Background effects */}
-              <div className="pointer-events-none absolute inset-0">
+              <div className="pointer-events-none absolute inset-0 overflow-hidden">
                 <div className="dot-grid-bg absolute inset-0" />
-                <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-blue-600/[0.04] rounded-full blur-[120px]" />
-                <div className="absolute bottom-1/4 left-1/3 w-[300px] h-[300px] bg-violet-600/[0.03] rounded-full blur-[100px]" />
+                <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[min(600px,120vw)] h-[400px] bg-blue-600/[0.04] rounded-full blur-[120px]" />
+                <div className="absolute bottom-1/4 left-1/3 w-[min(300px,80vw)] h-[300px] bg-violet-600/[0.03] rounded-full blur-[100px]" />
               </div>
 
               <div className="relative z-10 max-w-2xl text-center">
@@ -368,7 +368,7 @@ export default function HomePage() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.7 }}
-                  className="mt-12 flex items-center justify-center gap-8 text-[11px] text-zinc-600"
+                  className="mt-12 flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-[11px] text-zinc-600"
                 >
                   {["AI-powered", "Dual-track report", "Live market data"].map(
                     (f) => (
@@ -391,7 +391,7 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4 }}
-              className="mx-auto max-w-2xl px-6 py-8"
+              className="mx-auto max-w-2xl px-4 sm:px-6 py-6 sm:py-8"
             >
               {/* Back button */}
               <button
@@ -498,14 +498,14 @@ export default function HomePage() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5 }}
-              className="mx-auto max-w-3xl px-6 py-8"
+              className="mx-auto max-w-3xl px-4 sm:px-6 py-6 sm:py-8"
             >
               {/* ── Report Header ── */}
-              <div className="mb-10 rounded-2xl border border-white/[0.04] bg-zinc-950/80 p-7 relative overflow-hidden backdrop-blur-sm">
+              <div className="mb-10 rounded-2xl border border-white/[0.04] bg-zinc-950/80 p-5 sm:p-7 relative overflow-hidden backdrop-blur-sm">
                 {/* Ambient glow */}
                 <div className="absolute -top-20 -right-20 w-60 h-60 bg-blue-600/[0.06] rounded-full blur-[80px] pointer-events-none" />
                 <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-violet-600/[0.04] rounded-full blur-[60px] pointer-events-none" />
-                <div className="relative flex items-start justify-between gap-4">
+                <div className="relative flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                   <div>
                     <p className="text-[10px] text-zinc-600 uppercase tracking-[0.2em] mb-3 font-mono">
                       Intelligence Report · {results.identity.generated_date}

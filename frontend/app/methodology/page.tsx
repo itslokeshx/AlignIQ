@@ -7,7 +7,7 @@ export default function MethodologyPage() {
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
       <main className="flex-1">
-        <div className="mx-auto max-w-4xl px-6 py-14">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8 sm:py-14">
           {/* Page Header */}
           <div className="mb-14">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.03] px-3.5 py-1.5 text-[11px] text-zinc-500 mb-6">
@@ -49,8 +49,8 @@ export default function MethodologyPage() {
             {/* 1 */}
             <Section id="overview" num="01" title="Project Overview">
               <p className="mb-4">
-                <strong className="text-white">AlignIQ</strong> (Adaptive
-                Career Alignment Intelligence) is a full-stack web application
+                <strong className="text-white">AlignIQ</strong> (Adaptive Career
+                Alignment Intelligence) is a full-stack web application
                 providing personalised, data-driven career guidance for students
                 across all academic disciplines. It combines machine learning,
                 real-time market data, and AI-generated insights to produce a
@@ -58,18 +58,50 @@ export default function MethodologyPage() {
               </p>
               <InfoGrid
                 items={[
-                  { label: "Full Name", value: "AlignIQ — Adaptive Career Alignment Intelligence" },
+                  {
+                    label: "Full Name",
+                    value: "AlignIQ — Adaptive Career Alignment Intelligence",
+                  },
                   { label: "Type", value: "Full-Stack Web Application" },
-                  { label: "Target Users", value: "Students (UG/PG), final-year, any discipline" },
-                  { label: "Domains Covered", value: "12 domains — Tech, Business, Design, Healthcare, Law, Finance, Media, Science, Arts, Sports, Education, Trades" },
-                  { label: "Total Roles", value: "192 career roles across all 12 domains" },
-                  { label: "Assessment Modules", value: "6 input modules — Identity, Interests, Experience, Skills, Intent, Personality" },
-                  { label: "Report Sections", value: "8 result sections per report" },
-                  { label: "Backend", value: "Python · Flask REST API · port 5000" },
-                  { label: "Frontend", value: "Next.js 15 · TypeScript · TailwindCSS v4" },
+                  {
+                    label: "Target Users",
+                    value: "Students (UG/PG), final-year, any discipline",
+                  },
+                  {
+                    label: "Domains Covered",
+                    value:
+                      "12 domains — Tech, Business, Design, Healthcare, Law, Finance, Media, Science, Arts, Sports, Education, Trades",
+                  },
+                  {
+                    label: "Total Roles",
+                    value: "192 career roles across all 12 domains",
+                  },
+                  {
+                    label: "Assessment Modules",
+                    value:
+                      "6 input modules — Identity, Interests, Experience, Skills, Intent, Personality",
+                  },
+                  {
+                    label: "Report Sections",
+                    value: "8 result sections per report",
+                  },
+                  {
+                    label: "Backend",
+                    value: "Python · Flask REST API · port 5000",
+                  },
+                  {
+                    label: "Frontend",
+                    value: "Next.js 15 · TypeScript · TailwindCSS v4",
+                  },
                   { label: "AI Provider", value: "Groq Cloud (LLaMA 3 70B)" },
-                  { label: "Market Data", value: "Adzuna Jobs API — India endpoint" },
-                  { label: "ML Model", value: "Random Forest Classifier (scikit-learn)" },
+                  {
+                    label: "Market Data",
+                    value: "Adzuna Jobs API — India endpoint",
+                  },
+                  {
+                    label: "ML Model",
+                    value: "Random Forest Classifier (scikit-learn)",
+                  },
                 ]}
               />
             </Section>
@@ -125,8 +157,8 @@ export default function MethodologyPage() {
                         <div className="w-px h-4 bg-white/[0.06] mt-1" />
                       )}
                     </div>
-                    <div className="flex-1 rounded-xl border border-white/[0.05] bg-zinc-950/40 px-5 py-3.5 mb-1">
-                      <div className="flex items-center justify-between gap-4">
+                    <div className="flex-1 rounded-xl border border-white/[0.05] bg-zinc-950/40 px-4 sm:px-5 py-3.5 mb-1">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4">
                         <span className="text-sm font-semibold text-white">
                           {step.name}
                         </span>
@@ -148,27 +180,42 @@ export default function MethodologyPage() {
                   <span className="text-blue-400">POST /api/analyze</span> →
                   Profile Processor normalises → ML Engine predicts best-fit →
                   Market Engine fetches live jobs → CRI Calculator scores
-                  readiness → AI Engine writes prose → JSON → React renders
-                  8 report sections
+                  readiness → AI Engine writes prose → JSON → React renders 8
+                  report sections
                 </p>
               </div>
             </Section>
 
             {/* 4 */}
-            <Section id="frontend" num="04" title="Frontend — Next.js Application">
+            <Section
+              id="frontend"
+              num="04"
+              title="Frontend — Next.js Application"
+            >
               <p className="mb-5">
                 The frontend is built with{" "}
                 <strong className="text-white">Next.js 15 (App Router)</strong>,
-                TypeScript, and TailwindCSS v4. It is a single-page
-                application with 4 view states managed client-side.
+                TypeScript, and TailwindCSS v4. It is a single-page application
+                with 4 view states managed client-side.
               </p>
 
               <SubHeading>Pages</SubHeading>
               <InfoGrid
                 items={[
-                  { label: "/ (Home)", value: "Main SPA — Hero → 6-step Input wizard → Loading → Results (4 view states)" },
-                  { label: "/methodology", value: "This page — full technical documentation" },
-                  { label: "/market", value: "Market Intelligence — live job demand analysis by domain & role" },
+                  {
+                    label: "/ (Home)",
+                    value:
+                      "Main SPA — Hero → 6-step Input wizard → Loading → Results (4 view states)",
+                  },
+                  {
+                    label: "/methodology",
+                    value: "This page — full technical documentation",
+                  },
+                  {
+                    label: "/market",
+                    value:
+                      "Market Intelligence — live job demand analysis by domain & role",
+                  },
                 ]}
               />
 
@@ -185,7 +232,8 @@ export default function MethodologyPage() {
                 <span className="text-yellow-400">results</span>
                 <br />
                 <span className="text-zinc-600 text-xs">
-                  (New Assessment button resets view to &apos;hero&apos; with cleared state)
+                  (New Assessment button resets view to &apos;hero&apos; with
+                  cleared state)
                 </span>
               </div>
 
@@ -222,12 +270,36 @@ export default function MethodologyPage() {
               <SubHeading>Key Frontend Libraries</SubHeading>
               <InfoGrid
                 items={[
-                  { label: "Next.js 15", value: "App Router, SSR/CSR hybrid, file-based routing, server components" },
-                  { label: "TypeScript", value: "Full type safety across all components and API responses" },
-                  { label: "TailwindCSS v4", value: "Utility-first CSS with custom design tokens in globals.css" },
-                  { label: "Framer Motion", value: "Page transitions, step animations, loading sequences, gauge animations" },
-                  { label: "Recharts", value: "Horizontal bar charts for skills demand in chosen career section" },
-                  { label: "shadcn/ui", value: "Base UI primitives (inputs, labels, buttons, cards)" },
+                  {
+                    label: "Next.js 15",
+                    value:
+                      "App Router, SSR/CSR hybrid, file-based routing, server components",
+                  },
+                  {
+                    label: "TypeScript",
+                    value:
+                      "Full type safety across all components and API responses",
+                  },
+                  {
+                    label: "TailwindCSS v4",
+                    value:
+                      "Utility-first CSS with custom design tokens in globals.css",
+                  },
+                  {
+                    label: "Framer Motion",
+                    value:
+                      "Page transitions, step animations, loading sequences, gauge animations",
+                  },
+                  {
+                    label: "Recharts",
+                    value:
+                      "Horizontal bar charts for skills demand in chosen career section",
+                  },
+                  {
+                    label: "shadcn/ui",
+                    value:
+                      "Base UI primitives (inputs, labels, buttons, cards)",
+                  },
                 ]}
               />
             </Section>
@@ -276,16 +348,30 @@ export default function MethodologyPage() {
               <SubHeading>Environment Variables</SubHeading>
               <InfoGrid
                 items={[
-                  { label: "GROQ_API_KEY", value: "Groq Cloud API key for LLaMA 3 inference" },
-                  { label: "ADZUNA_APP_ID", value: "Adzuna API app identifier" },
+                  {
+                    label: "GROQ_API_KEY",
+                    value: "Groq Cloud API key for LLaMA 3 inference",
+                  },
+                  {
+                    label: "ADZUNA_APP_ID",
+                    value: "Adzuna API app identifier",
+                  },
                   { label: "ADZUNA_APP_KEY", value: "Adzuna API secret key" },
-                  { label: "NEXT_PUBLIC_API_URL", value: "Frontend → backend base URL (default: http://localhost:5000)" },
+                  {
+                    label: "NEXT_PUBLIC_API_URL",
+                    value:
+                      "Frontend → backend base URL (default: http://localhost:5000)",
+                  },
                 ]}
               />
             </Section>
 
             {/* 6 */}
-            <Section id="profile-processor" num="06" title="Profile Processor Module">
+            <Section
+              id="profile-processor"
+              num="06"
+              title="Profile Processor Module"
+            >
               <p className="mb-4">
                 The profile processor (
                 <code className="text-blue-400 font-mono text-xs">
@@ -304,18 +390,35 @@ export default function MethodologyPage() {
                 ))}
               </div>
 
-              <SubHeading>Personality Scoring — 8 Questions, 5 Dimensions</SubHeading>
+              <SubHeading>
+                Personality Scoring — 8 Questions, 5 Dimensions
+              </SubHeading>
               <p className="text-sm mb-3">
                 The personality module presents 8 forced-choice A/B questions.
                 Each answer maps to one pole of a bipolar dimension:
               </p>
               <InfoGrid
                 items={[
-                  { label: "Analytical ↔ Creative", value: "Logical vs imaginative thinking preference" },
-                  { label: "Independent ↔ Collaborative", value: "Solo work vs teamwork preference" },
-                  { label: "Theoretical ↔ Practical", value: "Conceptual vs applied learning style" },
-                  { label: "Stable ↔ Adaptive", value: "Routine vs dynamic environments" },
-                  { label: "Specialist ↔ Generalist", value: "Deep expertise vs broad knowledge" },
+                  {
+                    label: "Analytical ↔ Creative",
+                    value: "Logical vs imaginative thinking preference",
+                  },
+                  {
+                    label: "Independent ↔ Collaborative",
+                    value: "Solo work vs teamwork preference",
+                  },
+                  {
+                    label: "Theoretical ↔ Practical",
+                    value: "Conceptual vs applied learning style",
+                  },
+                  {
+                    label: "Stable ↔ Adaptive",
+                    value: "Routine vs dynamic environments",
+                  },
+                  {
+                    label: "Specialist ↔ Generalist",
+                    value: "Deep expertise vs broad knowledge",
+                  },
                 ]}
               />
               <p className="text-sm mt-4">
@@ -354,14 +457,15 @@ export default function MethodologyPage() {
 
               <div className="rounded-xl border border-blue-500/20 bg-blue-500/[0.04] p-5 font-mono text-sm text-zinc-300 mb-6">
                 <p className="text-blue-400 font-bold mb-2">CRI Formula</p>
-                CRI = (Academic × 0.25) + (Skills × 0.30) + (Experience × 0.30) + (Market × 0.15)
+                CRI = (Academic × 0.25) + (Skills × 0.30) + (Experience × 0.30)
+                + (Market × 0.15)
               </div>
 
               <p className="text-sm mb-5 text-zinc-400">
                 Weights reflect real hiring priorities. Skills + experience
                 carry 60% because employers prioritise demonstrated capability.
-                Academic performance is significant (25%) but no longer the
-                sole determinant. Market alignment (15%) rewards students whose
+                Academic performance is significant (25%) but no longer the sole
+                determinant. Market alignment (15%) rewards students whose
                 skills are currently demanded.
               </p>
 
@@ -390,10 +494,28 @@ export default function MethodologyPage() {
               <SubHeading>CRI Interpretation Bands</SubHeading>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
-                  { range: "75–100", label: "Highly Ready", color: "text-emerald-400 border-emerald-500/30 bg-emerald-500/5" },
-                  { range: "50–74", label: "Moderate", color: "text-blue-400 border-blue-500/30 bg-blue-500/5" },
-                  { range: "30–49", label: "Developing", color: "text-yellow-400 border-yellow-500/30 bg-yellow-500/5" },
-                  { range: "0–29", label: "Early Stage", color: "text-red-400 border-red-500/30 bg-red-500/5" },
+                  {
+                    range: "75–100",
+                    label: "Highly Ready",
+                    color:
+                      "text-emerald-400 border-emerald-500/30 bg-emerald-500/5",
+                  },
+                  {
+                    range: "50–74",
+                    label: "Moderate",
+                    color: "text-blue-400 border-blue-500/30 bg-blue-500/5",
+                  },
+                  {
+                    range: "30–49",
+                    label: "Developing",
+                    color:
+                      "text-yellow-400 border-yellow-500/30 bg-yellow-500/5",
+                  },
+                  {
+                    range: "0–29",
+                    label: "Early Stage",
+                    color: "text-red-400 border-red-500/30 bg-red-500/5",
+                  },
                 ].map((b, i) => (
                   <div
                     key={i}
@@ -442,31 +564,69 @@ export default function MethodologyPage() {
 
               <InfoGrid
                 items={[
-                  { label: "Algorithm", value: "RandomForestClassifier (scikit-learn)" },
-                  { label: "Hyperparameters", value: "100 estimators, max_depth=12, min_samples_split=5" },
-                  { label: "Training Data", value: "1,200 synthetic student profiles across all domains" },
-                  { label: "Train / Test Split", value: "80% training · 20% testing" },
-                  { label: "Input Features", value: "CGPA, backlogs, internships, projects, competitions, leadership, skills_count, skill_breadth, self_rating, 5 personality scores, 5 interest cluster signals" },
-                  { label: "Output Classes", value: "192 career roles across 12 domains" },
-                  { label: "Prediction Output", value: "Top 3 careers with probability scores (normalised to match %)" },
-                  { label: "Model File", value: "backend/model/career_model.pkl (joblib serialisation)" },
-                  { label: "Training Script", value: "backend/model/train_model.py" },
-                  { label: "Dataset File", value: "backend/data/career_dataset.csv" },
+                  {
+                    label: "Algorithm",
+                    value: "RandomForestClassifier (scikit-learn)",
+                  },
+                  {
+                    label: "Hyperparameters",
+                    value: "100 estimators, max_depth=12, min_samples_split=5",
+                  },
+                  {
+                    label: "Training Data",
+                    value:
+                      "1,200 synthetic student profiles across all domains",
+                  },
+                  {
+                    label: "Train / Test Split",
+                    value: "80% training · 20% testing",
+                  },
+                  {
+                    label: "Input Features",
+                    value:
+                      "CGPA, backlogs, internships, projects, competitions, leadership, skills_count, skill_breadth, self_rating, 5 personality scores, 5 interest cluster signals",
+                  },
+                  {
+                    label: "Output Classes",
+                    value: "192 career roles across 12 domains",
+                  },
+                  {
+                    label: "Prediction Output",
+                    value:
+                      "Top 3 careers with probability scores (normalised to match %)",
+                  },
+                  {
+                    label: "Model File",
+                    value:
+                      "backend/model/career_model.pkl (joblib serialisation)",
+                  },
+                  {
+                    label: "Training Script",
+                    value: "backend/model/train_model.py",
+                  },
+                  {
+                    label: "Dataset File",
+                    value: "backend/data/career_dataset.csv",
+                  },
                 ]}
               />
 
               <SubHeading>Score Normalisation</SubHeading>
               <p className="text-sm text-zinc-400">
-                Raw probability outputs (e.g. 0.12) are converted to
-                intuitive percentages using min-max normalisation within the
-                top-3 predictions. The top prediction is always expressed as
-                a relative 100% reference point, so final match% values are
+                Raw probability outputs (e.g. 0.12) are converted to intuitive
+                percentages using min-max normalisation within the top-3
+                predictions. The top prediction is always expressed as a
+                relative 100% reference point, so final match% values are
                 typically in the 55–85% range.
               </p>
             </Section>
 
             {/* 9 */}
-            <Section id="dual-track" num="09" title="Dual-Track Career Analysis">
+            <Section
+              id="dual-track"
+              num="09"
+              title="Dual-Track Career Analysis"
+            >
               <p className="mb-5">
                 AlignIQ analyses two career paths simultaneously. This is the
                 core differentiator.
@@ -481,9 +641,9 @@ export default function MethodologyPage() {
                   </p>
                   <p className="text-xs text-zinc-500 leading-relaxed">
                     The career with the highest ML model match score. Computed
-                    purely from personality, education, skills, and interests
-                    — without considering the student&apos;s stated goal. This
-                    is what the data says suits them best.
+                    purely from personality, education, skills, and interests —
+                    without considering the student&apos;s stated goal. This is
+                    what the data says suits them best.
                   </p>
                 </div>
                 <div className="rounded-xl border border-blue-500/20 bg-blue-500/[0.04] p-5">
@@ -496,8 +656,8 @@ export default function MethodologyPage() {
                   <p className="text-xs text-zinc-500 leading-relaxed">
                     The career the student wants (from the Intent module).
                     Analysed separately for alignment, skill gaps, market data,
-                    and a 3-phase roadmap. Represents aspiration vs
-                    statistical fit.
+                    and a 3-phase roadmap. Represents aspiration vs statistical
+                    fit.
                   </p>
                 </div>
               </div>
@@ -509,13 +669,26 @@ export default function MethodologyPage() {
 
               <SubHeading>Alignment Score Formula</SubHeading>
               <div className="rounded-xl border border-white/[0.05] bg-zinc-950/40 p-5 font-mono text-sm text-zinc-400 mb-4">
-                Alignment = (Interest Match × 0.40) + (Skill Match × 0.35) + (Experience Match × 0.25)
+                Alignment = (Interest Match × 0.40) + (Skill Match × 0.35) +
+                (Experience Match × 0.25)
               </div>
               <InfoGrid
                 items={[
-                  { label: "Interest Match (40%)", value: "Overlap between student's activity clusters and the target role's domain signals" },
-                  { label: "Skill Match (35%)", value: "Percentage of role-required skills that the student already has" },
-                  { label: "Experience Match (25%)", value: "Experience adequacy score relative to typical entry-level requirements" },
+                  {
+                    label: "Interest Match (40%)",
+                    value:
+                      "Overlap between student's activity clusters and the target role's domain signals",
+                  },
+                  {
+                    label: "Skill Match (35%)",
+                    value:
+                      "Percentage of role-required skills that the student already has",
+                  },
+                  {
+                    label: "Experience Match (25%)",
+                    value:
+                      "Experience adequacy score relative to typical entry-level requirements",
+                  },
                 ]}
               />
             </Section>
@@ -530,12 +703,25 @@ export default function MethodologyPage() {
               </p>
               <InfoGrid
                 items={[
-                  { label: "API Provider", value: "Adzuna (https://api.adzuna.com)" },
+                  {
+                    label: "API Provider",
+                    value: "Adzuna (https://api.adzuna.com)",
+                  },
                   { label: "Endpoint", value: "GET /v1/api/jobs/in/search/1" },
                   { label: "Country", value: "India (country code: in)" },
-                  { label: "Results per call", value: "Up to 20 job listings per role query" },
-                  { label: "Auth", value: "ADZUNA_APP_ID + ADZUNA_APP_KEY as query parameters" },
-                  { label: "Fallback", value: "Domain-specific mock data when API returns off-domain results" },
+                  {
+                    label: "Results per call",
+                    value: "Up to 20 job listings per role query",
+                  },
+                  {
+                    label: "Auth",
+                    value: "ADZUNA_APP_ID + ADZUNA_APP_KEY as query parameters",
+                  },
+                  {
+                    label: "Fallback",
+                    value:
+                      "Domain-specific mock data when API returns off-domain results",
+                  },
                 ]}
               />
 
@@ -543,20 +729,21 @@ export default function MethodologyPage() {
               <p className="text-sm mb-3 text-zinc-400">
                 Job descriptions are scanned using substring matching against a
                 curated list of 100+ skills. Each skill match increments a
-                frequency counter. Top skills become the &quot;Market Demand&quot;
-                bar chart in the Chosen Career section.
+                frequency counter. Top skills become the &quot;Market
+                Demand&quot; bar chart in the Chosen Career section.
               </p>
 
               <SubHeading>Job Match Scoring Logic</SubHeading>
               <div className="rounded-xl border border-white/[0.05] bg-zinc-950/40 p-5 font-mono text-sm text-zinc-400 mb-4">
-                match% = (student_skills found in job title+description) / total_student_skills × 100 + title_relevance_bonus (15%)
+                match% = (student_skills found in job title+description) /
+                total_student_skills × 100 + title_relevance_bonus (15%)
               </div>
               <p className="text-sm text-zinc-500">
                 Jobs are ranked by match % and the top 5 are returned. The
-                frontend shows contextual labels — &quot;High match&quot; (≥60%),
-                &quot;Good match&quot; (≥30%), &quot;Partial match&quot; (&gt;0%),
-                &quot;Relevant&quot; (0%) — instead of raw percentages to avoid
-                misleading display when API descriptions are sparse.
+                frontend shows contextual labels — &quot;High match&quot;
+                (≥60%), &quot;Good match&quot; (≥30%), &quot;Partial match&quot;
+                (&gt;0%), &quot;Relevant&quot; (0%) — instead of raw percentages
+                to avoid misleading display when API descriptions are sparse.
               </p>
 
               <SubHeading>Domain Relevance Gating</SubHeading>
@@ -564,8 +751,8 @@ export default function MethodologyPage() {
                 For non-tech roles, Adzuna India returns software jobs
                 regardless of query (due to listing density). A relevance gate
                 checks if ≥20% of extracted skills belong to the expected
-                domain. If not, the system substitutes curated mock
-                descriptions — ensuring market data is always meaningful and
+                domain. If not, the system substitutes curated mock descriptions
+                — ensuring market data is always meaningful and
                 domain-appropriate.
               </p>
             </Section>
@@ -596,9 +783,19 @@ export default function MethodologyPage() {
                 items={[
                   { label: "Provider", value: "Groq Cloud (https://groq.com)" },
                   { label: "Model", value: "llama3-70b-8192 (LLaMA 3 70B)" },
-                  { label: "Temperature", value: "0.4 — deterministic and factual; not creative" },
-                  { label: "Max tokens", value: "400–600 per call depending on task" },
-                  { label: "Fallback", value: "Rule-based template strings if Groq API is unreachable" },
+                  {
+                    label: "Temperature",
+                    value: "0.4 — deterministic and factual; not creative",
+                  },
+                  {
+                    label: "Max tokens",
+                    value: "400–600 per call depending on task",
+                  },
+                  {
+                    label: "Fallback",
+                    value:
+                      "Rule-based template strings if Groq API is unreachable",
+                  },
                 ]}
               />
 
@@ -616,7 +813,8 @@ export default function MethodologyPage() {
                 prompt. The model is instructed:{" "}
                 <em className="text-zinc-300">
                   &quot;Write professional, specific, actionable text. Use only
-                  the data provided. Do not invent any values or statistics.&quot;
+                  the data provided. Do not invent any values or
+                  statistics.&quot;
                 </em>{" "}
                 This prevents hallucination while producing fluent, readable
                 output.
@@ -669,7 +867,11 @@ export default function MethodologyPage() {
             </Section>
 
             {/* 13 */}
-            <Section id="roadmap" num="13" title="Personalised Roadmap Generation">
+            <Section
+              id="roadmap"
+              num="13"
+              title="Personalised Roadmap Generation"
+            >
               <p className="mb-5">
                 The roadmap is a structured 3-phase skill-building plan.
                 Generated by the AI engine using the student&apos;s skill gap,
@@ -704,14 +906,18 @@ export default function MethodologyPage() {
                 ].map((p, i) => (
                   <div key={i} className={`rounded-xl border p-5 ${p.color}`}>
                     <div className="flex items-center justify-between mb-2">
-                      <span className={`text-xs font-bold uppercase tracking-widest ${p.text}`}>
+                      <span
+                        className={`text-xs font-bold uppercase tracking-widest ${p.text}`}
+                      >
                         {p.phase}
                       </span>
                       <span className="text-[11px] text-zinc-600 font-mono">
                         {p.duration}
                       </span>
                     </div>
-                    <p className="text-sm font-semibold text-white mb-1">{p.title}</p>
+                    <p className="text-sm font-semibold text-white mb-1">
+                      {p.title}
+                    </p>
                     <p className="text-xs text-zinc-500">{p.desc}</p>
                   </div>
                 ))}
@@ -784,7 +990,11 @@ export default function MethodologyPage() {
             </Section>
 
             {/* 17 */}
-            <Section id="limitations" num="17" title="Limitations & Future Work">
+            <Section
+              id="limitations"
+              num="17"
+              title="Limitations & Future Work"
+            >
               <SubHeading>Current Limitations</SubHeading>
               <ul className="space-y-2 mb-6">
                 {[
@@ -795,7 +1005,9 @@ export default function MethodologyPage() {
                   "Mobile layout is functional but not fully optimised for small screens",
                 ].map((l, i) => (
                   <li key={i} className="flex items-start gap-2.5 text-sm">
-                    <span className="text-yellow-500/70 shrink-0 mt-0.5">⚠</span>
+                    <span className="text-yellow-500/70 shrink-0 mt-0.5">
+                      ⚠
+                    </span>
                     <span className="text-zinc-400">{l}</span>
                   </li>
                 ))}
@@ -819,7 +1031,11 @@ export default function MethodologyPage() {
             </Section>
 
             {/* 18 */}
-            <Section id="quick-ref" num="18" title="Quick Reference — Numbers That Matter">
+            <Section
+              id="quick-ref"
+              num="18"
+              title="Quick Reference — Numbers That Matter"
+            >
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {QUICK_NUMBERS.map((n, i) => (
                   <div
@@ -906,7 +1122,8 @@ const INPUT_MODULES = [
   {
     name: "Identity Module",
     desc: "Basic demographic and academic background",
-    fields: "name, age, education_level, field_of_study, cgpa, consistency, backlogs",
+    fields:
+      "name, age, education_level, field_of_study, cgpa, consistency, backlogs",
   },
   {
     name: "Interests Module",
@@ -916,7 +1133,8 @@ const INPUT_MODULES = [
   {
     name: "Experience Module",
     desc: "All forms of experience with animated toggle inputs for leadership, volunteer work, and freelancing",
-    fields: "internships, projects[], competitions, leadership, leadership_desc, volunteer, volunteer_desc, clubs, awards, earned_from_skill, earned_desc, readiness_rating",
+    fields:
+      "internships, projects[], competitions, leadership, leadership_desc, volunteer, volunteer_desc, clubs, awards, earned_from_skill, earned_desc, readiness_rating",
   },
   {
     name: "Skills Module",
@@ -926,34 +1144,81 @@ const INPUT_MODULES = [
   {
     name: "Intent Module",
     desc: "Target career goal, motivating reasons, salary expectations, and flexibility preferences",
-    fields: "target_domain, target_role, reasons[], salary_expectation, work_location, open_to_education",
+    fields:
+      "target_domain, target_role, reasons[], salary_expectation, work_location, open_to_education",
   },
   {
     name: "Personality Module",
     desc: "8 forced-choice A/B questions mapping to 5 bipolar dimensions (no neutral options — prevents fence-sitting)",
-    fields: "answers: Record<string, 'A'|'B'> — 8 entries mapped to 5 dimension scores",
+    fields:
+      "answers: Record<string, 'A'|'B'> — 8 entries mapped to 5 dimension scores",
   },
 ];
 
 const RESULT_COMPONENTS = [
-  { name: "AI Intelligence Summary", desc: "AI-generated prose analysis at top of report — personalised executive overview of the student's career intelligence" },
-  { name: "Interest Profile", desc: "5-dimension personality radar + 5 interest cluster signals with strength labels + top motivators list" },
-  { name: "Best Fit Career (Track A)", desc: "ML-predicted optimal career with match %, salary range, growth trajectory, why suited, skills to develop, 2nd and 3rd fit" },
-  { name: "Chosen Career Analysis (Track B)", desc: "Stated goal analysed with 3-dimension alignment breakdown, skill gap list with severity, market demand chart" },
-  { name: "Career Readiness Index", desc: "SVG gauge (0–100) + 4 sub-index progress bars + projected CRI after skill acquisition" },
-  { name: "Personalised Roadmap", desc: "3-phase vertical timeline + interactive Action Checklist with live progress bar and task completion celebration" },
-  { name: "Live Job Opportunities", desc: "Top 5 live Adzuna listings with contextual match labels, salary, location, and direct Apply links" },
+  {
+    name: "AI Intelligence Summary",
+    desc: "AI-generated prose analysis at top of report — personalised executive overview of the student's career intelligence",
+  },
+  {
+    name: "Interest Profile",
+    desc: "5-dimension personality radar + 5 interest cluster signals with strength labels + top motivators list",
+  },
+  {
+    name: "Best Fit Career (Track A)",
+    desc: "ML-predicted optimal career with match %, salary range, growth trajectory, why suited, skills to develop, 2nd and 3rd fit",
+  },
+  {
+    name: "Chosen Career Analysis (Track B)",
+    desc: "Stated goal analysed with 3-dimension alignment breakdown, skill gap list with severity, market demand chart",
+  },
+  {
+    name: "Career Readiness Index",
+    desc: "SVG gauge (0–100) + 4 sub-index progress bars + projected CRI after skill acquisition",
+  },
+  {
+    name: "Personalised Roadmap",
+    desc: "3-phase vertical timeline + interactive Action Checklist with live progress bar and task completion celebration",
+  },
+  {
+    name: "Live Job Opportunities",
+    desc: "Top 5 live Adzuna listings with contextual match labels, salary, location, and direct Apply links",
+  },
 ];
 
 const BACKEND_MODULES = [
-  { file: "app.py", desc: "Flask application entry point. Defines 3 routes, handles CORS, orchestrates all modules, assembles and returns the final JSON response." },
-  { file: "profile_processor.py", desc: "Normalises all input data. Computes personality scores, interest clusters, career vectors, skill matching, motivators. Returns processed dict." },
-  { file: "cri_calculator.py", desc: "Implements the full CRI formula with all 4 sub-indices. Returns cri_total, sub-scores, and projected CRI." },
-  { file: "ai_engine.py", desc: "Groq API wrapper with 4 functions: generate_role_description, generate_executive_summary, generate_roadmap, generate_action_checklist." },
-  { file: "market_engine.py", desc: "Adzuna API client. Fetches live listings, extracts skills via regex, ranks jobs by match score, computes domain competitiveness." },
-  { file: "model/train_model.py", desc: "Offline training script. Generates 1,200 synthetic student profiles, trains RandomForestClassifier, saves as career_model.pkl." },
-  { file: "model/__init__.py", desc: "Model loader. Loads the serialised .pkl model at app startup using joblib — avoids per-request loading overhead." },
-  { file: "data/career_dataset.csv", desc: "Synthetic training dataset with 1,200 rows. Columns: all feature fields + target (career role label)." },
+  {
+    file: "app.py",
+    desc: "Flask application entry point. Defines 3 routes, handles CORS, orchestrates all modules, assembles and returns the final JSON response.",
+  },
+  {
+    file: "profile_processor.py",
+    desc: "Normalises all input data. Computes personality scores, interest clusters, career vectors, skill matching, motivators. Returns processed dict.",
+  },
+  {
+    file: "cri_calculator.py",
+    desc: "Implements the full CRI formula with all 4 sub-indices. Returns cri_total, sub-scores, and projected CRI.",
+  },
+  {
+    file: "ai_engine.py",
+    desc: "Groq API wrapper with 4 functions: generate_role_description, generate_executive_summary, generate_roadmap, generate_action_checklist.",
+  },
+  {
+    file: "market_engine.py",
+    desc: "Adzuna API client. Fetches live listings, extracts skills via regex, ranks jobs by match score, computes domain competitiveness.",
+  },
+  {
+    file: "model/train_model.py",
+    desc: "Offline training script. Generates 1,200 synthetic student profiles, trains RandomForestClassifier, saves as career_model.pkl.",
+  },
+  {
+    file: "model/__init__.py",
+    desc: "Model loader. Loads the serialised .pkl model at app startup using joblib — avoids per-request loading overhead.",
+  },
+  {
+    file: "data/career_dataset.csv",
+    desc: "Synthetic training dataset with 1,200 rows. Columns: all feature fields + target (career role label).",
+  },
 ];
 
 const CRI_FORMULAE = [
@@ -967,14 +1232,16 @@ const CRI_FORMULAE = [
   {
     name: "Skill Depth Index",
     weight: "30%",
-    formula: "(skills_count × 2) + (proficiency_rating × 1.5) + (languages_known × 1)",
+    formula:
+      "(skills_count × 2) + (proficiency_rating × 1.5) + (languages_known × 1)",
     notes:
       "Rewards both breadth (more skills) and depth (higher self-rated proficiency). Multiple programming languages add bonus. Normalised to 0–30.",
   },
   {
     name: "Experience Adequacy Index",
     weight: "30%",
-    formula: "(internships × 8) + (projects_count × 3) + competition_bonus + leadership_bonus + volunteer_bonus",
+    formula:
+      "(internships × 8) + (projects_count × 3) + competition_bonus + leadership_bonus + volunteer_bonus",
     notes:
       "Internships weighted highest (real-world validated exposure). Competitions +5 pts. Leadership role +4. Volunteer work +2. Normalised to 0–30.",
   },
@@ -1007,41 +1274,131 @@ const AI_OUTPUTS = [
 ];
 
 const MARKET_PAGE_OUTPUTS = [
-  { name: "Top Skills Bar Chart", desc: "Horizontal bar chart of most demanded skills across selected roles, ranked by frequency across live job listings" },
-  { name: "Domain Competitiveness Score", desc: "0–100 score representing how competitive each domain is — based on skill density and demand depth in live listings" },
-  { name: "Summary Statistics", desc: "Top demanded skill, most competitive domain, and total roles analysed in this run" },
-  { name: "Roles Analysed List", desc: "Exact role names whose Adzuna listings were fetched and analysed for this market intelligence report" },
+  {
+    name: "Top Skills Bar Chart",
+    desc: "Horizontal bar chart of most demanded skills across selected roles, ranked by frequency across live job listings",
+  },
+  {
+    name: "Domain Competitiveness Score",
+    desc: "0–100 score representing how competitive each domain is — based on skill density and demand depth in live listings",
+  },
+  {
+    name: "Summary Statistics",
+    desc: "Top demanded skill, most competitive domain, and total roles analysed in this run",
+  },
+  {
+    name: "Roles Analysed List",
+    desc: "Exact role names whose Adzuna listings were fetched and analysed for this market intelligence report",
+  },
 ];
 
 const TECH_STACK = [
-  { category: "Frontend Framework", items: "Next.js 15 (App Router) · React 19 · TypeScript 5" },
-  { category: "Styling", items: "TailwindCSS v4 · Custom CSS variables · shadcn/ui components" },
-  { category: "Animations", items: "Framer Motion 11 — transitions, step animations, SVG gauges" },
-  { category: "Charts & Visualisation", items: "Recharts — horizontal bar charts for skill demand data" },
-  { category: "Backend Framework", items: "Python 3.11 · Flask 3.x · Flask-CORS" },
-  { category: "ML / Data Science", items: "scikit-learn · pandas · numpy · joblib" },
-  { category: "AI Text Generation", items: "Groq Cloud SDK · LLaMA 3 70B (llama3-70b-8192)" },
-  { category: "Market Data", items: "Adzuna Jobs API v1 · India endpoint (country: in)" },
-  { category: "Environment & Config", items: "python-dotenv · .venv virtual environment · .env file" },
-  { category: "Dev & Build Tools", items: "VS Code · ESLint · Prettier · Git · npm" },
+  {
+    category: "Frontend Framework",
+    items: "Next.js 15 (App Router) · React 19 · TypeScript 5",
+  },
+  {
+    category: "Styling",
+    items: "TailwindCSS v4 · Custom CSS variables · shadcn/ui components",
+  },
+  {
+    category: "Animations",
+    items: "Framer Motion 11 — transitions, step animations, SVG gauges",
+  },
+  {
+    category: "Charts & Visualisation",
+    items: "Recharts — horizontal bar charts for skill demand data",
+  },
+  {
+    category: "Backend Framework",
+    items: "Python 3.11 · Flask 3.x · Flask-CORS",
+  },
+  {
+    category: "ML / Data Science",
+    items: "scikit-learn · pandas · numpy · joblib",
+  },
+  {
+    category: "AI Text Generation",
+    items: "Groq Cloud SDK · LLaMA 3 70B (llama3-70b-8192)",
+  },
+  {
+    category: "Market Data",
+    items: "Adzuna Jobs API v1 · India endpoint (country: in)",
+  },
+  {
+    category: "Environment & Config",
+    items: "python-dotenv · .venv virtual environment · .env file",
+  },
+  {
+    category: "Dev & Build Tools",
+    items: "VS Code · ESLint · Prettier · Git · npm",
+  },
 ];
 
 const INPUT_TYPES = [
-  { name: "IdentityProfile", fields: "name, age, education_level, field_of_study, cgpa (number), consistency ('High'|'Medium'|'Low'), backlogs (number)" },
-  { name: "InterestsProfile", fields: "activities: string[], work_environments: string[], motivators: string[], topics: string[]" },
-  { name: "ExperienceProfile", fields: "internships (number), projects: string[], competitions (number), leadership (boolean), leadership_desc, volunteer (boolean), volunteer_desc, clubs (number), awards (number), readiness_rating (1–10), earned_from_skill (boolean), earned_desc" },
-  { name: "SkillsProfile", fields: "selected_skills: string[], proficiency_rating (1–10), languages_known: string[]" },
-  { name: "IntentProfile", fields: "target_domain, target_role, reasons: string[], salary_expectation, work_location, open_to_education (boolean)" },
-  { name: "PersonalityProfile", fields: "answers: Record<string, 'A' | 'B'> — 8 entries, one per personality question" },
+  {
+    name: "IdentityProfile",
+    fields:
+      "name, age, education_level, field_of_study, cgpa (number), consistency ('High'|'Medium'|'Low'), backlogs (number)",
+  },
+  {
+    name: "InterestsProfile",
+    fields:
+      "activities: string[], work_environments: string[], motivators: string[], topics: string[]",
+  },
+  {
+    name: "ExperienceProfile",
+    fields:
+      "internships (number), projects: string[], competitions (number), leadership (boolean), leadership_desc, volunteer (boolean), volunteer_desc, clubs (number), awards (number), readiness_rating (1–10), earned_from_skill (boolean), earned_desc",
+  },
+  {
+    name: "SkillsProfile",
+    fields:
+      "selected_skills: string[], proficiency_rating (1–10), languages_known: string[]",
+  },
+  {
+    name: "IntentProfile",
+    fields:
+      "target_domain, target_role, reasons: string[], salary_expectation, work_location, open_to_education (boolean)",
+  },
+  {
+    name: "PersonalityProfile",
+    fields:
+      "answers: Record<string, 'A' | 'B'> — 8 entries, one per personality question",
+  },
 ];
 
 const RESPONSE_TYPES = [
-  { name: "AnalysisResponse", fields: "identity, interest_profile, best_fit, chosen_career, cri, jobs[], executive_summary (string), action_checklist: string[]" },
-  { name: "BestFitCareer", fields: "role, score (%), why (string), strengths[], skills_to_develop[], salary_range, growth_trajectory, market_demand, second_fit, third_fit" },
-  { name: "ChosenCareerAnalysis", fields: "role, interest_match (%), skill_match (%), experience_match (%), alignment_score (%), role_description, market_data{}, you_have[], missing_skills[], gap_severity, gap_timeline, roadmap{phase_1, phase_2, phase_3}" },
-  { name: "CRIResult", fields: "cri_total (number), academic_reliability_index, skill_depth_index, experience_adequacy_index, market_alignment_score, projected_cri" },
-  { name: "JobResult", fields: "title, company, location, apply_url, match_percentage (number), salary" },
-  { name: "InterestProfileResult", fields: "personality: Record<dimension, score>, interest_clusters: {name, strength}[], motivators: string[]" },
+  {
+    name: "AnalysisResponse",
+    fields:
+      "identity, interest_profile, best_fit, chosen_career, cri, jobs[], executive_summary (string), action_checklist: string[]",
+  },
+  {
+    name: "BestFitCareer",
+    fields:
+      "role, score (%), why (string), strengths[], skills_to_develop[], salary_range, growth_trajectory, market_demand, second_fit, third_fit",
+  },
+  {
+    name: "ChosenCareerAnalysis",
+    fields:
+      "role, interest_match (%), skill_match (%), experience_match (%), alignment_score (%), role_description, market_data{}, you_have[], missing_skills[], gap_severity, gap_timeline, roadmap{phase_1, phase_2, phase_3}",
+  },
+  {
+    name: "CRIResult",
+    fields:
+      "cri_total (number), academic_reliability_index, skill_depth_index, experience_adequacy_index, market_alignment_score, projected_cri",
+  },
+  {
+    name: "JobResult",
+    fields:
+      "title, company, location, apply_url, match_percentage (number), salary",
+  },
+  {
+    name: "InterestProfileResult",
+    fields:
+      "personality: Record<dimension, score>, interest_clusters: {name, strength}[], motivators: string[]",
+  },
 ];
 
 const DESIGN_DECISIONS = [
@@ -1149,8 +1506,8 @@ function InfoGrid({
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-start gap-3 rounded-lg border border-white/[0.04] bg-zinc-950/30 px-4 py-2.5">
-      <span className="text-xs font-medium text-zinc-500 shrink-0 w-44 leading-5">
+    <div className="flex flex-col sm:flex-row items-start gap-0.5 sm:gap-3 rounded-lg border border-white/[0.04] bg-zinc-950/30 px-4 py-3">
+      <span className="text-[10px] sm:text-xs font-semibold text-zinc-500 sm:shrink-0 sm:w-44 leading-5 uppercase tracking-wide">
         {label}
       </span>
       <span className="text-xs text-zinc-300 leading-5">{value}</span>
@@ -1188,11 +1545,11 @@ function EndpointCard({
       <p className="text-xs text-zinc-400 mb-3">{desc}</p>
       <div className="space-y-1.5">
         <div className="flex gap-2 text-xs">
-          <span className="text-zinc-600 w-12 shrink-0">Input:</span>
+          <span className="text-zinc-600 w-10 shrink-0">Input:</span>
           <span className="text-zinc-400">{input}</span>
         </div>
         <div className="flex gap-2 text-xs">
-          <span className="text-zinc-600 w-12 shrink-0">Output:</span>
+          <span className="text-zinc-600 w-10 shrink-0">Output:</span>
           <span className="text-zinc-400">{output}</span>
         </div>
       </div>
