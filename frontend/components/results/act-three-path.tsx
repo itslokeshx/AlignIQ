@@ -211,7 +211,9 @@ export default function ActThreePathForward({
                   transition={{ delay: 0.2 + i * 0.1 }}
                   className={`rounded-xl border border-white/[0.04] bg-gradient-to-r ${PHASE_STYLES[i].bg} to-transparent overflow-hidden`}
                 >
-                  <div className="border-l-2 ${PHASE_STYLES[i].border} p-4 sm:p-5">
+                  <div
+                    className={`border-l-2 ${PHASE_STYLES[i].border} p-4 sm:p-5`}
+                  >
                     {/* Phase header */}
                     <div className="flex flex-wrap items-center gap-2 mb-3">
                       <span
