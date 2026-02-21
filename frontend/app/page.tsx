@@ -29,8 +29,21 @@ type ViewState = "hero" | "input" | "loading" | "results";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
+const STEPS = [
+  { num: 1, title: "Academic Profile", desc: "GPA, aptitude & consistency" },
+  {
+    num: 2,
+    title: "Experience Depth",
+    desc: "Internships, projects & leadership",
+  },
+  { num: 3, title: "Skills Stack", desc: "Technologies & self-assessment" },
+  { num: 4, title: "Career Intent", desc: "Goals, domains & preferences" },
+];
+
 export default function HomePage() {
   const [view, setView] = useState<ViewState>("hero");
+  const [step, setStep] = useState(1);
+  const [direction, setDirection] = useState(1); // 1 = forward, -1 = backward
   const [results, setResults] = useState<AnalysisResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -98,35 +111,40 @@ export default function HomePage() {
 
   const handleReset = () => {
     setResults(null);
+    setStep(1);
     setView("hero");
     setError(null);
   };
 
-  const modules = [
-    {
-      num: 1,
-      title: "Academic Profile",
-      desc: "GPA, aptitude, and consistency metrics",
-      content: <AcademicModule data={academic} onChange={setAcademic} />,
-    },
-    {
-      num: 2,
-      title: "Experience Depth",
-      desc: "Internships, projects, and leadership",
-      content: <ExperienceModule data={experience} onChange={setExperience} />,
-    },
-    {
-      num: 3,
-      title: "Skills Stack",
-      desc: "Technical skills and self-assessment",
-      content: <SkillsModule data={skills} onChange={setSkills} />,
-    },
-    {
-      num: 4,
-      title: "Career Intent",
-      desc: "Domains, role targets, and preferences",
-      content: <IntentModule data={intent} onChange={setIntent} />,
-    },
+  const handleNext = () => {
+    setDirection(1);
+    setStep((s) => Math.min(s + 1, 4));
+  };
+
+  const handleBack = () => {
+    if (step === 1) {
+      setView("hero");
+    } else {
+      setDirection(-1);
+      setStep((s) => Math.max(s - 1, 1));
+    }
+  };
+
+  const canProceed = () => {
+    if (step === 3) return skills.selected_skills.length > 0;
+    if (step === 4) return !!intent.target_role;
+    return true;
+  };
+
+  const stepContent = [
+    <AcademicModule key="academic" data={academic} onChange={setAcademic} />,
+    <ExperienceModule
+      key="experience"
+      data={experience}
+      onChange={setExperience}
+    />,
+    <SkillsModule key="skills" data={skills} onChange={setSkills} />,
+    <IntentModule key="intent" data={intent} onChange={setIntent} />,
   ];
 
   return (
@@ -216,12 +234,13 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4 }}
-              className="mx-auto max-w-3xl px-6 py-12"
+              className="mx-auto max-w-2xl px-6 py-12"
             >
+              {/* ── Step progress header ── */}
               <div className="mb-8">
                 <button
-                  onClick={() => setView("hero")}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors mb-4 flex items-center gap-1"
+                  onClick={handleBack}
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors mb-6 flex items-center gap-1"
                 >
                   <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
                     <path
@@ -232,14 +251,72 @@ export default function HomePage() {
                       strokeLinejoin="round"
                     />
                   </svg>
-                  Back
+                  {step === 1 ? "Back to home" : "Previous"}
                 </button>
-                <h2 className="text-2xl font-bold text-foreground">
-                  Profile Assessment
-                </h2>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Complete all four modules for comprehensive career analysis.
-                </p>
+
+                {/* Step labels */}
+                <div className="flex items-center justify-between mb-3">
+                  {STEPS.map((s) => (
+                    <div key={s.num} className="flex items-center gap-2">
+                      <span
+                        className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold transition-colors ${
+                          s.num < step
+                            ? "bg-success text-white"
+                            : s.num === step
+                              ? "bg-primary text-white"
+                              : "bg-secondary text-muted-foreground"
+                        }`}
+                      >
+                        {s.num < step ? (
+                          <svg
+                            width="10"
+                            height="10"
+                            viewBox="0 0 10 10"
+                            fill="none"
+                          >
+                            <path
+                              d="M2 5L4.5 7.5L8 3"
+                              stroke="white"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        ) : (
+                          s.num
+                        )}
+                      </span>
+                      {s.num < STEPS.length && (
+                        <div
+                          className={`h-px w-12 sm:w-20 transition-colors ${s.num < step ? "bg-success/60" : "bg-border"}`}
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Progress bar */}
+                <div className="h-1 w-full rounded-full bg-secondary mb-5">
+                  <motion.div
+                    className="h-full rounded-full bg-primary"
+                    animate={{
+                      width: `${((step - 1) / (STEPS.length - 1)) * 100}%`,
+                    }}
+                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                  />
+                </div>
+
+                <div>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                    Step {step} of {STEPS.length}
+                  </p>
+                  <h2 className="text-2xl font-bold text-foreground">
+                    {STEPS[step - 1].title}
+                  </h2>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {STEPS[step - 1].desc}
+                  </p>
+                </div>
               </div>
 
               {error && (
@@ -248,59 +325,59 @@ export default function HomePage() {
                 </div>
               )}
 
-              <div className="space-y-4">
-                {modules.map((mod, i) => (
+              {/* ── Animated step content ── */}
+              <div className="rounded-xl border border-border bg-card p-6 overflow-hidden">
+                <AnimatePresence mode="wait" custom={direction}>
                   <motion.div
-                    key={mod.num}
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.1 }}
-                    className="rounded-xl border border-border bg-card overflow-hidden"
+                    key={step}
+                    custom={direction}
+                    initial={{ opacity: 0, x: direction * 40 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: direction * -40 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
                   >
-                    <div className="p-6">
-                      <div className="flex items-center gap-3 mb-5">
-                        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-xs font-bold text-white">
-                          {mod.num}
-                        </span>
-                        <div>
-                          <h3 className="text-sm font-semibold text-foreground">
-                            {mod.title}
-                          </h3>
-                          <p className="text-xs text-muted-foreground">
-                            {mod.desc}
-                          </p>
-                        </div>
-                      </div>
-                      {mod.content}
-                    </div>
+                    {stepContent[step - 1]}
                   </motion.div>
-                ))}
+                </AnimatePresence>
               </div>
 
-              {/* Analyze button */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="mt-8"
-              >
-                <button
-                  onClick={handleAnalyze}
-                  disabled={
-                    skills.selected_skills.length === 0 || !intent.target_role
-                  }
-                  className="w-full rounded-xl bg-primary py-3.5 text-sm font-semibold text-white transition-all hover:bg-[#4F46E5] disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  Analyze My Profile →
-                </button>
-                {(skills.selected_skills.length === 0 ||
-                  !intent.target_role) && (
-                  <p className="text-xs text-muted-foreground mt-2 text-center">
-                    Select at least one skill and enter a target role to
-                    continue
-                  </p>
+              {/* ── Navigation buttons ── */}
+              <div className="mt-6 flex gap-3">
+                {step > 1 && (
+                  <button
+                    onClick={handleBack}
+                    className="flex-1 rounded-xl border border-border bg-secondary py-3 text-sm font-semibold text-foreground transition-colors hover:bg-secondary/80"
+                  >
+                    ← Back
+                  </button>
                 )}
-              </motion.div>
+
+                {step < 4 ? (
+                  <button
+                    onClick={handleNext}
+                    disabled={!canProceed()}
+                    className="flex-1 rounded-xl bg-primary py-3 text-sm font-semibold text-white transition-all hover:bg-[#4F46E5] disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    Continue →
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleAnalyze}
+                    disabled={!canProceed()}
+                    className="flex-1 rounded-xl bg-primary py-3.5 text-sm font-semibold text-white transition-all hover:bg-[#4F46E5] disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    Analyze My Profile →
+                  </button>
+                )}
+              </div>
+
+              {!canProceed() && (
+                <p className="text-xs text-muted-foreground mt-2 text-center">
+                  {step === 3
+                    ? "Select at least one skill to continue"
+                    : "Enter a target role to continue"}
+                </p>
+              )}
             </motion.div>
           )}
 
