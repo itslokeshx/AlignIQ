@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   BarChart,
@@ -18,9 +18,29 @@ import { API_URL } from "@/lib/config";
 
 interface MarketTrends {
   top_skills: [string, number][];
-  domain_competitiveness: Record<string, number>;
   analyzed_roles: string[];
 }
+
+interface SkillResource {
+  title: string;
+  platform: string;
+  type: string;
+  url: string;
+}
+
+const PLATFORM_COLORS: Record<string, string> = {
+  Coursera: "#0056D2",
+  Udemy: "#A435F0",
+  YouTube: "#FF0000",
+  freeCodeCamp: "#0A0A23",
+  Kaggle: "#20BEFF",
+  Practice: "#10b981",
+  edX: "#02262B",
+  Google: "#4285F4",
+  "Khan Academy": "#14BF96",
+  "LinkedIn Learning": "#0A66C2",
+  Skillshare: "#00FF84",
+};
 
 const DOMAIN_ICONS: Record<string, string> = {
   "Technology & Engineering": "⚙️",
@@ -44,18 +64,16 @@ function getBarFill(index: number): string {
   return "#c7d2fe";
 }
 
-function getScoreColor(score: number): string {
-  if (score >= 70) return "#10b981";
-  if (score >= 40) return "#f59e0b";
-  return "#ef4444";
-}
-
 export default function MarketPage() {
   const [trends, setTrends] = useState<MarketTrends | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedDomain, setSelectedDomain] = useState<string | null>(null);
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+  const [skillResources, setSkillResources] = useState<
+    Record<string, SkillResource[]>
+  >({});
+  const [loadingResources, setLoadingResources] = useState(false);
 
   const domainRoles = useMemo(
     () => (selectedDomain ? (UNIVERSAL_DOMAINS[selectedDomain] ?? []) : []),
@@ -105,15 +123,25 @@ export default function MarketPage() {
   const chartData =
     trends?.top_skills.map(([skill, demand]) => ({ skill, demand })) ?? [];
 
-  const domainScores = trends?.domain_competitiveness
-    ? Object.entries(trends.domain_competitiveness).sort(
-        ([, a], [, b]) => b - a,
-      )
-    : [];
-
   const topSkill = chartData[0];
-  const topDomainLabel = domainScores[0]?.[0] ?? selectedDomain ?? "—";
   const rolesScanned = trends?.analyzed_roles?.length ?? 0;
+
+  // Fetch resources when top skills change
+  useEffect(() => {
+    if (!trends?.top_skills?.length) {
+      setSkillResources({});
+      return;
+    }
+    const skills = trends.top_skills.slice(0, 8).map(([s]) => s);
+    setLoadingResources(true);
+    const params = new URLSearchParams();
+    skills.forEach((s) => params.append("skills", s));
+    fetch(`${API_URL}/api/skill-resources?${params}`)
+      .then((r) => (r.ok ? r.json() : {}))
+      .then((data) => setSkillResources(data))
+      .catch(() => setSkillResources({}))
+      .finally(() => setLoadingResources(false));
+  }, [trends]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -319,10 +347,9 @@ export default function MarketPage() {
             >
               {/* Stat row */}
               {topSkill && (
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {[
                     { label: "Top skill", value: topSkill.skill },
-                    { label: "Top domain", value: topDomainLabel },
                     { label: "Roles scanned", value: String(rolesScanned) },
                   ].map(({ label, value }) => (
                     <div
@@ -407,48 +434,84 @@ export default function MarketPage() {
                 )}
               </section>
 
-              {/* Domain competitiveness */}
-              {domainScores.length > 0 && (
+              {/* Skill Learning Resources */}
+              {chartData.length > 0 && (
                 <section>
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-4">
-                    Domain Competitiveness
+                    Learning Resources
                   </p>
-                  <div className="rounded-xl border border-border bg-card divide-y divide-border">
-                    {domainScores.map(([domain, score], i) => (
-                      <motion.div
-                        key={domain}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: i * 0.04 }}
-                        className="flex items-center gap-2 sm:gap-4 px-3 sm:px-5 py-3.5"
-                      >
-                        <span className="text-base w-6 shrink-0">
-                          {DOMAIN_ICONS[domain] ?? "◆"}
-                        </span>
-                        <span className="text-xs sm:text-sm text-foreground w-24 sm:w-40 shrink-0 truncate">
-                          {domain}
-                        </span>
-                        <div className="flex-1 h-1 rounded-full bg-secondary overflow-hidden">
+                  {loadingResources ? (
+                    <div className="rounded-xl border border-border bg-card px-5 py-8 flex items-center justify-center gap-1.5">
+                      {[0, 1, 2].map((i) => (
+                        <motion.div
+                          key={i}
+                          className="h-1.5 w-1.5 rounded-full bg-indigo-500"
+                          animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1, 0.8] }}
+                          transition={{ duration: 1.1, repeat: Infinity, delay: i * 0.18 }}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {chartData.slice(0, 8).map(({ skill }, idx) => {
+                        const resources = skillResources[skill] ?? [];
+                        if (resources.length === 0) return null;
+                        return (
                           <motion.div
-                            className="h-full rounded-full"
-                            style={{ backgroundColor: getScoreColor(score) }}
-                            initial={{ width: 0 }}
-                            animate={{ width: `${score}%` }}
-                            transition={{
-                              duration: 0.7,
-                              delay: 0.1 + i * 0.04,
-                            }}
-                          />
-                        </div>
-                        <span
-                          className="text-xs font-semibold tabular-nums w-7 text-right"
-                          style={{ color: getScoreColor(score) }}
-                        >
-                          {score}
-                        </span>
-                      </motion.div>
-                    ))}
-                  </div>
+                            key={skill}
+                            initial={{ opacity: 0, y: 6 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: idx * 0.04 }}
+                            className="rounded-xl border border-border bg-card px-4 sm:px-5 py-4"
+                          >
+                            <div className="flex items-center gap-2 mb-3">
+                              <div
+                                className="h-2 w-2 rounded-full shrink-0"
+                                style={{ backgroundColor: getBarFill(idx) }}
+                              />
+                              <span className="text-sm font-semibold text-foreground">
+                                {skill}
+                              </span>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              {resources.map((r, ri) => (
+                                <a
+                                  key={ri}
+                                  href={r.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="group flex items-center gap-1.5 rounded-lg border border-border bg-secondary/30 px-3 py-2 text-xs transition-all hover:border-indigo-500/40 hover:bg-indigo-500/5"
+                                >
+                                  <span
+                                    className="h-1.5 w-1.5 rounded-full shrink-0"
+                                    style={{
+                                      backgroundColor:
+                                        PLATFORM_COLORS[r.platform] ?? "#6366f1",
+                                    }}
+                                  />
+                                  <span className="text-foreground/90 group-hover:text-foreground truncate max-w-[200px] sm:max-w-xs">
+                                    {r.title}
+                                  </span>
+                                  <span className="text-muted-foreground/60 shrink-0">
+                                    {r.platform}
+                                  </span>
+                                  <svg
+                                    className="w-3 h-3 text-muted-foreground/40 group-hover:text-indigo-400 shrink-0 transition"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    strokeWidth={2}
+                                  >
+                                    <path d="M7 17L17 7M17 7H7M17 7v10" />
+                                  </svg>
+                                </a>
+                              ))}
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </section>
               )}
 

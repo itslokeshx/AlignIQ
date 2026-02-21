@@ -84,6 +84,25 @@ def market_trends():
         return jsonify({"error": str(e)}), 500
 
 
+# ─── Skill Resources ──────────────────────────────────────────────────────────
+@app.route("/api/skill-resources")
+def skill_resources():
+    """Return curated + YouTube learning resources for a list of skills."""
+    try:
+        from modules.resource_map import get_resources_for_skills
+        raw_skills = request.args.getlist("skills")
+        if not raw_skills:
+            csv = request.args.get("skills", "")
+            raw_skills = [s.strip() for s in csv.split(",") if s.strip()]
+        if not raw_skills:
+            return jsonify({"error": "No skills provided"}), 400
+
+        result = get_resources_for_skills(raw_skills[:10])   # cap at 10
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 # ─── Main Analysis Endpoint ──────────────────────────────────────────────────────
 @app.route("/api/analyze", methods=["POST"])
 def analyze():

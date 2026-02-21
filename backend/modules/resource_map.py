@@ -1227,6 +1227,50 @@ def get_resources_for_action(
     return resources[:2]
 
 
+def get_resources_for_skills(skills: list) -> dict:
+    """
+    Return curated + YouTube resources for a list of skill names.
+    Used by /api/skill-resources endpoint for market page.
+
+    Returns: { "skill_name": [ {title, platform, type, url}, ... ], ... }
+    """
+    result = {}
+    for skill in skills:
+        skill_norm = _normalize(skill)
+        resources = []
+
+        # 1. Exact curated match
+        if skill_norm in RESOURCE_MAP:
+            resources.extend(RESOURCE_MAP[skill_norm][:2])
+        else:
+            # 2. Partial match — key in skill or skill in key
+            for key in RESOURCE_MAP:
+                if skill_norm in key or key in skill_norm:
+                    resources.extend(RESOURCE_MAP[key][:2])
+                    break
+
+        # 3. YouTube — always try for a video
+        if YOUTUBE_API_KEY:
+            yt_results = _fetch_youtube(f"{skill} tutorial course")
+            for vid in yt_results[:1]:
+                # Avoid duplicates
+                if not any(r.get("url") == vid.get("url") for r in resources):
+                    resources.append(vid)
+
+        # 4. Generic search fallback if nothing found
+        if not resources:
+            resources.append({
+                "title": f"Learn {skill}",
+                "platform": "Google",
+                "type": "search",
+                "url": f"https://www.google.com/search?q=learn+{urllib.parse.quote(skill)}+course",
+            })
+
+        result[skill] = resources[:3]   # max 3 per skill
+
+    return result
+
+
 def enrich_roadmap_with_resources(
     roadmap: dict,
     missing_skills: list,
