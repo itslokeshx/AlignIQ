@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   BarChart,
@@ -14,13 +14,17 @@ import {
 } from "recharts";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import { UNIVERSAL_DOMAINS } from "@/lib/constants";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 interface MarketTrends {
   top_skills: [string, number][];
   domain_competitiveness: Record<string, number>;
+  analyzed_roles: string[];
 }
+
+const DOMAIN_OPTIONS = Object.keys(UNIVERSAL_DOMAINS);
 
 const DOMAIN_META: Record<string, { icon: string; desc: string }> = {
   "AI/ML": { icon: "⚡", desc: "Machine Learning, Deep Learning, NLP" },
@@ -55,26 +59,70 @@ export default function MarketPage() {
   const [trends, setTrends] = useState<MarketTrends | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedDomains, setSelectedDomains] = useState<string[]>([]);
+  const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+
+  const availableRoles = useMemo(() => {
+    const roleSet = new Set<string>();
+    selectedDomains.forEach((domain) => {
+      (UNIVERSAL_DOMAINS[domain] || []).forEach((role) => roleSet.add(role));
+    });
+    return Array.from(roleSet);
+  }, [selectedDomains]);
+
+  const fetchTrends = async (roles: string[] = []) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const params = new URLSearchParams();
+      roles.forEach((role) => params.append("roles", role));
+      const endpoint = params.toString()
+        ? `${API_URL}/api/market-trends?${params.toString()}`
+        : `${API_URL}/api/market-trends`;
+
+      const res = await fetch(endpoint);
+      if (!res.ok) throw new Error(`Failed to fetch (${res.status})`);
+      const data: MarketTrends = await res.json();
+      setTrends(data);
+    } catch (err: any) {
+      console.error("Market trends error:", err);
+      setError(
+        err.message ||
+          "Failed to load market data. Make sure the backend is running.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchTrends = async () => {
-      try {
-        const res = await fetch(`${API_URL}/api/market-trends`);
-        if (!res.ok) throw new Error(`Failed to fetch (${res.status})`);
-        const data: MarketTrends = await res.json();
-        setTrends(data);
-      } catch (err: any) {
-        console.error("Market trends error:", err);
-        setError(
-          err.message ||
-            "Failed to load market data. Make sure the backend is running.",
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchTrends();
   }, []);
+
+  const toggleDomain = (domain: string) => {
+    setSelectedDomains((prev) => {
+      const next = prev.includes(domain)
+        ? prev.filter((d) => d !== domain)
+        : [...prev, domain];
+
+      setSelectedRoles((prevRoles) => {
+        const nextRoleSet = new Set<string>();
+        next.forEach((d) => {
+          (UNIVERSAL_DOMAINS[d] || []).forEach((r) => nextRoleSet.add(r));
+        });
+        return prevRoles.filter((role) => nextRoleSet.has(role));
+      });
+
+      return next;
+    });
+  };
+
+  const toggleRole = (role: string) => {
+    setSelectedRoles((prev) =>
+      prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role],
+    );
+  };
 
   const chartData =
     trends?.top_skills.map(([skill, count]) => ({
@@ -109,11 +157,102 @@ export default function MarketPage() {
                 Market Intelligence
               </h1>
               <p className="mt-3 text-base text-muted-foreground max-w-xl">
-                Real-time skill demand signals aggregated from job listings
-                across India&apos;s top engineering roles via the Adzuna API.
+                Real-time skill demand signals from job listings. Select any
+                domains and roles you want, or leave blank to run the default
+                market scan.
               </p>
             </motion.div>
           </div>
+
+          {/* Filters */}
+          <section className="mb-10 rounded-xl border border-border bg-card p-5 space-y-5">
+            <div>
+              <h2 className="text-sm font-semibold text-foreground">
+                1) Select domain(s) (optional)
+              </h2>
+              <p className="text-xs text-muted-foreground mt-1">
+                Choose one or more domains. Then check the roles you want to
+                analyze.
+              </p>
+              <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                {DOMAIN_OPTIONS.map((domain) => {
+                  const active = selectedDomains.includes(domain);
+                  return (
+                    <label
+                      key={domain}
+                      className={`flex items-center gap-2 rounded-md border px-3 py-2 text-xs transition-colors cursor-pointer ${
+                        active
+                          ? "border-primary/50 bg-primary/5"
+                          : "border-border hover:bg-secondary/40"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        className="accent-indigo-500"
+                        checked={active}
+                        onChange={() => toggleDomain(domain)}
+                      />
+                      <span className="text-foreground">{domain}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div>
+              <h2 className="text-sm font-semibold text-foreground">
+                2) Check role(s) in selected domains (optional)
+              </h2>
+              <p className="text-xs text-muted-foreground mt-1">
+                {selectedDomains.length === 0
+                  ? "Pick at least one domain to enable role selection."
+                  : "Leave roles empty to scan all default roles."}
+              </p>
+
+              <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                {availableRoles.map((role) => {
+                  const active = selectedRoles.includes(role);
+                  return (
+                    <label
+                      key={role}
+                      className={`flex items-center gap-2 rounded-md border px-3 py-2 text-xs transition-colors cursor-pointer ${
+                        active
+                          ? "border-primary/50 bg-primary/5"
+                          : "border-border hover:bg-secondary/40"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        className="accent-indigo-500"
+                        checked={active}
+                        onChange={() => toggleRole(role)}
+                      />
+                      <span className="text-foreground">{role}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2 pt-1">
+              <button
+                onClick={() => fetchTrends(selectedRoles)}
+                className="rounded-md bg-primary px-3 py-2 text-xs font-medium text-primary-foreground hover:opacity-90"
+              >
+                Run Market Research
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedDomains([]);
+                  setSelectedRoles([]);
+                  fetchTrends([]);
+                }}
+                className="rounded-md border border-border px-3 py-2 text-xs font-medium text-foreground hover:bg-secondary/50"
+              >
+                Reset to Default
+              </button>
+            </div>
+          </section>
 
           {/* Loading */}
           {loading && (
@@ -133,7 +272,7 @@ export default function MarketPage() {
                 ))}
               </div>
               <p className="text-sm text-muted-foreground">
-                Fetching market data across 6 roles...
+                Fetching market data...
               </p>
             </div>
           )}
@@ -162,9 +301,8 @@ export default function MarketPage() {
                     Top 10 Demanded Skills
                   </h2>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Aggregated frequency across Software Engineer, Data
-                    Scientist, DevOps Engineer, Frontend Developer, ML Engineer,
-                    and Backend Developer roles.
+                    Aggregated frequency across selected roles. Current scan:{" "}
+                    {trends.analyzed_roles?.join(", ") || "default role set"}.
                   </p>
                 </div>
 
@@ -324,7 +462,7 @@ export default function MarketPage() {
                     <>
                       <InsightCard
                         title="Most In-Demand Skill"
-                        body={`${chartData[0]?.skill} leads with ${chartData[0]?.demand} mentions across all surveyed roles, making it the single most requested technical competency in India's engineering job market.`}
+                        body={`${chartData[0]?.skill} leads with ${chartData[0]?.demand} mentions across the selected roles, making it the current top requested competency in this market scan.`}
                       />
                       {chartData.length >= 3 && (
                         <InsightCard
@@ -340,7 +478,7 @@ export default function MarketPage() {
                       )}
                       <InsightCard
                         title="Data Source"
-                        body="All signals are derived from real-time Adzuna API job listings for India, aggregated across 6 core engineering roles: Software Engineer, Data Scientist, DevOps Engineer, Frontend Developer, ML Engineer, and Backend Developer."
+                        body={`All signals are derived from Adzuna API job listings for India. Roles analyzed in this run: ${trends.analyzed_roles?.join(", ") || "default set"}.`}
                       />
                     </>
                   )}

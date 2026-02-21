@@ -40,7 +40,12 @@ def health():
 @app.route("/api/market-trends")
 def market_trends():
     try:
-        data = get_market_trends()
+        raw_roles = request.args.getlist("roles")
+        if not raw_roles:
+            csv_roles = request.args.get("roles", "")
+            raw_roles = [r.strip() for r in csv_roles.split(",") if r.strip()]
+
+        data = get_market_trends(raw_roles or None)
         return jsonify(data)
     except Exception as e:
         return jsonify({"error": str(e)}), 500

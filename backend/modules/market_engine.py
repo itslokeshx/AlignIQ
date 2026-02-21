@@ -114,17 +114,23 @@ def rank_jobs_by_match(jobs: list, student_skills: list) -> list:
     return sorted(ranked, key=lambda x: x["match_percentage"], reverse=True)[:5]
 
 
-def get_market_trends() -> dict:
+def get_market_trends(roles: list | None = None) -> dict:
     """
     Aggregate skill demand data across multiple roles for the Market Intelligence page.
     """
-    roles = ["Software Engineer", "Data Scientist", "DevOps Engineer",
-             "Frontend Developer", "ML Engineer", "Backend Developer"]
+    roles_to_scan = roles or [
+        "Software Engineer",
+        "Data Scientist",
+        "DevOps Engineer",
+        "Frontend Developer",
+        "ML Engineer",
+        "Backend Developer",
+    ]
 
     all_skill_counts = Counter()
     domain_scores = {}
 
-    for role in roles:
+    for role in roles_to_scan:
         jobs = fetch_jobs(role, count=5)
         skills = extract_skills_from_jobs(jobs)
         for skill, count in skills:
@@ -150,6 +156,7 @@ def get_market_trends() -> dict:
     return {
         "top_skills": top_skills,
         "domain_competitiveness": domain_scores,
+        "analyzed_roles": roles_to_scan,
     }
 
 
