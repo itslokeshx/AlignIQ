@@ -380,6 +380,47 @@ def get_market_trends(roles: list | None = None) -> dict:
     for role in roles_to_scan:
         jobs = fetch_jobs(role, count=5)
         skills = extract_skills_from_jobs(jobs)
+
+        # ── Relevance gate ─────────────────────────────────────────────
+        # For non-tech roles the Indian Adzuna market almost always
+        # returns software/tech listings, so the extracted skills end up
+        # being "Rust", "Python", etc. — completely irrelevant.
+        # We detect the role's expected domain and check two things:
+        #   1. Relevance — at least 20 % of skill mentions must belong
+        #      to the role's expected domain.
+        #   2. Density — we need at least 5 total skill mentions to
+        #      consider the API data "rich enough".
+        # If either check fails we discard the API results and use the
+        # domain-aware mock data instead.
+        domain_hint = _detect_domain(role)
+        if domain_hint != "tech":
+            public_domain = PUBLIC_DOMAIN_FROM_HINT.get(domain_hint, "")
+            expected_skills = {
+                s.lower() for s in DOMAIN_SKILL_MAP.get(public_domain, [])
+            }
+            if expected_skills:
+                total = sum(c for _, c in skills)
+                relevant = sum(
+                    c for s, c in skills if s.lower() in expected_skills
+                )
+                relevance = relevant / max(total, 1)
+                use_mock = False
+                if relevance < 0.20:
+                    print(
+                        f"[Market] API results for '{role}' are off-domain "
+                        f"(relevance={relevance:.0%}). Falling back to mock data."
+                    )
+                    use_mock = True
+                elif total < 5:
+                    print(
+                        f"[Market] API results for '{role}' are too sparse "
+                        f"({total} mentions). Falling back to mock data."
+                    )
+                    use_mock = True
+                if use_mock:
+                    jobs = _mock_jobs(role)
+                    skills = extract_skills_from_jobs(jobs)
+
         for skill, count in skills:
             all_skill_counts[skill] += count
 
