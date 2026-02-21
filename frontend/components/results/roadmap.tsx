@@ -124,7 +124,7 @@ export default function Roadmap({
                           <div
                             className={`mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${PHASE_ACCENTS[i].dotColor} opacity-60`}
                           />
-                          {a}
+                          {typeof a === "string" ? a : a.action}
                         </li>
                       ))}
                     </ul>
