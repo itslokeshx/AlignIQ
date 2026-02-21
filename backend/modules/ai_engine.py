@@ -10,11 +10,15 @@ import json
 import re
 from groq import Groq
 
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-MODEL  = "llama-3.3-70b-versatile"
+MODEL = "llama-3.3-70b-versatile"
+
+def _get_client() -> Groq:
+    """Lazy Groq client — reads API key at call time after dotenv is loaded."""
+    return Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 
 def _call_groq(prompt: str) -> str:
+    client = _get_client()
     response = client.chat.completions.create(
         model=MODEL,
         messages=[{"role": "user", "content": prompt}],
