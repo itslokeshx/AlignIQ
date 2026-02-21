@@ -70,6 +70,7 @@ export default function MarketPage() {
       setError(null);
       const params = new URLSearchParams();
       roles.forEach((r) => params.append("roles", r));
+      if (selectedDomain) params.append("domain", selectedDomain);
       const res = await fetch(`${API_URL}/api/market-trends?${params}`);
       if (!res.ok) throw new Error(`${res.status}`);
       setTrends(await res.json());

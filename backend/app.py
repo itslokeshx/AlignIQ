@@ -45,8 +45,9 @@ def market_trends():
         if not raw_roles:
             csv_roles = request.args.get("roles", "")
             raw_roles = [r.strip() for r in csv_roles.split(",") if r.strip()]
+        domain = request.args.get("domain", "")
 
-        data = get_market_trends(raw_roles or None)
+        data = get_market_trends(raw_roles or None, domain=domain)
         return jsonify(data)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
