@@ -327,42 +327,39 @@ for domain, roles in UNIVERSAL_DOMAINS.items():
 
 def process_profile(data: dict) -> dict:
     """
-    Process v2 universal student profile into structured analysis inputs.
+    Process v3 streamlined student profile (4-step form) into structured analysis inputs.
     """
-    identity   = data.get('identity', {})
-    interests  = data.get('interests', {})
-    experience = data.get('experience', {})
-    skills     = data.get('skills', {})
-    intent     = data.get('intent', {})
-    personality= data.get('personality', {})
+    academic      = data.get('academic', {})
+    exp_skills    = data.get('experience_skills', {})
+    career_goal   = data.get('career_goal', {})
+    personality   = data.get('personality', {})
+
+    projects_val = exp_skills.get('projects', 0)
+    if isinstance(projects_val, list):
+        projects_count = len([p for p in projects_val if isinstance(p, str) and p.strip()])
+    else:
+        projects_count = int(projects_val)
 
     return {
         'personality_scores': calculate_personality_scores(personality.get('answers', {})),
-        'interest_clusters':  calculate_interest_clusters(interests.get('activities', [])),
-        'cgpa_norm':         min(identity.get('cgpa', 0) / 10.0, 1.0),
-        'field_of_study':    identity.get('field_of_study', ''),
-        'education_level':   identity.get('education_level', ''),
-        'consistency':       identity.get('consistency', 'medium'),
-        'backlogs':          int(identity.get('backlogs', 0)),
-        'activities':        interests.get('activities', []),
-        'work_environments': interests.get('work_environments', []),
-        'motivators':        interests.get('motivators', []),
-        'internships':       int(experience.get('internships', 0)),
-        'projects':          experience.get('projects', []),
-        'competitions':      experience.get('competitions', ''),
-        'leadership':        bool(experience.get('leadership', False)),
-        'volunteer':         bool(experience.get('volunteer', False)),
-        'readiness_rating':  int(experience.get('readiness_rating', 5)),
-        'earned_from_skill': bool(experience.get('earned_from_skill', False)),
-        'selected_skills':   skills.get('selected_skills', []),
-        'proficiency_rating':int(skills.get('proficiency_rating', 5)),
-        'languages_known':   skills.get('languages_known', []),
-        'target_domain':     intent.get('target_domain', ''),
-        'target_role':       intent.get('target_role', ''),
-        'reasons':           intent.get('reasons', []),
-        'salary_expectation':int(intent.get('salary_expectation', 10)),
-        'work_location':     intent.get('work_location', 'Hybrid'),
-        'open_to_education': intent.get('open_to_education', 'Maybe'),
+        'interest_clusters':  calculate_interest_clusters(career_goal.get('activities', [])),
+        'cgpa_norm':         min(academic.get('cgpa', 0) / 10.0, 1.0),
+        'field_of_study':    academic.get('field_of_study', ''),
+        'consistency':       academic.get('consistency', 'medium'),
+        'backlogs':          int(academic.get('backlogs', 0)),
+        'activities':        career_goal.get('activities', []),
+        'internships':       int(exp_skills.get('internships', 0)),
+        'projects':          projects_count,
+        'competitions':      bool(exp_skills.get('competitions', False)),
+        'leadership':        bool(exp_skills.get('leadership', False)),
+        'volunteer':         bool(exp_skills.get('volunteer', False)),
+        'readiness_rating':  int(exp_skills.get('readiness_rating', 5)),
+        'earned_from_skill': bool(exp_skills.get('earned_from_skill', False)),
+        'selected_skills':   exp_skills.get('selected_skills', []),
+        'proficiency_rating':int(exp_skills.get('proficiency_rating', 5)),
+        'languages_known':   exp_skills.get('languages_known', []),
+        'target_domain':     career_goal.get('target_domain', ''),
+        'target_role':       career_goal.get('target_role', ''),
     }
 
 
@@ -521,7 +518,7 @@ def calculate_chosen_career_match(processed: dict, job_skill_demand: list) -> di
 
     # Experience match
     exp_score = min(
-        (processed['internships'] * 20 + len(processed['projects']) * 10 +
+        (processed['internships'] * 20 + processed['projects'] * 10 +
          (10 if processed['competitions'] else 0) + (12 if processed['leadership'] else 0)),
         100
     )

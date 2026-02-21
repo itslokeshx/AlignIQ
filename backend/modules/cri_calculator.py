@@ -38,17 +38,19 @@ def calculate_cri(processed: dict) -> dict:
 
     # ─── 3. Experience Adequacy Index (0–30) ─────────────────────────────────
     internships       = processed.get('internships', 0)
-    projects          = processed.get('projects', [])
-    competitions      = processed.get('competitions', '')
+    projects          = processed.get('projects', 0)
+    if isinstance(projects, list):
+        projects = len([p for p in projects if isinstance(p, str) and p.strip()])
+    competitions      = processed.get('competitions', False)
     leadership        = processed.get('leadership', False)
     volunteer         = processed.get('volunteer', False)
     earned_from_skill = processed.get('earned_from_skill', False)
     readiness_rating  = processed.get('readiness_rating', 5)
 
     internship_score  = min(internships * 6, 12)
-    project_score     = min(len([p for p in projects if p and len(p.strip()) > 3]) * 3, 9)
+    project_score     = min(int(projects) * 3, 9)
     extra_score       = 0
-    if competitions and len(competitions.strip()) > 2: extra_score += 2
+    if competitions: extra_score += 2
     if leadership:        extra_score += 2
     if volunteer:         extra_score += 1
     if earned_from_skill: extra_score += 2

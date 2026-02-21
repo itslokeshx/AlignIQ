@@ -114,7 +114,7 @@ def analyze():
     except Exception as e:
         return jsonify({"error": f"Profile processing failed: {str(e)}"}), 400
 
-    name        = data.get("identity", {}).get("name", "User")
+    name        = data.get("academic", {}).get("name", "User")
     target_role = processed["target_role"]
     target_domain = processed["target_domain"]
     field       = processed["field_of_study"]
@@ -215,7 +215,7 @@ def analyze():
     interest_profile = {
         "personality":       processed["personality_scores"],
         "interest_clusters": processed["interest_clusters"],
-        "motivators":        processed["motivators"],
+        "motivators":        [],
     }
 
     # ── 6. Executive Summary + Checklist ─────────────────────────────────────
@@ -248,7 +248,9 @@ def analyze():
 # ─── Helpers ──────────────────────────────────────────────────────────────────
 def _get_experience_level(processed: dict) -> str:
     internships = processed.get("internships", 0)
-    projects    = len(processed.get("projects", []))
+    projects    = processed.get("projects", 0)
+    if isinstance(projects, list):
+        projects = len(projects)
     if internships >= 2 or (internships >= 1 and projects >= 2):
         return "intermediate"
     return "entry"

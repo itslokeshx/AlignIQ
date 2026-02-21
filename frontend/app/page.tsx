@@ -4,12 +4,10 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Navbar } from "@/components/layout/navbar";
 
-// ── Input modules ──────────────────────────────────────────────────────────────
-import IdentityModule from "@/components/input-modules/identity-module";
-import InterestsModule from "@/components/input-modules/interests-module";
-import ExperienceModule from "@/components/input-modules/experience-module";
-import SkillsModule from "@/components/input-modules/skills-module";
-import IntentModule from "@/components/input-modules/intent-module";
+// ── Input modules (4 steps) ───────────────────────────────────────────────────
+import AcademicModule from "@/components/input-modules/academic-module";
+import ExperienceSkillsModule from "@/components/input-modules/experience-skills-module";
+import CareerGoalModule from "@/components/input-modules/career-goal-module";
 import PersonalityModule from "@/components/input-modules/personality-module";
 
 // ── Result components ─────────────────────────────────────────────────────────
@@ -19,11 +17,9 @@ import ActThreePathForward from "@/components/results/act-three-path";
 import { API_URL } from "@/lib/config";
 
 import type {
-  IdentityProfile,
-  InterestsProfile,
-  ExperienceProfile,
-  SkillsProfile,
-  IntentProfile,
+  AcademicProfile,
+  ExperienceSkillsProfile,
+  CareerGoalProfile,
   PersonalityProfile,
   StudentProfile,
   AnalysisResponse,
@@ -32,16 +28,14 @@ import type {
 type ViewState = "hero" | "input" | "loading" | "results";
 
 const STEPS = [
-  { num: 1, title: "Who are you?", desc: "Identity & education" },
+  { num: 1, title: "About you", desc: "Name, field & academics" },
   {
     num: 2,
-    title: "What moves you?",
-    desc: "Activities, environments & drives",
+    title: "Skills & experience",
+    desc: "What you know & what you've done",
   },
-  { num: 3, title: "Your experience", desc: "Projects, internships & extras" },
-  { num: 4, title: "Your skills", desc: "Domain skills & proficiency" },
-  { num: 5, title: "Career intent", desc: "Goal role & motivations" },
-  { num: 6, title: "Personality snapshot", desc: "8 quick questions" },
+  { num: 3, title: "Career goal", desc: "Target role & interests" },
+  { num: 4, title: "Personality", desc: "8 quick questions" },
 ];
 
 const LOADING_TEXTS = [
@@ -102,48 +96,31 @@ export default function HomePage() {
   const [results, setResults] = useState<AnalysisResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // ── 6-module state ────────────────────────────────────────────────────────
-  const [identity, setIdentity] = useState<IdentityProfile>({
+  // ── 4-step state ─────────────────────────────────────────────────────────
+  const [academic, setAcademic] = useState<AcademicProfile>({
     name: "",
-    age: 21,
-    education_level: "Undergraduate (pursuing)",
     field_of_study: "",
     cgpa: 7.5,
     consistency: "medium",
     backlogs: 0,
   });
-  const [interests, setInterests] = useState<InterestsProfile>({
-    activities: [],
-    work_environments: [],
-    motivators: [],
-    topics: ["", "", ""],
-  });
-  const [experience, setExperience] = useState<ExperienceProfile>({
-    internships: 0,
-    projects: ["", "", ""],
-    competitions: "",
-    leadership: false,
-    leadership_desc: "",
-    volunteer: false,
-    volunteer_desc: "",
-    clubs: "",
-    awards: "",
-    readiness_rating: 5,
-    earned_from_skill: false,
-    earned_desc: "",
-  });
-  const [skills, setSkills] = useState<SkillsProfile>({
-    selected_skills: [],
-    proficiency_rating: 5,
-    languages_known: [],
-  });
-  const [intent, setIntent] = useState<IntentProfile>({
+  const [experienceSkills, setExperienceSkills] =
+    useState<ExperienceSkillsProfile>({
+      selected_skills: [],
+      proficiency_rating: 5,
+      languages_known: [],
+      internships: 0,
+      projects: 0,
+      leadership: false,
+      competitions: false,
+      volunteer: false,
+      earned_from_skill: false,
+      readiness_rating: 5,
+    });
+  const [careerGoal, setCareerGoal] = useState<CareerGoalProfile>({
     target_domain: "",
     target_role: "",
-    reasons: [],
-    salary_expectation: 10,
-    work_location: "Hybrid",
-    open_to_education: "Maybe later",
+    activities: [],
   });
   const [personality, setPersonality] = useState<PersonalityProfile>({
     answers: {},
@@ -153,11 +130,9 @@ export default function HomePage() {
     setError(null);
     setView("loading");
     const payload: StudentProfile = {
-      identity,
-      interests,
-      experience,
-      skills,
-      intent,
+      academic,
+      experience_skills: experienceSkills,
+      career_goal: careerGoal,
       personality,
     };
     try {
@@ -182,54 +157,36 @@ export default function HomePage() {
     setStep(1);
     setView("hero");
     setError(null);
-    setIdentity({
+    setAcademic({
       name: "",
-      age: 21,
-      education_level: "Undergraduate (pursuing)",
       field_of_study: "",
       cgpa: 7.5,
       consistency: "medium",
       backlogs: 0,
     });
-    setInterests({
-      activities: [],
-      work_environments: [],
-      motivators: [],
-      topics: ["", "", ""],
-    });
-    setExperience({
-      internships: 0,
-      projects: ["", "", ""],
-      competitions: "",
-      leadership: false,
-      leadership_desc: "",
-      volunteer: false,
-      volunteer_desc: "",
-      clubs: "",
-      awards: "",
-      readiness_rating: 5,
-      earned_from_skill: false,
-      earned_desc: "",
-    });
-    setSkills({
+    setExperienceSkills({
       selected_skills: [],
       proficiency_rating: 5,
       languages_known: [],
+      internships: 0,
+      projects: 0,
+      leadership: false,
+      competitions: false,
+      volunteer: false,
+      earned_from_skill: false,
+      readiness_rating: 5,
     });
-    setIntent({
+    setCareerGoal({
       target_domain: "",
       target_role: "",
-      reasons: [],
-      salary_expectation: 10,
-      work_location: "Hybrid",
-      open_to_education: "Maybe later",
+      activities: [],
     });
     setPersonality({ answers: {} });
   };
 
   const handleNext = () => {
     setDirection(1);
-    setStep((s) => Math.min(s + 1, 6));
+    setStep((s) => Math.min(s + 1, 4));
   };
   const handleBack = () => {
     if (step === 1) {
@@ -241,35 +198,30 @@ export default function HomePage() {
   };
 
   const canProceed = () => {
-    if (step === 1) return !!identity.name.trim() && !!identity.field_of_study;
-    if (step === 2)
-      return interests.activities.length > 0 && interests.motivators.length > 0;
-    if (step === 4) return skills.selected_skills.length > 0;
-    if (step === 5) return !!intent.target_role;
-    if (step === 6) return Object.keys(personality.answers).length === 8;
+    if (step === 1) return !!academic.name.trim() && !!academic.field_of_study;
+    if (step === 2) return experienceSkills.selected_skills.length > 0;
+    if (step === 3) return !!careerGoal.target_role;
+    if (step === 4) return Object.keys(personality.answers).length === 8;
     return true;
   };
 
   const gateMsg = () => {
     if (step === 1) return "Enter your name and field of study";
-    if (step === 2) return "Select at least 1 activity and 1 motivator";
-    if (step === 4) return "Select at least one skill";
-    if (step === 5) return "Select your target role";
-    if (step === 6) return "Answer all 8 questions";
+    if (step === 2) return "Select at least one skill";
+    if (step === 3) return "Select your target role";
+    if (step === 4) return "Answer all 8 questions";
     return "";
   };
 
   const stepContent = [
-    <IdentityModule key="id" data={identity} onChange={setIdentity} />,
-    <InterestsModule key="int" data={interests} onChange={setInterests} />,
-    <ExperienceModule key="exp" data={experience} onChange={setExperience} />,
-    <SkillsModule
-      key="sk"
-      data={skills}
-      onChange={setSkills}
-      fieldOfStudy={identity.field_of_study}
+    <AcademicModule key="ac" data={academic} onChange={setAcademic} />,
+    <ExperienceSkillsModule
+      key="es"
+      data={experienceSkills}
+      onChange={setExperienceSkills}
+      fieldOfStudy={academic.field_of_study}
     />,
-    <IntentModule key="int2" data={intent} onChange={setIntent} />,
+    <CareerGoalModule key="cg" data={careerGoal} onChange={setCareerGoal} />,
     <PersonalityModule
       key="per"
       data={personality}
@@ -328,7 +280,7 @@ export default function HomePage() {
                   transition={{ delay: 0.35 }}
                   className="mt-5 text-[15px] text-zinc-500 sm:text-base max-w-md mx-auto leading-relaxed"
                 >
-                  6-module assessment. Dual-track analysis. One precise
+                  4-step assessment. Dual-track analysis. One precise
                   intelligence report — for every field.
                 </motion.p>
                 <motion.div
@@ -456,7 +408,7 @@ export default function HomePage() {
                     ← Back
                   </button>
                 )}
-                {step < 6 ? (
+                {step < 4 ? (
                   <button
                     onClick={handleNext}
                     disabled={!canProceed()}

@@ -1,61 +1,44 @@
-// ─── Input Types ──────────────────────────────────────────────────────────────
-export interface IdentityProfile {
+// ─── Input Types (4-step streamlined form) ───────────────────────────────────
+
+/** Step 1 — Academic Profile */
+export interface AcademicProfile {
   name: string;
-  age: number;
-  education_level: string;
   field_of_study: string;
   cgpa: number;
   consistency: "low" | "medium" | "high";
   backlogs: number;
 }
 
-export interface InterestsProfile {
-  activities: string[];
-  work_environments: string[];
-  motivators: string[];
-  topics: string[];
-}
-
-export interface ExperienceProfile {
-  internships: number;
-  projects: string[];
-  competitions: string;
-  leadership: boolean;
-  leadership_desc: string;
-  volunteer: boolean;
-  volunteer_desc: string;
-  clubs: string;
-  awards: string;
-  readiness_rating: number;
-  earned_from_skill: boolean;
-  earned_desc: string;
-}
-
-export interface SkillsProfile {
+/** Step 2 — Experience & Skills (merged) */
+export interface ExperienceSkillsProfile {
   selected_skills: string[];
   proficiency_rating: number;
   languages_known: string[];
+  internships: number;
+  projects: number;
+  leadership: boolean;
+  competitions: boolean;
+  volunteer: boolean;
+  earned_from_skill: boolean;
+  readiness_rating: number;
 }
 
-export interface IntentProfile {
+/** Step 3 — Career Goal (merged intent + interests) */
+export interface CareerGoalProfile {
   target_domain: string;
   target_role: string;
-  reasons: string[];
-  salary_expectation: number;
-  work_location: string;
-  open_to_education: string;
+  activities: string[];
 }
 
+/** Step 4 — Personality (unchanged) */
 export interface PersonalityProfile {
   answers: Record<string, "A" | "B">;
 }
 
 export interface StudentProfile {
-  identity: IdentityProfile;
-  interests: InterestsProfile;
-  experience: ExperienceProfile;
-  skills: SkillsProfile;
-  intent: IntentProfile;
+  academic: AcademicProfile;
+  experience_skills: ExperienceSkillsProfile;
+  career_goal: CareerGoalProfile;
   personality: PersonalityProfile;
 }
 
