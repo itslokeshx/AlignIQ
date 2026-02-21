@@ -24,7 +24,7 @@ from modules.ai_engine       import (
     generate_role_description, generate_executive_summary,
     generate_action_checklist, generate_roadmap,
 )
-from modules.market_engine   import fetch_jobs, get_market_trends
+from modules.market_engine   import fetch_jobs, get_market_trends, rank_jobs_by_match
 
 app = Flask(__name__)
 CORS(app)
@@ -169,7 +169,7 @@ def analyze():
         "best_fit":          best_fit,
         "chosen_career":     chosen_career,
         "cri":               cri,
-        "jobs":              job_results[:5],
+        "jobs":              rank_jobs_by_match(job_results, processed["selected_skills"]),
         "executive_summary": executive_summary,
         "action_checklist":  action_checklist,
     }
