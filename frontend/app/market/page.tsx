@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import { useMemo, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   BarChart,
   Bar,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   ResponsiveContainer,
   Cell,
@@ -24,483 +23,405 @@ interface MarketTrends {
   analyzed_roles: string[];
 }
 
-const DOMAIN_OPTIONS = Object.keys(UNIVERSAL_DOMAINS);
-
-const DOMAIN_META: Record<string, { icon: string; desc: string }> = {
-  "AI/ML": { icon: "⚡", desc: "Machine Learning, Deep Learning, NLP" },
-  "Web Development": { icon: "🌐", desc: "Frontend, Backend, Full-stack" },
-  "Data Science": { icon: "📊", desc: "Analytics, Statistics, Visualization" },
-  "Cloud/DevOps": { icon: "☁️", desc: "AWS, Docker, CI/CD pipelines" },
-  Cybersecurity: { icon: "🔒", desc: "Security, Networking, Ethical Hacking" },
-  "Core Engineering": { icon: "⚙️", desc: "Embedded, VLSI, Systems" },
+const DOMAIN_ICONS: Record<string, string> = {
+  "Technology & Engineering": "⚙️",
+  "Business & Management": "📈",
+  "Creative & Design": "🎨",
+  "Science & Research": "🔬",
+  "Healthcare & Medicine": "🩺",
+  "Law & Policy": "⚖️",
+  "Education & Social": "📚",
+  "Media & Communication": "📡",
+  "Finance & Economics": "💹",
+  "Arts & Culture": "🎭",
+  "Sports & Wellness": "🏃",
+  "Trades & Skilled Work": "🔧",
 };
 
-function getScoreColor(score: number): string {
-  if (score >= 70) return "text-[#10b981]";
-  if (score >= 40) return "text-[#f59e0b]";
-  return "text-[#ef4444]";
+function getBarFill(index: number): string {
+  if (index === 0) return "#6366f1";
+  if (index <= 2) return "#818cf8";
+  if (index <= 5) return "#a5b4fc";
+  return "#c7d2fe";
 }
 
-function getBarColor(score: number): string {
+function getScoreColor(score: number): string {
   if (score >= 70) return "#10b981";
   if (score >= 40) return "#f59e0b";
   return "#ef4444";
 }
 
-function getScoreLabel(score: number): string {
-  if (score >= 80) return "Very High";
-  if (score >= 60) return "High";
-  if (score >= 40) return "Moderate";
-  if (score >= 20) return "Low";
-  return "Very Low";
-}
-
 export default function MarketPage() {
   const [trends, setTrends] = useState<MarketTrends | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [analyzing, setAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedDomains, setSelectedDomains] = useState<string[]>([]);
+  const [selectedDomain, setSelectedDomain] = useState<string | null>(null);
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
 
-  const availableRoles = useMemo(() => {
-    const roleSet = new Set<string>();
-    selectedDomains.forEach((domain) => {
-      (UNIVERSAL_DOMAINS[domain] || []).forEach((role) => roleSet.add(role));
-    });
-    return Array.from(roleSet);
-  }, [selectedDomains]);
+  const domainRoles = useMemo(
+    () => (selectedDomain ? (UNIVERSAL_DOMAINS[selectedDomain] ?? []) : []),
+    [selectedDomain],
+  );
 
   const fetchTrends = async (roles: string[] = []) => {
+    if (roles.length === 0) return;
     try {
-      setLoading(true);
+      setAnalyzing(true);
       setError(null);
-
       const params = new URLSearchParams();
-      roles.forEach((role) => params.append("roles", role));
-      const endpoint = params.toString()
-        ? `${API_URL}/api/market-trends?${params.toString()}`
-        : `${API_URL}/api/market-trends`;
-
-      const res = await fetch(endpoint);
-      if (!res.ok) throw new Error(`Failed to fetch (${res.status})`);
-      const data: MarketTrends = await res.json();
-      setTrends(data);
-    } catch (err: any) {
-      console.error("Market trends error:", err);
-      setError(
-        err.message ||
-          "Failed to load market data. Make sure the backend is running.",
-      );
+      roles.forEach((r) => params.append("roles", r));
+      const res = await fetch(`${API_URL}/api/market-trends?${params}`);
+      if (!res.ok) throw new Error(`${res.status}`);
+      setTrends(await res.json());
+    } catch {
+      setError("Backend unreachable. Is the server running?");
     } finally {
-      setLoading(false);
+      setAnalyzing(false);
     }
   };
 
-  useEffect(() => {
-    fetchTrends();
-  }, []);
-
-  const toggleDomain = (domain: string) => {
-    setSelectedDomains((prev) => {
-      const next = prev.includes(domain)
-        ? prev.filter((d) => d !== domain)
-        : [...prev, domain];
-
-      setSelectedRoles((prevRoles) => {
-        const nextRoleSet = new Set<string>();
-        next.forEach((d) => {
-          (UNIVERSAL_DOMAINS[d] || []).forEach((r) => nextRoleSet.add(r));
-        });
-        return prevRoles.filter((role) => nextRoleSet.has(role));
-      });
-
-      return next;
-    });
-  };
-
-  const toggleRole = (role: string) => {
+  const toggleRole = (role: string) =>
     setSelectedRoles((prev) =>
       prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role],
     );
+
+  const selectDomain = (domain: string) => {
+    if (selectedDomain === domain) {
+      setSelectedDomain(null);
+      setSelectedRoles([]);
+    } else {
+      setSelectedDomain(domain);
+      setSelectedRoles([]);
+    }
   };
 
   const chartData =
-    trends?.top_skills.map(([skill, count]) => ({
-      skill,
-      demand: count,
-    })) ?? [];
+    trends?.top_skills.map(([skill, demand]) => ({ skill, demand })) ?? [];
 
-  const domains = trends?.domain_competitiveness
+  const domainScores = trends?.domain_competitiveness
     ? Object.entries(trends.domain_competitiveness).sort(
         ([, a], [, b]) => b - a,
       )
     : [];
+
+  const topSkill = chartData[0];
+  const topDomain = domainScores[0];
+  const rolesScanned = trends?.analyzed_roles?.length ?? 0;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
 
       <main className="flex-1">
-        <div className="mx-auto max-w-5xl px-6 py-16">
+        <div className="mx-auto max-w-4xl px-6 py-14">
           {/* Header */}
-          <div className="mb-12">
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-            >
-              <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/50 px-3 py-1 text-xs text-muted-foreground mb-4">
-                <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
-                Live Data
-              </span>
-              <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                Market Intelligence
-              </h1>
-              <p className="mt-3 text-base text-muted-foreground max-w-xl">
-                Real-time skill demand signals from job listings. Select any
-                domains and roles you want, or leave blank to run the default
-                market scan.
-              </p>
-            </motion.div>
-          </div>
-
-          {/* Filters */}
-          <section className="mb-10 rounded-xl border border-border bg-card p-5 space-y-5">
-            <div>
-              <h2 className="text-sm font-semibold text-foreground">
-                1) Select domain(s) (optional)
-              </h2>
-              <p className="text-xs text-muted-foreground mt-1">
-                Choose one or more domains. Then check the roles you want to
-                analyze.
-              </p>
-              <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
-                {DOMAIN_OPTIONS.map((domain) => {
-                  const active = selectedDomains.includes(domain);
-                  return (
-                    <label
-                      key={domain}
-                      className={`flex items-center gap-2 rounded-md border px-3 py-2 text-xs transition-colors cursor-pointer ${
-                        active
-                          ? "border-primary/50 bg-primary/5"
-                          : "border-border hover:bg-secondary/40"
-                      }`}
-                    >
-                      <input
-                        type="checkbox"
-                        className="accent-indigo-500"
-                        checked={active}
-                        onChange={() => toggleDomain(domain)}
-                      />
-                      <span className="text-foreground">{domain}</span>
-                    </label>
-                  );
-                })}
-              </div>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35 }}
+            className="mb-10"
+          >
+            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/40 px-3 py-1 text-xs text-muted-foreground mb-5">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              Live · Adzuna API · India
             </div>
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">
+              Market Intelligence
+            </h1>
+            <p className="mt-2 text-sm text-muted-foreground max-w-lg">
+              Real-time skill demand from job listings. Pick a domain and roles,
+              or run a default scan.
+            </p>
+          </motion.div>
 
-            <div>
-              <h2 className="text-sm font-semibold text-foreground">
-                2) Check role(s) in selected domains (optional)
-              </h2>
-              <p className="text-xs text-muted-foreground mt-1">
-                {selectedDomains.length === 0
-                  ? "Pick at least one domain to enable role selection."
-                  : "Leave roles empty to scan all default roles."}
-              </p>
-
-              <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
-                {availableRoles.map((role) => {
-                  const active = selectedRoles.includes(role);
-                  return (
-                    <label
-                      key={role}
-                      className={`flex items-center gap-2 rounded-md border px-3 py-2 text-xs transition-colors cursor-pointer ${
-                        active
-                          ? "border-primary/50 bg-primary/5"
-                          : "border-border hover:bg-secondary/40"
-                      }`}
-                    >
-                      <input
-                        type="checkbox"
-                        className="accent-indigo-500"
-                        checked={active}
-                        onChange={() => toggleRole(role)}
-                      />
-                      <span className="text-foreground">{role}</span>
-                    </label>
-                  );
-                })}
-              </div>
+          {/* Domain pills */}
+          <motion.section
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, delay: 0.05 }}
+            className="mb-5"
+          >
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-3">
+              Domain
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {Object.keys(UNIVERSAL_DOMAINS).map((domain) => {
+                const active = selectedDomain === domain;
+                return (
+                  <button
+                    key={domain}
+                    onClick={() => selectDomain(domain)}
+                    className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
+                      active
+                        ? "border-indigo-500/60 bg-indigo-500/10 text-indigo-400"
+                        : "border-border text-muted-foreground hover:border-border/80 hover:text-foreground"
+                    }`}
+                  >
+                    <span>{DOMAIN_ICONS[domain] ?? "◆"}</span>
+                    {domain}
+                  </button>
+                );
+              })}
             </div>
+          </motion.section>
 
-            <div className="flex flex-wrap gap-2 pt-1">
-              <button
-                onClick={() => fetchTrends(selectedRoles)}
-                className="rounded-md bg-primary px-3 py-2 text-xs font-medium text-primary-foreground hover:opacity-90"
+          {/* Role pills */}
+          <AnimatePresence>
+            {selectedDomain && (
+              <motion.section
+                key="roles"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.22 }}
+                className="mb-5 overflow-hidden"
               >
-                Run Market Research
-              </button>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-3">
+                  Roles · {selectedDomain}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {domainRoles.map((role) => {
+                    const active = selectedRoles.includes(role);
+                    return (
+                      <button
+                        key={role}
+                        onClick={() => toggleRole(role)}
+                        className={`rounded-full border px-3 py-1 text-xs transition-all duration-150 ${
+                          active
+                            ? "border-indigo-500/60 bg-indigo-500/10 text-indigo-300"
+                            : "border-border text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        {active && (
+                          <span className="mr-1 text-indigo-400">✓</span>
+                        )}
+                        {role}
+                      </button>
+                    );
+                  })}
+                </div>
+              </motion.section>
+            )}
+          </AnimatePresence>
+
+          {/* Action bar */}
+          <div className="flex items-center gap-3 mb-10">
+            <button
+              onClick={() => fetchTrends(selectedRoles)}
+              disabled={analyzing || selectedRoles.length === 0}
+              className="rounded-full bg-indigo-600 px-5 py-2 text-xs font-semibold text-white transition hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {analyzing
+                ? "Scanning…"
+                : selectedRoles.length === 0
+                  ? "Select roles first"
+                  : `Analyze ${selectedRoles.length} role${selectedRoles.length > 1 ? "s" : ""}`}
+            </button>
+            {(selectedDomain || selectedRoles.length > 0 || trends) && (
               <button
                 onClick={() => {
-                  setSelectedDomains([]);
+                  setSelectedDomain(null);
                   setSelectedRoles([]);
-                  fetchTrends([]);
+                  setTrends(null);
+                  setError(null);
                 }}
-                className="rounded-md border border-border px-3 py-2 text-xs font-medium text-foreground hover:bg-secondary/50"
+                className="rounded-full border border-border px-4 py-2 text-xs text-muted-foreground hover:text-foreground transition"
               >
-                Reset to Default
+                Reset
               </button>
-            </div>
-          </section>
+            )}
+            {trends && (
+              <span className="ml-auto text-xs text-muted-foreground">
+                {rolesScanned} role{rolesScanned !== 1 ? "s" : ""} scanned
+              </span>
+            )}
+          </div>
 
-          {/* Loading */}
-          {loading && (
-            <div className="flex flex-col items-center justify-center py-32 gap-4">
-              <div className="flex items-center gap-1.5">
-                {[0, 1, 2].map((i) => (
-                  <motion.div
-                    key={i}
-                    className="h-2 w-2 rounded-full bg-primary"
-                    animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1, 0.8] }}
-                    transition={{
-                      duration: 1.2,
-                      repeat: Infinity,
-                      delay: i * 0.2,
-                    }}
-                  />
-                ))}
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Fetching market data...
-              </p>
+          {/* Analyzing pulse */}
+          {analyzing && (
+            <div className="flex items-center justify-center py-32 gap-1.5">
+              {[0, 1, 2].map((i) => (
+                <motion.div
+                  key={i}
+                  className="h-1.5 w-1.5 rounded-full bg-indigo-500"
+                  animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1, 0.8] }}
+                  transition={{
+                    duration: 1.1,
+                    repeat: Infinity,
+                    delay: i * 0.18,
+                  }}
+                />
+              ))}
             </div>
           )}
 
           {/* Error */}
-          {error && !loading && (
-            <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center">
-              <p className="text-sm text-destructive mb-2">
-                Unable to load market data
-              </p>
-              <p className="text-xs text-muted-foreground">{error}</p>
+          {error && !analyzing && (
+            <div className="rounded-xl border border-destructive/20 bg-destructive/5 px-5 py-4 text-sm text-destructive">
+              {error}
             </div>
           )}
 
-          {/* Content */}
-          {trends && !loading && (
-            <div className="space-y-12">
-              {/* ─── Top 10 Demanded Skills ─── */}
-              <motion.section
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <div className="mb-6">
-                  <h2 className="text-lg font-semibold text-foreground">
-                    Top 10 Demanded Skills
-                  </h2>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Aggregated frequency across selected roles. Current scan:{" "}
-                    {trends.analyzed_roles?.join(", ") || "default role set"}.
-                  </p>
-                </div>
+          {/* Empty state — no selection yet */}
+          {!analyzing && !trends && !error && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.1 }}
+              className="flex flex-col items-center justify-center py-28 gap-3 text-center"
+            >
+              <span className="text-3xl">◎</span>
+              <p className="text-sm font-medium text-foreground">
+                Choose a domain to get started
+              </p>
+              <p className="text-xs text-muted-foreground max-w-xs">
+                Select a domain above, pick the roles you care about, then hit{" "}
+                <span className="text-foreground">Analyze Market</span>.
+              </p>
+            </motion.div>
+          )}
 
-                <div className="rounded-xl border border-border bg-card p-6">
-                  <ResponsiveContainer width="100%" height={380}>
+          {/* Results */}
+          {trends && !analyzing && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4 }}
+              className="space-y-10"
+            >
+              {/* Stat row */}
+              {topSkill && (
+                <div className="grid grid-cols-3 gap-4">
+                  {[
+                    { label: "Top skill", value: topSkill.skill },
+                    { label: "Top domain", value: topDomain?.[0] ?? "—" },
+                    { label: "Roles scanned", value: String(rolesScanned) },
+                  ].map(({ label, value }) => (
+                    <div
+                      key={label}
+                      className="rounded-xl border border-border bg-card px-5 py-4"
+                    >
+                      <p className="text-xs text-muted-foreground mb-1.5">
+                        {label}
+                      </p>
+                      <p className="text-sm font-semibold text-foreground truncate">
+                        {value}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Skills bar chart */}
+              <section>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-4">
+                  Top Demanded Skills
+                </p>
+                <div className="rounded-xl border border-border bg-card px-5 py-5">
+                  <ResponsiveContainer width="100%" height={340}>
                     <BarChart
                       data={chartData}
                       layout="vertical"
-                      margin={{ top: 0, right: 20, left: 0, bottom: 0 }}
+                      margin={{ top: 0, right: 16, left: 0, bottom: 0 }}
                     >
-                      <CartesianGrid
-                        horizontal={false}
-                        stroke="#1e1e1e"
-                        strokeDasharray="3 3"
-                      />
                       <XAxis
                         type="number"
-                        tick={{ fill: "#606060", fontSize: 12 }}
+                        tick={{ fill: "#555", fontSize: 11 }}
                         axisLine={false}
                         tickLine={false}
                       />
                       <YAxis
                         type="category"
                         dataKey="skill"
-                        tick={{ fill: "#a0a0a0", fontSize: 12 }}
+                        tick={{ fill: "#888", fontSize: 12 }}
                         axisLine={false}
                         tickLine={false}
-                        width={100}
+                        width={110}
                       />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: "#141414",
-                          border: "1px solid #1e1e1e",
+                          backgroundColor: "#111",
+                          border: "1px solid #222",
                           borderRadius: "8px",
                           fontSize: "12px",
-                          color: "#ffffff",
+                          color: "#fff",
                         }}
-                        cursor={{ fill: "rgba(99, 102, 241, 0.05)" }}
-                        formatter={(value: number) => [
-                          `${value} mentions`,
-                          "Demand",
-                        ]}
+                        cursor={{ fill: "rgba(99,102,241,0.05)" }}
+                        formatter={(v: number) => [`${v} mentions`, "Demand"]}
                       />
                       <Bar
                         dataKey="demand"
                         radius={[0, 4, 4, 0]}
-                        maxBarSize={24}
+                        maxBarSize={20}
                       >
-                        {chartData.map((_, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={
-                              index < 3
-                                ? "#6366f1"
-                                : index < 6
-                                  ? "#818cf8"
-                                  : "#a5b4fc"
-                            }
-                          />
+                        {chartData.map((_, i) => (
+                          <Cell key={i} fill={getBarFill(i)} />
                         ))}
                       </Bar>
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
-              </motion.section>
+              </section>
 
-              {/* ─── Domain Competitiveness ─── */}
-              <motion.section
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.15 }}
-              >
-                <div className="mb-6">
-                  <h2 className="text-lg font-semibold text-foreground">
+              {/* Domain competitiveness */}
+              {domainScores.length > 0 && (
+                <section>
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-4">
                     Domain Competitiveness
-                  </h2>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Demand density score per domain, derived from skill keyword
-                    frequency in active job postings.
                   </p>
-                </div>
-
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {domains.map(([domain, score], i) => {
-                    const meta = DOMAIN_META[domain] ?? {
-                      icon: "📌",
-                      desc: domain,
-                    };
-                    return (
+                  <div className="rounded-xl border border-border bg-card divide-y divide-border">
+                    {domainScores.map(([domain, score], i) => (
                       <motion.div
                         key={domain}
-                        initial={{ opacity: 0, y: 12 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 + i * 0.06 }}
-                        className="rounded-xl border border-border bg-card p-5 flex flex-col justify-between"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: i * 0.04 }}
+                        className="flex items-center gap-4 px-5 py-3.5"
                       >
-                        <div>
-                          <div className="flex items-center gap-2.5 mb-3">
-                            <span className="text-lg">{meta.icon}</span>
-                            <h3 className="text-sm font-semibold text-foreground">
-                              {domain}
-                            </h3>
-                          </div>
-                          <p className="text-xs text-muted-foreground mb-4">
-                            {meta.desc}
-                          </p>
+                        <span className="text-base w-6 shrink-0">
+                          {DOMAIN_ICONS[domain] ?? "◆"}
+                        </span>
+                        <span className="text-sm text-foreground w-40 shrink-0 truncate">
+                          {domain}
+                        </span>
+                        <div className="flex-1 h-1 rounded-full bg-secondary overflow-hidden">
+                          <motion.div
+                            className="h-full rounded-full"
+                            style={{ backgroundColor: getScoreColor(score) }}
+                            initial={{ width: 0 }}
+                            animate={{ width: `${score}%` }}
+                            transition={{
+                              duration: 0.7,
+                              delay: 0.1 + i * 0.04,
+                            }}
+                          />
                         </div>
-
-                        <div>
-                          <div className="flex items-end justify-between mb-2">
-                            <span
-                              className={`text-2xl font-bold tracking-tight ${getScoreColor(score)}`}
-                            >
-                              {score}
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              / 100
-                            </span>
-                          </div>
-                          {/* Progress bar */}
-                          <div className="h-1.5 w-full rounded-full bg-secondary">
-                            <motion.div
-                              className="h-full rounded-full"
-                              style={{ backgroundColor: getBarColor(score) }}
-                              initial={{ width: 0 }}
-                              animate={{ width: `${score}%` }}
-                              transition={{
-                                duration: 0.8,
-                                delay: 0.2 + i * 0.06,
-                              }}
-                            />
-                          </div>
-                          <p className="text-xs text-muted-foreground mt-2">
-                            {getScoreLabel(score)} demand
-                          </p>
-                        </div>
+                        <span
+                          className="text-xs font-semibold tabular-nums w-7 text-right"
+                          style={{ color: getScoreColor(score) }}
+                        >
+                          {score}
+                        </span>
                       </motion.div>
-                    );
-                  })}
-                </div>
-              </motion.section>
+                    ))}
+                  </div>
+                </section>
+              )}
 
-              {/* ─── Skill Demand Insights ─── */}
-              <motion.section
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-              >
-                <div className="mb-6">
-                  <h2 className="text-lg font-semibold text-foreground">
-                    Key Insights
-                  </h2>
-                </div>
-
-                <div className="space-y-3">
-                  {chartData.length > 0 && (
-                    <>
-                      <InsightCard
-                        title="Most In-Demand Skill"
-                        body={`${chartData[0]?.skill} leads with ${chartData[0]?.demand} mentions across the selected roles, making it the current top requested competency in this market scan.`}
-                      />
-                      {chartData.length >= 3 && (
-                        <InsightCard
-                          title="Top 3 Cluster"
-                          body={`${chartData[0]?.skill}, ${chartData[1]?.skill}, and ${chartData[2]?.skill} together dominate job requirements. Proficiency in all three significantly increases employability across multiple domains.`}
-                        />
-                      )}
-                      {domains.length >= 2 && (
-                        <InsightCard
-                          title="Highest Demand Domain"
-                          body={`${domains[0][0]} shows the highest competitiveness score (${domains[0][1]}/100), indicating the densest concentration of active job postings requiring domain-specific skills.`}
-                        />
-                      )}
-                      <InsightCard
-                        title="Data Source"
-                        body={`All signals are derived from Adzuna API job listings for India. Roles analyzed in this run: ${trends.analyzed_roles?.join(", ") || "default set"}.`}
-                      />
-                    </>
-                  )}
-                </div>
-              </motion.section>
-            </div>
+              {/* Footnote */}
+              <p className="text-xs text-muted-foreground/50">
+                Adzuna API · India ·{" "}
+                {trends.analyzed_roles?.slice(0, 4).join(", ")}
+                {(trends.analyzed_roles?.length ?? 0) > 4
+                  ? ` +${(trends.analyzed_roles?.length ?? 0) - 4} more`
+                  : ""}
+              </p>
+            </motion.div>
           )}
         </div>
       </main>
 
       <Footer />
-    </div>
-  );
-}
-
-/* ─── Sub-components ─── */
-
-function InsightCard({ title, body }: { title: string; body: string }) {
-  return (
-    <div className="rounded-xl border border-border bg-card p-5">
-      <h4 className="text-sm font-semibold text-foreground mb-1.5">{title}</h4>
-      <p className="text-sm text-muted-foreground leading-relaxed">{body}</p>
     </div>
   );
 }
