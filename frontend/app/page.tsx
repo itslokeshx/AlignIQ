@@ -338,7 +338,7 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4 }}
-              className="mx-auto max-w-2xl px-4 sm:px-6 py-6 sm:py-8"
+              className="mx-auto max-w-2xl px-4 sm:px-6 pt-3 pb-6 sm:py-8"
             >
               {/* Back button */}
               <button
@@ -445,7 +445,7 @@ export default function HomePage() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5 }}
-              className="mx-auto max-w-3xl px-4 sm:px-6 py-6 sm:py-10"
+              className="mx-auto max-w-3xl px-4 sm:px-6 pt-3 pb-6 sm:py-10"
             >
               {/* ── Premium Report Header ── */}
               <div className="mb-10 sm:mb-14">
