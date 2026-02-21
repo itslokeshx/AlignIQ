@@ -14,6 +14,21 @@ export function Navbar() {
             ALIGNIQ
           </span>
         </Link>
+
+        <div className="flex items-center gap-2">
+          <Link
+            href="/"
+            className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-1.5 text-xs font-medium text-zinc-400 transition-all hover:bg-white/[0.06] hover:text-zinc-200"
+          >
+            Home
+          </Link>
+          <Link
+            href="/market"
+            className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-1.5 text-xs font-medium text-zinc-400 transition-all hover:bg-white/[0.06] hover:text-zinc-200"
+          >
+            Market Analysis
+          </Link>
+        </div>
       </nav>
     </header>
   );
