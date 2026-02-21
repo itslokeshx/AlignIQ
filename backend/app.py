@@ -10,6 +10,7 @@ import threading
 import time
 import logging
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import requests as http_requests
 from flask import Flask, jsonify, request
@@ -108,7 +109,7 @@ def skill_resources():
 def analyze():
     data = request.get_json(force=True)
 
-    # ── 1. Process Profile ───────────────────────────────────────────────────
+    # ── 1. Process Profile (sync — fast, everything depends on it) ───────────
     try:
         processed = process_profile(data)
     except Exception as e:
@@ -119,9 +120,29 @@ def analyze():
     target_domain = processed["target_domain"]
     field       = processed["field_of_study"]
 
-    # ── 2. Best-Fit Career Predictions ────────────────────────────────────────
-    top3 = predict_best_fit_careers(processed)
-    # top3: [(role, score), (role, score), (role, score)]
+    # ── 2. Phase A — parallel: predictions + jobs + CRI + role description ───
+    phase_a = {}
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        futures = {
+            pool.submit(predict_best_fit_careers, processed): "best_fit",
+            pool.submit(fetch_jobs, target_role, "India"): "jobs",
+            pool.submit(calculate_cri, processed): "cri",
+            pool.submit(generate_role_description, target_role, target_domain): "role_desc",
+        }
+        for fut in as_completed(futures):
+            key = futures[fut]
+            try:
+                phase_a[key] = fut.result()
+            except Exception as e:
+                logging.warning(f"Phase A '{key}' failed: {e}")
+                phase_a[key] = None
+
+    # Unpack Phase A results
+    top3 = phase_a.get("best_fit") or [("Business Analyst", 60.0)]
+    job_results = phase_a.get("jobs") or []
+    cri = phase_a.get("cri") or calculate_cri(processed)
+    role_description = phase_a.get("role_desc") or f"A {target_role} operates within the {target_domain} domain."
+
     primary_role  = top3[0][0] if top3 else "Business Analyst"
     primary_score = top3[0][1] if top3 else 60.0
     second_role   = top3[1][0] if len(top3) > 1 else None
@@ -130,7 +151,6 @@ def analyze():
     primary_details = get_role_details(primary_role)
     why_text        = generate_why_text(primary_role, processed)
 
-    # Strengths = skills the student has that appear in the best-fit role requirements
     primary_req     = ROLE_REQUIREMENTS.get(primary_role, {})
     primary_skills  = primary_req.get("skills", [])
     student_lower   = [s.lower() for s in processed["selected_skills"]]
@@ -150,43 +170,59 @@ def analyze():
         "third_fit":         {"role": third_role,  "score": top3[2][1] if len(top3) > 2 else 0},
     }
 
-    # ── 3. Chosen Career Analysis ─────────────────────────────────────────────
-    # Fetch jobs for chosen role (used for market skill demand too)
-    try:
-        job_results = fetch_jobs(target_role, "India")
-    except Exception:
-        job_results = []
-
-    # Extract top-demanded skills from job listings
+    # ── 3. Chosen career match (sync — fast, needs jobs) ─────────────────────
     market_skill_demand = _extract_market_skills(job_results, target_role)
-
     chosen_match = calculate_chosen_career_match(processed, market_skill_demand)
-
-    # AI-generated role description
-    role_description = generate_role_description(target_role, target_domain)
-
-    # Target role entry salary (from ROLE_REQUIREMENTS or domain defaults)
     chosen_role_details = get_role_details(target_role)
-
-    # AI roadmap
     exp_level = _get_experience_level(processed)
-    roadmap   = generate_roadmap(
-        target_role,
-        chosen_match["missing_skills"],
-        chosen_match["gap_severity"],
-        field,
-        exp_level,
-    )
 
-    # Enrich roadmap actions with curated resources + YouTube API
+    # ── 4. Phase B — parallel: 4 LLM calls at once ──────────────────────────
+    phase_b = {}
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        futures = {
+            pool.submit(
+                generate_roadmap, target_role,
+                chosen_match["missing_skills"], chosen_match["gap_severity"],
+                field, exp_level,
+            ): "roadmap",
+            pool.submit(
+                generate_bridge_sentence, name,
+                best_fit["role"], target_role, processed["personality_scores"],
+            ): "bridge",
+            pool.submit(
+                generate_executive_summary, name, best_fit,
+                {  # partial chosen_career — only fields the prompt uses
+                    "role": target_role,
+                    "alignment_score": chosen_match["alignment_score"],
+                    "interest_match": chosen_match["interest_match"],
+                    "skill_match": chosen_match["skill_match"],
+                    "experience_match": chosen_match["experience_match"],
+                    "gap_severity": chosen_match["gap_severity"],
+                },
+                cri, processed["personality_scores"],
+            ): "summary",
+            pool.submit(
+                generate_action_checklist, target_role,
+                chosen_match["missing_skills"], chosen_match["gap_timeline"], field,
+            ): "checklist",
+        }
+        for fut in as_completed(futures):
+            key = futures[fut]
+            try:
+                phase_b[key] = fut.result()
+            except Exception as e:
+                logging.warning(f"Phase B '{key}' failed: {e}")
+                phase_b[key] = None
+
+    roadmap          = phase_b.get("roadmap") or _fallback_roadmap(chosen_match)
+    bridge_sentence  = phase_b.get("bridge") or ""
+    executive_summary = phase_b.get("summary") or f"{name}'s career profile is being generated."
+    action_checklist  = phase_b.get("checklist") or []
+
+    # ── 5. Enrich roadmap with resources (parallel YouTube internally) ───────
     roadmap = enrich_roadmap_with_resources(
         roadmap, chosen_match["missing_skills"],
         target_role=target_role, target_domain=target_domain,
-    )
-
-    # Bridge sentence between best fit and chosen career
-    bridge_sentence = generate_bridge_sentence(
-        name, best_fit["role"], target_role, processed["personality_scores"]
     )
 
     chosen_career = {
@@ -208,25 +244,14 @@ def analyze():
         "roadmap":          roadmap,
     }
 
-    # ── 4. CRI ────────────────────────────────────────────────────────────────
-    cri = calculate_cri(processed)
-
-    # ── 5. Personality & Interest Profile ────────────────────────────────────
+    # ── 6. Interest Profile ──────────────────────────────────────────────────
     interest_profile = {
         "personality":       processed["personality_scores"],
         "interest_clusters": processed["interest_clusters"],
         "motivators":        [],
     }
 
-    # ── 6. Executive Summary + Checklist ─────────────────────────────────────
-    executive_summary = generate_executive_summary(
-        name, best_fit, chosen_career, cri, processed["personality_scores"]
-    )
-    action_checklist = generate_action_checklist(
-        target_role, chosen_match["missing_skills"], chosen_match["gap_timeline"], field
-    )
-
-    # ── 7. Assemble Response ──────────────────────────────────────────────────
+    # ── 7. Assemble Response ─────────────────────────────────────────────────
     response = {
         "identity": {
             "name":           name,
@@ -254,6 +279,25 @@ def _get_experience_level(processed: dict) -> str:
     if internships >= 2 or (internships >= 1 and projects >= 2):
         return "intermediate"
     return "entry"
+
+
+def _fallback_roadmap(chosen_match: dict) -> dict:
+    """Fallback roadmap when LLM fails."""
+    gap = chosen_match.get("gap_severity", "Moderate")
+    ms = chosen_match.get("missing_skills", [])
+    if gap == "Minimal":
+        d1, d2, d3 = "0–1 months", "1–2 months", "2–4 months"
+    elif gap == "Minor":
+        d1, d2, d3 = "0–1 months", "1–3 months", "3–6 months"
+    elif gap == "Moderate":
+        d1, d2, d3 = "0–2 months", "2–4 months", "4–8 months"
+    else:
+        d1, d2, d3 = "0–2 months", "2–6 months", "6–12 months"
+    return {
+        "phase_1": {"title": "Build Core Foundation", "duration": d1, "actions": [f"Learn {ms[0] if ms else 'foundational skill'}", "Complete one structured online course", "Set up your portfolio"]},
+        "phase_2": {"title": "Apply & Create", "duration": d2, "actions": ["Build a real project using your new skills", "Pursue an internship or freelance gig", "Participate in a hackathon or workshop"]},
+        "phase_3": {"title": "Position & Launch", "duration": d3, "actions": ["Refine your resume and LinkedIn", "Apply to 10+ targeted roles", "Get feedback from 2 professionals"]},
+    }
 
 
 def _extract_market_skills(job_results: list, role: str) -> list:

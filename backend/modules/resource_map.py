@@ -14,6 +14,7 @@ import logging
 import urllib.request
 import urllib.parse
 from functools import lru_cache
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 logger = logging.getLogger(__name__)
 
@@ -1231,42 +1232,57 @@ def get_resources_for_skills(skills: list) -> dict:
     """
     Return curated + YouTube resources for a list of skill names.
     Used by /api/skill-resources endpoint for market page.
+    YouTube calls run in PARALLEL for speed.
 
     Returns: { "skill_name": [ {title, platform, type, url}, ... ], ... }
     """
     result = {}
+    yt_needed = {}  # skill -> curated_resources (skills that need YouTube fetch)
+
+    # Step 1: Gather curated resources (instant, no API calls)
     for skill in skills:
         skill_norm = _normalize(skill)
         resources = []
 
-        # 1. Exact curated match
         if skill_norm in RESOURCE_MAP:
             resources.extend(RESOURCE_MAP[skill_norm][:2])
         else:
-            # 2. Partial match — key in skill or skill in key
             for key in RESOURCE_MAP:
                 if skill_norm in key or key in skill_norm:
                     resources.extend(RESOURCE_MAP[key][:2])
                     break
 
-        # 3. YouTube — always try for a video
+        result[skill] = resources
         if YOUTUBE_API_KEY:
-            yt_results = _fetch_youtube(f"{skill} tutorial course")
-            for vid in yt_results[:1]:
-                # Avoid duplicates
-                if not any(r.get("url") == vid.get("url") for r in resources):
-                    resources.append(vid)
+            yt_needed[skill] = resources
 
-        # 4. Generic search fallback if nothing found
-        if not resources:
-            resources.append({
+    # Step 2: Parallel YouTube fetch for all skills at once
+    if yt_needed:
+        with ThreadPoolExecutor(max_workers=min(len(yt_needed), 8)) as pool:
+            futures = {
+                pool.submit(_fetch_youtube, f"{skill} tutorial course"): skill
+                for skill in yt_needed
+            }
+            for fut in as_completed(futures):
+                skill = futures[fut]
+                try:
+                    yt_results = fut.result()
+                    for vid in yt_results[:1]:
+                        if not any(r.get("url") == vid.get("url") for r in result[skill]):
+                            result[skill].append(vid)
+                except Exception:
+                    pass
+
+    # Step 3: Fallback for skills with no resources
+    for skill in skills:
+        if not result.get(skill):
+            result[skill] = [{
                 "title": f"Learn {skill}",
                 "platform": "Google",
                 "type": "search",
                 "url": f"https://www.google.com/search?q=learn+{urllib.parse.quote(skill)}+course",
-            })
-
-        result[skill] = resources[:3]   # max 3 per skill
+            }]
+        result[skill] = result[skill][:3]
 
     return result
 
@@ -1279,33 +1295,47 @@ def enrich_roadmap_with_resources(
 ) -> dict:
     """
     Attach 1-2 curated/YouTube resources to each roadmap action.
-
-    Args:
-        roadmap: Dict with phase_1, phase_2, phase_3 keys
-        missing_skills: List of skill gaps identified for the user
-        target_role: The career role the user is targeting
-        target_domain: The domain (e.g., "Creative & Design")
+    All actions across all phases are enriched in PARALLEL for speed.
     """
+    # Collect all actions with their phase/index info
+    all_tasks = []  # (phase_key, index, action_text)
     for phase_key in ["phase_1", "phase_2", "phase_3"]:
         phase = roadmap.get(phase_key, {})
-        enriched_actions = []
-
-        for action in phase.get("actions", []):
-            # Handle already-enriched actions
+        for i, action in enumerate(phase.get("actions", [])):
             action_text = action if isinstance(action, str) else action.get("action", "")
+            all_tasks.append((phase_key, i, action_text))
 
-            resources = get_resources_for_action(
-                action_text,
+    # Enrich all actions in parallel
+    results = {}  # (phase_key, index) -> {action, resources}
+    with ThreadPoolExecutor(max_workers=min(len(all_tasks), 9)) as pool:
+        futures = {
+            pool.submit(
+                get_resources_for_action,
+                task[2],
                 missing_skills=missing_skills,
                 target_role=target_role,
                 target_domain=target_domain,
-            )
-
-            enriched_actions.append({
+            ): (task[0], task[1], task[2])
+            for task in all_tasks
+        }
+        for fut in as_completed(futures):
+            phase_key, idx, action_text = futures[fut]
+            try:
+                resources = fut.result()
+            except Exception:
+                resources = []
+            results[(phase_key, idx)] = {
                 "action": action_text,
                 "resources": resources,
-            })
+            }
 
-        phase["actions"] = enriched_actions
+    # Reassemble roadmap in order
+    for phase_key in ["phase_1", "phase_2", "phase_3"]:
+        phase = roadmap.get(phase_key, {})
+        action_count = len(phase.get("actions", []))
+        phase["actions"] = [
+            results.get((phase_key, i), {"action": "", "resources": []})
+            for i in range(action_count)
+        ]
 
     return roadmap

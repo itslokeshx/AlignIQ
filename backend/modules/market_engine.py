@@ -12,6 +12,7 @@ import os
 import re
 import requests
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -609,11 +610,7 @@ def rank_jobs_by_match(jobs: list, student_skills: list) -> list:
 def get_market_trends(roles: list | None = None, domain: str = "") -> dict:
     """
     Aggregate skill demand data across multiple roles for Market Intelligence.
-
-    Args:
-        roles: list of role names to scan
-        domain: the user-selected domain (e.g. "Trades & Skilled Work")
-               — used to force correct mock data when API results are off-domain
+    Fetches all roles in PARALLEL for speed.
     """
     roles_to_scan = roles or [
         "Software Engineer",
@@ -630,12 +627,11 @@ def get_market_trends(roles: list | None = None, domain: str = "") -> dict:
     all_skill_counts = Counter()
     domain_scores = {}
 
-    for role in roles_to_scan:
+    def _scan_role(role: str):
+        """Fetch + extract skills for one role (runs in thread)."""
         jobs = fetch_jobs(role, count=5)
         skills = extract_skills_from_jobs(jobs)
 
-        # ── Relevance gate ─────────────────────────────────────────
-        # Determine expected domain: explicit > auto-detected
         domain_hint = explicit_hint or _detect_domain(role)
         expected_domain = PUBLIC_DOMAIN_FROM_HINT.get(domain_hint, "")
         expected_skills = {
@@ -668,8 +664,18 @@ def get_market_trends(roles: list | None = None, domain: str = "") -> dict:
                 jobs = _mock_jobs(role, domain_hint_override=domain_hint)
                 skills = extract_skills_from_jobs(jobs)
 
-        for skill, count in skills:
-            all_skill_counts[skill] += count
+        return skills
+
+    # ── Parallel fetch all roles ─────────────────────────────────────────
+    with ThreadPoolExecutor(max_workers=min(len(roles_to_scan), 6)) as pool:
+        futures = {pool.submit(_scan_role, role): role for role in roles_to_scan}
+        for fut in as_completed(futures):
+            try:
+                skills = fut.result()
+                for skill, count in skills:
+                    all_skill_counts[skill] += count
+            except Exception as e:
+                print(f"[Market] Role scan failed: {e}")
 
     # Top 10 demanded skills
     top_skills = all_skill_counts.most_common(10)
