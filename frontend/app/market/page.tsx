@@ -74,8 +74,15 @@ export default function MarketPage() {
       const res = await fetch(`${API_URL}/api/market-trends?${params}`);
       if (!res.ok) throw new Error(`${res.status}`);
       setTrends(await res.json());
-    } catch {
-      setError("Backend unreachable. Is the server running?");
+    } catch (err: any) {
+      const isBlocked =
+        err instanceof TypeError &&
+        err.message?.toLowerCase().includes("failed to fetch");
+      setError(
+        isBlocked
+          ? "Request blocked — disable your ad blocker for this page, then try again."
+          : "Backend unreachable. Is the server running?",
+      );
     } finally {
       setAnalyzing(false);
     }
