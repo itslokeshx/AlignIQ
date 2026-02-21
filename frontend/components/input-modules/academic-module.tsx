@@ -85,7 +85,7 @@ export default function AcademicModule({ data, onChange }: Props) {
         <Label className="text-zinc-300 text-sm font-medium">
           Academic Consistency
         </Label>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 xs:grid-cols-3 gap-2 sm:gap-3">
           {CONSISTENCY_OPTIONS.map((opt) => (
             <button
               key={opt.value}

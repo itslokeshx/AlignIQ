@@ -447,40 +447,59 @@ export default function HomePage() {
               transition={{ duration: 0.5 }}
               className="mx-auto max-w-3xl px-4 sm:px-6 py-6 sm:py-10"
             >
-              {/* ── Report Header — minimal, one line ── */}
-              <div className="mb-12">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
-                  <h1 className="text-2xl font-bold text-white tracking-tight">
-                    {results.identity.name}
-                  </h1>
-                  <p className="text-[11px] text-zinc-600 font-mono">
-                    {results.identity.profile_id} ·{" "}
-                    {results.identity.generated_date}
-                  </p>
-                </div>
-                <div className="h-px bg-zinc-800/60 mb-5" />
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                  <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
-                    <span className="text-zinc-500">
-                      Best Fit →{" "}
-                      <span className="text-emerald-400 font-medium">
-                        {results.best_fit.role}
-                      </span>
-                    </span>
-                    <span className="text-zinc-500">
-                      Your Goal →{" "}
-                      <span className="text-blue-400 font-medium">
-                        {results.chosen_career.role}
-                      </span>
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={handleReset}
-                      className="rounded-lg border border-white/[0.06] bg-white/[0.03] px-4 py-2 text-[11px] font-medium text-zinc-500 hover:text-white hover:bg-white/[0.06] transition-all duration-200"
-                    >
-                      New Assessment
-                    </button>
+              {/* ── Premium Report Header ── */}
+              <div className="mb-10 sm:mb-14">
+                <div className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-gradient-to-br from-zinc-900/80 via-zinc-950/60 to-zinc-900/80 p-5 sm:p-8">
+                  {/* Decorative orbs */}
+                  <div className="pointer-events-none absolute -top-20 -left-20 w-48 h-48 bg-blue-600/[0.05] rounded-full blur-3xl" />
+                  <div className="pointer-events-none absolute -bottom-16 -right-16 w-40 h-40 bg-violet-600/[0.04] rounded-full blur-3xl" />
+
+                  <div className="relative">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-5">
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-600 mb-2">
+                          Career Intelligence Report
+                        </p>
+                        <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                          {results.identity.name}
+                        </h1>
+                      </div>
+                      <p className="text-[10px] text-zinc-600 font-mono bg-zinc-800/50 px-2.5 py-1 rounded-md self-start">
+                        {results.identity.profile_id} ·{" "}
+                        {results.identity.generated_date}
+                      </p>
+                    </div>
+
+                    <div className="h-px bg-gradient-to-r from-blue-500/20 via-violet-500/20 to-transparent mb-5" />
+
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                      <div className="flex flex-wrap items-center gap-3 sm:gap-5">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                          <span className="text-xs text-zinc-500">
+                            Best Fit:{" "}
+                            <span className="text-emerald-400 font-semibold">
+                              {results.best_fit.role}
+                            </span>
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-blue-500" />
+                          <span className="text-xs text-zinc-500">
+                            Your Goal:{" "}
+                            <span className="text-blue-400 font-semibold">
+                              {results.chosen_career.role}
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={handleReset}
+                        className="rounded-lg border border-white/[0.06] bg-white/[0.03] px-4 py-2 text-[11px] font-medium text-zinc-500 hover:text-white hover:bg-white/[0.06] transition-all duration-200"
+                      >
+                        New Assessment
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -491,7 +510,7 @@ export default function HomePage() {
                 personality={results.interest_profile.personality}
               />
 
-              <div className="h-px bg-zinc-800/40 my-12" />
+              <div className="h-px bg-gradient-to-r from-transparent via-zinc-800/40 to-transparent my-10 sm:my-14" />
 
               {/* ── ACT 2 — The Analysis ── */}
               <ActTwoAnalysis
@@ -501,7 +520,7 @@ export default function HomePage() {
                 bridgeSentence={results.bridge_sentence || ""}
               />
 
-              <div className="h-px bg-zinc-800/40 my-12" />
+              <div className="h-px bg-gradient-to-r from-transparent via-zinc-800/40 to-transparent my-10 sm:my-14" />
 
               {/* ── ACT 3 — Your Path Forward ── */}
               <ActThreePathForward
@@ -512,19 +531,23 @@ export default function HomePage() {
               />
 
               {/* ── Report Footer ── */}
-              <div className="mt-16 pt-8 border-t border-zinc-800/30">
+              <div className="mt-14 sm:mt-20 pt-6 sm:pt-8 border-t border-zinc-800/20">
                 <div className="text-center space-y-4">
-                  <p className="text-xs text-zinc-700 leading-relaxed max-w-md mx-auto">
-                    This analysis uses ML career prediction, cosine alignment
-                    scoring, and live Adzuna market data. It is an intelligence
-                    tool — your decisions are your own.
-                  </p>
-                  <button
-                    onClick={handleReset}
-                    className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
-                  >
-                    Start New Assessment →
-                  </button>
+                  <div className="inline-flex items-center gap-2 rounded-full border border-white/[0.04] bg-white/[0.02] px-4 py-1.5">
+                    <span className="h-1.5 w-1.5 rounded-full bg-blue-500/50" />
+                    <p className="text-[10px] text-zinc-600">
+                      Powered by ML prediction · cosine alignment · live Adzuna
+                      data
+                    </p>
+                  </div>
+                  <div>
+                    <button
+                      onClick={handleReset}
+                      className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
+                    >
+                      Start New Assessment →
+                    </button>
+                  </div>
                 </div>
               </div>
             </motion.div>

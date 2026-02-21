@@ -3,6 +3,11 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* xs breakpoint for small phones → regular phones */
+@theme inline {
+  --breakpoint-xs: 28rem; /* 448px */
+}
+
 :root {
   --background: #0a0a0a;
   --foreground: #ffffff;

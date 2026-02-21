@@ -157,7 +157,7 @@ export default function ExperienceSkillsModule({
         </Label>
 
         {/* Internships */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <span className="text-sm text-zinc-400">Internships completed</span>
           <div className="flex gap-1.5">
             {[0, 1, 2, 3, "4+"].map((n) => (
@@ -180,7 +180,7 @@ export default function ExperienceSkillsModule({
         </div>
 
         {/* Projects */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <span className="text-sm text-zinc-400">Projects built</span>
           <div className="flex gap-1.5">
             {[0, 1, 2, 3, "4+"].map((n) => (
@@ -201,9 +201,9 @@ export default function ExperienceSkillsModule({
         </div>
 
         {/* Readiness */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <span className="text-sm text-zinc-400">Career readiness feel</span>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             <input
               type="range"
               min={1}
@@ -212,7 +212,7 @@ export default function ExperienceSkillsModule({
               onChange={(e) =>
                 set("readiness_rating", parseInt(e.target.value))
               }
-              className="w-28 accent-blue-500"
+              className="flex-1 sm:w-28 accent-blue-500"
             />
             <span className="text-xs text-zinc-500 tabular-nums w-6 text-right">
               {data.readiness_rating}
