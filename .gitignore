@@ -1,10 +1,51 @@
-# v0 runtime files
-__v0_runtime_loader.js
-__v0_devtools.tsx
-__v0_jsx-dev-runtime.ts
+# ── Frontend ──────────────────────────────
+frontend/node_modules/
+frontend/.next/
+frontend/.env*.local
+frontend/out/
+frontend/.vercel/
 
-# Common ignores
-node_modules/
-.next/
-.env*.local
+# ── Backend ───────────────────────────────
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.pyc
+backend/**/*.pyc
+backend/.env
+backend/venv/
+backend/.venv/
+backend/data/career_dataset.csv
+backend/model/career_model.pkl
+
+# ── Python ────────────────────────────────
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+.pytest_cache/
+.mypy_cache/
+
+# ── OS ────────────────────────────────────
 .DS_Store
+Thumbs.db
+*.swp
+*~
+
+# ── IDE ───────────────────────────────────
+.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# ── Misc ──────────────────────────────────
+*.log
+*.pid
+.env
+.env.local
+.env.*.local
