@@ -58,7 +58,7 @@ def calculate_cri(processed: dict) -> dict:
 
     # ─── 4. Market Alignment Score (0–15) ────────────────────────────────────
     # Higher if the target role has strong market demand and student's skills match it
-    from backend.modules.profile_processor import ROLE_REQUIREMENTS, calculate_skill_overlap
+    from modules.profile_processor import ROLE_REQUIREMENTS, calculate_skill_overlap
     target_role   = processed.get('target_role', '')
     req           = ROLE_REQUIREMENTS.get(target_role, {})
     role_skills   = req.get('skills', [])

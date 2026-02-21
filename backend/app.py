@@ -14,17 +14,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from backend.modules.profile_processor import (
+from modules.profile_processor import (
     process_profile, predict_best_fit_careers,
     get_role_details, generate_why_text,
     calculate_chosen_career_match, ROLE_REQUIREMENTS,
 )
-from backend.modules.cri_calculator  import calculate_cri
-from backend.modules.ai_engine       import (
+from modules.cri_calculator  import calculate_cri
+from modules.ai_engine       import (
     generate_role_description, generate_executive_summary,
     generate_action_checklist, generate_roadmap,
 )
-from backend.modules.market_engine   import fetch_jobs, get_market_trends
+from modules.market_engine   import fetch_jobs, get_market_trends
 
 app = Flask(__name__)
 CORS(app)
