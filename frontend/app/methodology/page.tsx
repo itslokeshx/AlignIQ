@@ -79,19 +79,21 @@ export default function MethodologyPage() {
                   {
                     label: "Assessment Modules",
                     value:
-                      "6 input modules — Identity, Interests, Experience, Skills, Intent, Personality",
+                      "4 input steps — Academic, Experience & Skills, Career Goal, Personality",
                   },
                   {
-                    label: "Report Sections",
-                    value: "8 result sections per report",
+                    label: "Report Structure",
+                    value:
+                      "3-act intelligence report — Profile, Analysis, Action Path",
                   },
                   {
                     label: "Backend",
-                    value: "Python · Flask REST API · port 5000",
+                    value: "Python · Flask REST API · Gunicorn · port 5000",
                   },
                   {
                     label: "Frontend",
-                    value: "Next.js 15 · TypeScript · TailwindCSS v4",
+                    value:
+                      "Next.js 16 · TypeScript · TailwindCSS v4 · Glass-morphism UI",
                   },
                   { label: "AI Provider", value: "Groq Cloud (LLaMA 3 70B)" },
                   {
@@ -130,10 +132,11 @@ export default function MethodologyPage() {
               </ul>
               <p>
                 <strong className="text-white">AlignIQ solves this</strong> by
-                running a 6-module data collection pipeline, computing a
+                running a 4-step data collection pipeline, computing a
                 quantified Career Readiness Index, performing dual-track career
                 matching, pulling live job listings, and generating a fully
-                personalised roadmap — all in a single report.
+                personalised roadmap with curated learning resources — all in a
+                single 3-act intelligence report.
               </p>
             </Section>
 
@@ -142,9 +145,10 @@ export default function MethodologyPage() {
               <p className="mb-6">
                 AlignIQ follows a{" "}
                 <strong className="text-white">
-                  7-stage modular pipeline architecture
+                  7-stage parallelised pipeline architecture
                 </strong>
                 . Each stage produces structured data consumed by the next.
+                Independent stages execute in parallel via ThreadPoolExecutor.
               </p>
               <div className="relative space-y-3">
                 {ARCHITECTURE_STEPS.map((step, i) => (
@@ -176,12 +180,11 @@ export default function MethodologyPage() {
                   Data Flow Summary
                 </p>
                 <p className="text-sm text-zinc-400 font-mono leading-7">
-                  User fills 6 modules →{" "}
+                  User fills 4 steps →{" "}
                   <span className="text-blue-400">POST /api/analyze</span> →
-                  Profile Processor normalises → ML Engine predicts best-fit →
-                  Market Engine fetches live jobs → CRI Calculator scores
-                  readiness → AI Engine writes prose → JSON → React renders 8
-                  report sections
+                  Profile Processor normalises → Phase A parallel (ML + Jobs +
+                  CRI + Role Desc) → Phase B parallel (4 LLM calls) → Resource
+                  Enrichment (YouTube API) → JSON → React renders 3-act report
                 </p>
               </div>
             </Section>
@@ -194,9 +197,12 @@ export default function MethodologyPage() {
             >
               <p className="mb-5">
                 The frontend is built with{" "}
-                <strong className="text-white">Next.js 15 (App Router)</strong>,
-                TypeScript, and TailwindCSS v4. It is a single-page application
-                with 4 view states managed client-side.
+                <strong className="text-white">
+                  Next.js 16 (App Router, Turbopack)
+                </strong>
+                , TypeScript, and TailwindCSS v4. It is a single-page
+                application with 4 view states managed client-side, featuring
+                premium glass-morphism UI and full mobile responsiveness.
               </p>
 
               <SubHeading>Pages</SubHeading>
@@ -205,7 +211,7 @@ export default function MethodologyPage() {
                   {
                     label: "/ (Home)",
                     value:
-                      "Main SPA — Hero → 6-step Input wizard → Loading → Results (4 view states)",
+                      "Main SPA — Hero → 4-step Input wizard → Loading → 3-Act Results (4 view states)",
                   },
                   {
                     label: "/methodology",
@@ -227,7 +233,7 @@ export default function MethodologyPage() {
               </p>
               <div className="rounded-xl border border-white/[0.05] bg-zinc-950/40 p-5 font-mono text-sm text-zinc-400">
                 <span className="text-emerald-400">hero</span> →{" "}
-                <span className="text-blue-400">input (step 1–6)</span> →{" "}
+                <span className="text-blue-400">input (step 1–4)</span> →{" "}
                 <span className="text-violet-400">loading</span> →{" "}
                 <span className="text-yellow-400">results</span>
                 <br />
@@ -237,7 +243,7 @@ export default function MethodologyPage() {
                 </span>
               </div>
 
-              <SubHeading>The 6 Input Modules</SubHeading>
+              <SubHeading>The 4 Input Steps</SubHeading>
               <div className="space-y-2">
                 {INPUT_MODULES.map((m, i) => (
                   <div
@@ -271,9 +277,9 @@ export default function MethodologyPage() {
               <InfoGrid
                 items={[
                   {
-                    label: "Next.js 15",
+                    label: "Next.js 16",
                     value:
-                      "App Router, SSR/CSR hybrid, file-based routing, server components",
+                      "App Router, Turbopack, SSR/CSR hybrid, file-based routing, server components",
                   },
                   {
                     label: "TypeScript",
@@ -309,8 +315,10 @@ export default function MethodologyPage() {
               <p className="mb-5">
                 The backend is a{" "}
                 <strong className="text-white">Python Flask REST API</strong>{" "}
-                running on port 5000. It exposes 3 endpoints and orchestrates
-                all analysis modules.
+                running on port 5000 (Gunicorn in production). It exposes 4
+                endpoints and orchestrates all analysis modules using a 2-phase
+                parallelised architecture via ThreadPoolExecutor (~8–12s total
+                execution).
               </p>
 
               <SubHeading>API Endpoints</SubHeading>
@@ -318,9 +326,9 @@ export default function MethodologyPage() {
                 <EndpointCard
                   method="POST"
                   path="/api/analyze"
-                  desc="Main analysis endpoint. Accepts full student profile JSON, runs all 6 backend modules, returns the complete intelligence report."
-                  input="StudentProfile (identity, interests, experience, skills, intent, personality)"
-                  output="AnalysisResponse (identity, interest_profile, best_fit, chosen_career, cri, jobs, executive_summary, action_checklist)"
+                  desc="Main analysis endpoint. Accepts 4-step student profile JSON, runs parallelised backend pipeline (Phase A + Phase B + Resource Enrichment), returns the complete 3-act intelligence report."
+                  input="StudentProfile (academic, experience_skills, career_goal, personality)"
+                  output="AnalysisResponse (identity, interest_profile, best_fit, chosen_career, cri, jobs, executive_summary, action_checklist, bridge_sentence)"
                 />
                 <EndpointCard
                   method="GET"
@@ -332,9 +340,16 @@ export default function MethodologyPage() {
                 <EndpointCard
                   method="GET"
                   path="/api/market-trends"
-                  desc="Market Intelligence page endpoint. Accepts a list of roles, returns top demanded skills and domain competitiveness scores."
-                  input="?roles=Role1&roles=Role2 (query string)"
+                  desc="Market Intelligence page endpoint. Accepts a list of roles and optional domain context, returns top demanded skills and domain competitiveness scores."
+                  input="?roles=Role1&roles=Role2&domain=Domain (query string)"
                   output="{ top_skills, domain_competitiveness, analyzed_roles }"
+                />
+                <EndpointCard
+                  method="GET"
+                  path="/api/skill-resources"
+                  desc="Returns curated + YouTube learning resources for a list of skills. Max 10 skills. Uses parallel YouTube API calls."
+                  input="?skills=Skill1&skills=Skill2 (query string, max 10)"
+                  output="{ [skill]: Resource[] } — per-skill resource arrays"
                 />
               </div>
 
@@ -357,6 +372,11 @@ export default function MethodologyPage() {
                     value: "Adzuna API app identifier",
                   },
                   { label: "ADZUNA_APP_KEY", value: "Adzuna API secret key" },
+                  {
+                    label: "YOUTUBE_API_KEY",
+                    value:
+                      "YouTube Data API v3 key (optional — enables dynamic video resources)",
+                  },
                   {
                     label: "NEXT_PUBLIC_API_URL",
                     value:
@@ -1002,7 +1022,7 @@ export default function MethodologyPage() {
                   "Adzuna API India has limited coverage for non-tech roles — mock fallback activates frequently for law, healthcare, arts domains",
                   "Single-session only — no user accounts, history, or progress tracking between sessions",
                   "Roadmap generated fresh per session — not connected to verified learning platform catalogs",
-                  "Mobile layout is functional but not fully optimised for small screens",
+                  "YouTube API quota limits — high traffic may exhaust daily quota (10,000 units), falls back to curated-only resources",
                 ].map((l, i) => (
                   <li key={i} className="flex items-start gap-2.5 text-sm">
                     <span className="text-yellow-500/70 shrink-0 mt-0.5">
@@ -1018,9 +1038,10 @@ export default function MethodologyPage() {
                   "User authentication + saved reports with version history",
                   "LinkedIn OAuth to auto-populate skills from student profile",
                   "Real student dataset collection → retrain model with ground-truth data",
-                  "Course API integrations (Coursera, Udemy) embedded in roadmap steps",
-                  "Mobile-native redesign with PWA support",
+                  "PDF export of the complete 3-act intelligence report",
+                  "Course API integrations (Coursera, Udemy official APIs) for verified recommendations",
                   "Multi-language support (Hindi, Tamil, Telugu)",
+                  "WebSocket-based streaming for real-time report generation progress",
                 ].map((p, i) => (
                   <li key={i} className="flex items-start gap-2.5 text-sm">
                     <span className="text-blue-400 shrink-0 mt-0.5">→</span>
@@ -1082,14 +1103,14 @@ const TOC_ITEMS = [
 
 const ARCHITECTURE_STEPS = [
   {
-    name: "User Input — 6 Modules",
-    tech: "React / Next.js",
-    desc: "Identity, Interests, Experience, Skills, Intent, Personality — collected as structured JSON over a 6-step wizard UI",
+    name: "User Input — 4-Step Assessment",
+    tech: "React / Next.js 16",
+    desc: "Academic, Experience & Skills, Career Goal, Personality — collected as structured JSON over a streamlined 4-step wizard UI",
   },
   {
     name: "POST /api/analyze",
     tech: "Flask REST API",
-    desc: "Single endpoint receives the full student profile object and orchestrates all processing modules in sequence",
+    desc: "Single endpoint receives the full student profile object and orchestrates all processing modules with parallelised execution",
   },
   {
     name: "Profile Processor",
@@ -1097,58 +1118,47 @@ const ARCHITECTURE_STEPS = [
     desc: "Normalises, vectorises, and scores raw input. Computes personality dimension scores, interest clusters, career vectors, and skill matching",
   },
   {
-    name: "ML Engine + Market Engine (parallel)",
-    tech: "scikit-learn + Adzuna API",
-    desc: "ML model predicts best-fit career; market engine concurrently fetches live job listings and extracts demanded skills",
+    name: "Phase A — Parallel Compute & Fetch",
+    tech: "ThreadPoolExecutor (4 workers)",
+    desc: "ML prediction, Adzuna job fetch, CRI calculation, and role description (LLM) — all execute simultaneously in ~3–4s",
   },
   {
-    name: "CRI Calculator",
-    tech: "cri_calculator.py",
-    desc: "Computes the 4-dimension Career Readiness Index using the processed profile data and market alignment score",
-  },
-  {
-    name: "AI Engine — Text Generation",
+    name: "Phase B — Parallel LLM Generation",
     tech: "Groq Cloud (LLaMA 3 70B)",
-    desc: "Receives all computed scores. Generates: role description, executive summary, 3-phase roadmap text, action checklist items",
+    desc: "4 Groq calls in parallel: roadmap, bridge sentence, executive summary, action checklist — completes in ~3–5s",
   },
   {
-    name: "JSON Response → React Render",
-    tech: "Next.js / Framer Motion",
-    desc: "Full AnalysisResponse JSON returned to frontend. 8 result sections render with entrance animations and interactive components",
+    name: "Resource Enrichment",
+    tech: "resource_map.py + YouTube API v3",
+    desc: "241-skill map lookup + parallel YouTube API calls enrich every roadmap action with curated learning resources",
+  },
+  {
+    name: "JSON Response → 3-Act Report",
+    tech: "Next.js 16 / Framer Motion",
+    desc: "Full AnalysisResponse JSON returned to frontend. 3-act report renders with premium glass-morphism UI and entrance animations",
   },
 ];
 
 const INPUT_MODULES = [
   {
-    name: "Identity Module",
-    desc: "Basic demographic and academic background",
+    name: "Academic Profile",
+    desc: "Student identity and academic background — streamlined from the original Identity module",
     fields:
-      "name, age, education_level, field_of_study, cgpa, consistency, backlogs",
+      "name, field_of_study, cgpa, consistency ('low'|'medium'|'high'), backlogs",
   },
   {
-    name: "Interests Module",
-    desc: "Activities enjoyed, preferred work environments, core motivators, and interest topics",
-    fields: "activities[], work_environments[], motivators[], topics[]",
-  },
-  {
-    name: "Experience Module",
-    desc: "All forms of experience with animated toggle inputs for leadership, volunteer work, and freelancing",
+    name: "Experience & Skills",
+    desc: "All experience and skills in one step — merged from the original Experience + Skills modules for faster completion",
     fields:
-      "internships, projects[], competitions, leadership, leadership_desc, volunteer, volunteer_desc, clubs, awards, earned_from_skill, earned_desc, readiness_rating",
+      "selected_skills[], proficiency_rating (1–10), languages_known[], internships, projects, leadership, competitions, volunteer, earned_from_skill, readiness_rating",
   },
   {
-    name: "Skills Module",
-    desc: "Domain skills selected from a comprehensive list with proficiency self-rating",
-    fields: "selected_skills[], proficiency_rating (1–10), languages_known[]",
+    name: "Career Goal",
+    desc: "Target career and enjoyed activities — merged from the original Intent + Interests modules",
+    fields: "target_domain, target_role, activities[]",
   },
   {
-    name: "Intent Module",
-    desc: "Target career goal, motivating reasons, salary expectations, and flexibility preferences",
-    fields:
-      "target_domain, target_role, reasons[], salary_expectation, work_location, open_to_education",
-  },
-  {
-    name: "Personality Module",
+    name: "Personality",
     desc: "8 forced-choice A/B questions mapping to 5 bipolar dimensions (no neutral options — prevents fence-sitting)",
     fields:
       "answers: Record<string, 'A'|'B'> — 8 entries mapped to 5 dimension scores",
@@ -1157,43 +1167,27 @@ const INPUT_MODULES = [
 
 const RESULT_COMPONENTS = [
   {
-    name: "AI Intelligence Summary",
-    desc: "AI-generated prose analysis at top of report — personalised executive overview of the student's career intelligence",
+    name: "Act I — Profile Snapshot",
+    desc: "Glass summary card with identity + profile ID, bidirectional personality spectrum bars (5 dimensions), interest cluster signals, AI bridge sentence",
   },
   {
-    name: "Interest Profile",
-    desc: "5-dimension personality radar + 5 interest cluster signals with strength labels + top motivators list",
+    name: "Act II — Career Analysis",
+    desc: "Animated CRI ring (SVG donut) + 4 sub-index bars, Track A best-fit card with gradient styling, Track B chosen career with alignment bars + skill gaps + market chart, 2nd/3rd fit cards",
   },
   {
-    name: "Best Fit Career (Track A)",
-    desc: "ML-predicted optimal career with match %, salary range, growth trajectory, why suited, skills to develop, 2nd and 3rd fit",
-  },
-  {
-    name: "Chosen Career Analysis (Track B)",
-    desc: "Stated goal analysed with 3-dimension alignment breakdown, skill gap list with severity, market demand chart",
-  },
-  {
-    name: "Career Readiness Index",
-    desc: "SVG gauge (0–100) + 4 sub-index progress bars + projected CRI after skill acquisition",
-  },
-  {
-    name: "Personalised Roadmap",
-    desc: "3-phase vertical timeline + interactive Action Checklist with live progress bar and task completion celebration",
-  },
-  {
-    name: "Live Job Opportunities",
-    desc: "Top 5 live Adzuna listings with contextual match labels, salary, location, and direct Apply links",
+    name: "Act III — Action Path",
+    desc: "3-phase gradient roadmap timeline with enriched resource links per action, interactive checklist with live progress bar, top 5 job cards with contextual match labels, AI executive summary",
   },
 ];
 
 const BACKEND_MODULES = [
   {
     file: "app.py",
-    desc: "Flask application entry point. Defines 3 routes, handles CORS, orchestrates all modules, assembles and returns the final JSON response.",
+    desc: "Flask application entry point. Defines 4 routes, handles CORS, orchestrates all modules using 2-phase ThreadPoolExecutor parallelisation (~8–12s total).",
   },
   {
     file: "profile_processor.py",
-    desc: "Normalises all input data. Computes personality scores, interest clusters, career vectors, skill matching, motivators. Returns processed dict.",
+    desc: "Normalises all input data. Computes personality scores, interest clusters, career vectors, skill matching. Returns processed dict.",
   },
   {
     file: "cri_calculator.py",
@@ -1201,11 +1195,15 @@ const BACKEND_MODULES = [
   },
   {
     file: "ai_engine.py",
-    desc: "Groq API wrapper with 4 functions: generate_role_description, generate_executive_summary, generate_roadmap, generate_action_checklist.",
+    desc: "Groq API wrapper with 5 functions: generate_role_description, generate_executive_summary, generate_roadmap, generate_action_checklist, generate_bridge_sentence.",
   },
   {
     file: "market_engine.py",
-    desc: "Adzuna API client. Fetches live listings, extracts skills via regex, ranks jobs by match score, computes domain competitiveness.",
+    desc: "Adzuna API client. Fetches live listings (parallel per role), extracts skills via regex, ranks jobs by match score, computes domain competitiveness.",
+  },
+  {
+    file: "resource_map.py",
+    desc: "241-skill resource map + YouTube Data API v3 integration. Smart matching (exact → partial → domain fallback). Parallel YouTube calls for enrichment.",
   },
   {
     file: "model/train_model.py",
@@ -1271,6 +1269,10 @@ const AI_OUTPUTS = [
     name: "Action Checklist",
     desc: "6 specific, time-bound, actionable tasks formatted as a checklist — items are role-specific and prioritised by impact",
   },
+  {
+    name: "Bridge Sentence",
+    desc: "Transitional insight connecting Track A (Best Fit) and Track B (Chosen Career) findings, incorporating personality context",
+  },
 ];
 
 const MARKET_PAGE_OUTPUTS = [
@@ -1295,15 +1297,17 @@ const MARKET_PAGE_OUTPUTS = [
 const TECH_STACK = [
   {
     category: "Frontend Framework",
-    items: "Next.js 15 (App Router) · React 19 · TypeScript 5",
+    items: "Next.js 16 (App Router, Turbopack) · React 19 · TypeScript 5",
   },
   {
     category: "Styling",
-    items: "TailwindCSS v4 · Custom CSS variables · shadcn/ui components",
+    items:
+      "TailwindCSS v4 · Custom CSS variables · shadcn/ui components · Glass-morphism UI",
   },
   {
     category: "Animations",
-    items: "Framer Motion 11 — transitions, step animations, SVG gauges",
+    items:
+      "Framer Motion 11 — transitions, step animations, SVG gauges, spring physics",
   },
   {
     category: "Charts & Visualisation",
@@ -1311,7 +1315,12 @@ const TECH_STACK = [
   },
   {
     category: "Backend Framework",
-    items: "Python 3.11 · Flask 3.x · Flask-CORS",
+    items: "Python 3.11 · Flask 3.x · Flask-CORS · Gunicorn (production)",
+  },
+  {
+    category: "Parallelisation",
+    items:
+      "concurrent.futures.ThreadPoolExecutor — 2-phase parallel pipeline (~8–12s)",
   },
   {
     category: "ML / Data Science",
@@ -1319,15 +1328,23 @@ const TECH_STACK = [
   },
   {
     category: "AI Text Generation",
-    items: "Groq Cloud SDK · LLaMA 3 70B (llama3-70b-8192)",
+    items:
+      "Groq Cloud SDK · LLaMA 3 70B (llama3-70b-8192) · 5 generation tasks",
   },
   {
     category: "Market Data",
-    items: "Adzuna Jobs API v1 · India endpoint (country: in)",
+    items:
+      "Adzuna Jobs API v1 · India endpoint (country: in) · 180+ role→domain hints",
   },
   {
-    category: "Environment & Config",
-    items: "python-dotenv · .venv virtual environment · .env file",
+    category: "Learning Resources",
+    items:
+      "YouTube Data API v3 · 241-skill resource map · 6 learning platforms",
+  },
+  {
+    category: "Environment & Deployment",
+    items:
+      "python-dotenv · Vercel (frontend) · Render (backend) · Keep-alive daemon",
   },
   {
     category: "Dev & Build Tools",
@@ -1337,34 +1354,29 @@ const TECH_STACK = [
 
 const INPUT_TYPES = [
   {
-    name: "IdentityProfile",
+    name: "AcademicProfile",
     fields:
-      "name, age, education_level, field_of_study, cgpa (number), consistency ('High'|'Medium'|'Low'), backlogs (number)",
+      "name (string), field_of_study (string), cgpa (number), consistency ('low'|'medium'|'high'), backlogs (number)",
   },
   {
-    name: "InterestsProfile",
+    name: "ExperienceSkillsProfile",
     fields:
-      "activities: string[], work_environments: string[], motivators: string[], topics: string[]",
+      "selected_skills: string[], proficiency_rating (1–10), languages_known: string[], internships (number), projects (number), leadership (boolean), competitions (boolean), volunteer (boolean), earned_from_skill (boolean), readiness_rating (1–10)",
   },
   {
-    name: "ExperienceProfile",
+    name: "CareerGoalProfile",
     fields:
-      "internships (number), projects: string[], competitions (number), leadership (boolean), leadership_desc, volunteer (boolean), volunteer_desc, clubs (number), awards (number), readiness_rating (1–10), earned_from_skill (boolean), earned_desc",
-  },
-  {
-    name: "SkillsProfile",
-    fields:
-      "selected_skills: string[], proficiency_rating (1–10), languages_known: string[]",
-  },
-  {
-    name: "IntentProfile",
-    fields:
-      "target_domain, target_role, reasons: string[], salary_expectation, work_location, open_to_education (boolean)",
+      "target_domain (string), target_role (string), activities: string[]",
   },
   {
     name: "PersonalityProfile",
     fields:
       "answers: Record<string, 'A' | 'B'> — 8 entries, one per personality question",
+  },
+  {
+    name: "StudentProfile",
+    fields:
+      "{ academic: AcademicProfile, experience_skills: ExperienceSkillsProfile, career_goal: CareerGoalProfile, personality: PersonalityProfile }",
   },
 ];
 
@@ -1372,7 +1384,7 @@ const RESPONSE_TYPES = [
   {
     name: "AnalysisResponse",
     fields:
-      "identity, interest_profile, best_fit, chosen_career, cri, jobs[], executive_summary (string), action_checklist: string[]",
+      "identity, interest_profile, best_fit, chosen_career, cri, jobs[], executive_summary (string), action_checklist: string[], bridge_sentence (string)",
   },
   {
     name: "BestFitCareer",
@@ -1405,12 +1417,22 @@ const DESIGN_DECISIONS = [
   {
     decision: "Single-page state machine instead of multi-step URL routes",
     reason:
-      "All 6 assessment steps share the same form state. Using URL routes would require complex state serialisation into query strings or a session store. A client-side state machine (view: hero | input | loading | results) keeps all data in memory, prevents back-button issues mid-assessment, and provides instant transitions.",
+      "All 4 assessment steps share the same form state. Using URL routes would require complex state serialisation into query strings or a session store. A client-side state machine (view: hero | input | loading | results) keeps all data in memory, prevents back-button issues mid-assessment, and provides instant transitions.",
+  },
+  {
+    decision: "4-step form consolidation (from 6 steps)",
+    reason:
+      "The original 6-step assessment had higher abandonment rates. Merging Identity + Academic → Step 1, Experience + Skills → Step 2, and Intent + Interests → Step 3 reduced friction by 33% while preserving all analytical signal. Personality remains Step 4 (cannot be merged without compromising the forced-choice UX).",
   },
   {
     decision: "AI as presentation layer only — not as the analysis engine",
     reason:
       "If the LLM computed scores, results would be non-reproducible and potentially hallucinated. By making the Python backend compute all numeric scores deterministically, the LLM only formats pre-computed data into readable prose. This makes the system auditable, debuggable, and trustworthy for high-stakes career decisions.",
+  },
+  {
+    decision: "2-phase parallelised backend (ThreadPoolExecutor)",
+    reason:
+      "Sequential execution of 5 LLM calls + API fetches + YouTube enrichment took ~30 seconds. Grouping independent operations into ThreadPoolExecutor phases (Phase A: ML + Adzuna + CRI + role desc; Phase B: 4 LLM calls; Phase C: YouTube) reduced total time to ~8–12s — a 3× improvement with zero additional dependencies (uses stdlib concurrent.futures).",
   },
   {
     decision: "Random Forest over deep learning for career prediction",
@@ -1433,25 +1455,30 @@ const DESIGN_DECISIONS = [
       "The Indian Adzuna market is dominated by tech listings. A search for 'Nurse', 'Lawyer', or 'Graphic Designer' returns mostly software engineering jobs. A relevance gate (≥20% domain-expected skills in results) detects off-domain results and substitutes curated mock job descriptions — ensuring market data is always domain-appropriate and meaningful.",
   },
   {
-    decision: "Contextual job match labels instead of raw match percentages",
+    decision: "241-skill resource map with YouTube API over static links",
     reason:
-      "When job descriptions are sparse (common with Adzuna India), calculated match % can be 0% even for highly relevant listings. Displaying '0% match' is misleading and demoralising. Contextual labels (High / Good / Partial / Relevant) communicate job relevance without implying a false negative signal.",
+      "A smart matching engine (exact → partial → domain fallback) enriches every roadmap action with real platform links across 6 learning platforms. YouTube API v3 makes video resources dynamic and always current. Static links go stale; this approach ensures resources stay relevant.",
+  },
+  {
+    decision: "Premium glass-morphism report UI",
+    reason:
+      "Career reports should feel important. Glass panels, gradient cards, animated CRI rings, and spring-physics entrance animations create a premium experience that makes students want to read and share their report — increasing engagement with actionable recommendations.",
   },
 ];
 
 const QUICK_NUMBERS = [
-  { value: "6", label: "Input modules" },
+  { value: "4", label: "Assessment steps" },
   { value: "12", label: "Career domains" },
   { value: "192", label: "Total career roles" },
-  { value: "8", label: "Result report sections" },
-  { value: "100+", label: "Skills tracked" },
-  { value: "3", label: "API integrations" },
+  { value: "3", label: "Report acts" },
+  { value: "241", label: "Skills mapped" },
+  { value: "4", label: "API endpoints" },
   { value: "1,200", label: "ML training samples" },
   { value: "100", label: "Random Forest trees" },
   { value: "4", label: "CRI sub-dimensions" },
   { value: "3", label: "Roadmap phases" },
   { value: "5", label: "Personality dimensions" },
-  { value: "5", label: "Live jobs returned" },
+  { value: "~10s", label: "Analysis time" },
 ];
 
 /* ─────────── UI Sub-Components ─────────── */
@@ -1558,12 +1585,11 @@ function EndpointCard({
 }
 
 const PROFILE_PROCESSOR_STEPS = [
-  "Extracts and validates all 6 input module fields from the raw POST body",
+  "Extracts and validates all 4 input step fields from the raw POST body",
   "Computes 5 personality dimension scores (0–100 each) from the 8 A/B answers",
-  "Maps selected activities and work environments to 5 interest clusters with signal strength (strong / moderate / emerging)",
+  "Maps selected activities to 5 interest clusters with signal strength (strong / moderate / emerging)",
   "Builds a skill vector — total count, category breakdown, and normalised breadth score",
   "Detects target domain from stated role name using a 100+ keyword-to-domain lookup",
   "Computes career alignment vectors for matching the chosen role to the student profile",
-  "Formats the motivators list in priority order based on selection frequency and weight",
   "Returns a single flat 'processed' dictionary consumed by all downstream modules",
 ];
