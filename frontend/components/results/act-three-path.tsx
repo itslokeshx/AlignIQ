@@ -119,7 +119,7 @@ export default function ActThreePathForward({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}
-      className="space-y-8"
+      className="space-y-6 sm:space-y-8"
     >
       {/* Section header */}
       <div className="flex items-center gap-3">
@@ -157,7 +157,7 @@ export default function ActThreePathForward({
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.1 + i * 0.06 }}
-                  className="group rounded-xl border border-white/[0.04] bg-zinc-900/50 hover:bg-zinc-900/70 p-3.5 sm:p-4 transition-all"
+                  className="group rounded-xl border border-white/[0.04] bg-zinc-900/50 hover:bg-zinc-900/70 p-3 sm:p-4 transition-all"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
                     <div className="min-w-0 flex-1">
@@ -212,7 +212,7 @@ export default function ActThreePathForward({
                   className={`rounded-xl border border-white/[0.04] bg-gradient-to-r ${PHASE_STYLES[i].bg} to-transparent overflow-hidden`}
                 >
                   <div
-                    className={`border-l-2 ${PHASE_STYLES[i].border} p-4 sm:p-5`}
+                    className={`border-l-2 ${PHASE_STYLES[i].border} p-3 sm:p-5`}
                   >
                     {/* Phase header */}
                     <div className="flex flex-wrap items-center gap-2 mb-3">
@@ -229,17 +229,17 @@ export default function ActThreePathForward({
                       </span>
                     </div>
 
-                    <div className="space-y-2.5 pl-8">
+                    <div className="space-y-2.5 pl-4 sm:pl-8">
                       {phase.actions.slice(0, 3).map((a, j) => (
                         <div key={j}>
-                          <p className="text-[13px] text-zinc-300 leading-relaxed">
+                          <p className="text-[12px] sm:text-[13px] text-zinc-300 leading-relaxed">
                             <span className={`${PHASE_STYLES[i].label} mr-1.5`}>
                               →
                             </span>
                             {getActionText(a)}
                           </p>
                           {getActionResources(a).length > 0 && (
-                            <div className="flex flex-wrap gap-1.5 mt-1.5 ml-4">
+                            <div className="flex flex-wrap gap-1.5 mt-1.5 ml-1 sm:ml-4">
                               {getActionResources(a).map((r, k) => (
                                 <ResourcePill key={k} resource={r} />
                               ))}
@@ -258,7 +258,7 @@ export default function ActThreePathForward({
 
       {/* ═══ Action Checklist ═════════════════════════════════════════ */}
       {actionChecklist && actionChecklist.length > 0 && (
-        <div className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-gradient-to-br from-zinc-900/80 to-zinc-950/80 p-5 sm:p-6">
+        <div className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-gradient-to-br from-zinc-900/80 to-zinc-950/80 p-4 sm:p-6">
           <div className="pointer-events-none absolute -bottom-16 -right-16 w-40 h-40 bg-emerald-600/[0.04] rounded-full blur-3xl" />
 
           <div className="relative">
@@ -327,7 +327,7 @@ export default function ActThreePathForward({
                     )}
                   </div>
                   <span
-                    className={`text-[13px] leading-relaxed transition-all duration-200 ${
+                    className={`text-[12px] sm:text-[13px] leading-relaxed transition-all duration-200 ${
                       checked.has(i)
                         ? "line-through text-zinc-600"
                         : "text-zinc-300"

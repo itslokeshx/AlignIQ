@@ -153,7 +153,7 @@ export default function ActTwoAnalysis({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.1 }}
-      className="space-y-8"
+      className="space-y-6 sm:space-y-8"
     >
       {/* Section header */}
       <div className="flex items-center gap-3">
@@ -173,7 +173,7 @@ export default function ActTwoAnalysis({
       {/* ═══ Two Career Tracks ═══════════════════════════════════════ */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         {/* Best Fit */}
-        <div className="relative overflow-hidden rounded-2xl border border-emerald-500/15 bg-gradient-to-br from-emerald-500/[0.04] to-transparent p-5 sm:p-6 space-y-4">
+        <div className="relative overflow-hidden rounded-2xl border border-emerald-500/15 bg-gradient-to-br from-emerald-500/[0.04] to-transparent p-4 sm:p-6 space-y-3 sm:space-y-4">
           <div className="pointer-events-none absolute -top-16 -right-16 w-32 h-32 bg-emerald-600/[0.06] rounded-full blur-3xl" />
           <div className="relative">
             <div className="flex items-center gap-2 mb-3">
@@ -185,19 +185,26 @@ export default function ActTwoAnalysis({
             <h3 className="text-xl font-bold text-white mb-1">
               {bestFit.role}
             </h3>
-            <p className="text-[40px] font-black text-emerald-400/90 leading-none mb-4">
+            <p className="text-3xl sm:text-[40px] font-black text-emerald-400/90 leading-none mb-3 sm:mb-4">
               {bestFit.score}
-              <span className="text-lg font-medium text-emerald-400/40">%</span>
+              <span className="text-base sm:text-lg font-medium text-emerald-400/40">
+                %
+              </span>
             </p>
-            <div className="space-y-2">
+            <div className="space-y-1.5 sm:space-y-2">
               {[
                 { label: "Salary", value: bestFit.salary_range },
                 { label: "Growth", value: bestFit.growth_trajectory },
                 { label: "Demand", value: bestFit.market_demand },
               ].map((r) => (
-                <div key={r.label} className="flex justify-between text-sm">
+                <div
+                  key={r.label}
+                  className="flex justify-between text-xs sm:text-sm"
+                >
                   <span className="text-zinc-500">{r.label}</span>
-                  <span className="text-zinc-300 font-medium">{r.value}</span>
+                  <span className="text-zinc-300 font-medium truncate ml-2 text-right">
+                    {r.value}
+                  </span>
                 </div>
               ))}
             </div>
@@ -208,7 +215,7 @@ export default function ActTwoAnalysis({
         </div>
 
         {/* Chosen Goal */}
-        <div className="relative overflow-hidden rounded-2xl border border-blue-500/15 bg-gradient-to-br from-blue-500/[0.04] to-transparent p-5 sm:p-6 space-y-4">
+        <div className="relative overflow-hidden rounded-2xl border border-blue-500/15 bg-gradient-to-br from-blue-500/[0.04] to-transparent p-4 sm:p-6 space-y-3 sm:space-y-4">
           <div className="pointer-events-none absolute -top-16 -right-16 w-32 h-32 bg-blue-600/[0.06] rounded-full blur-3xl" />
           <div className="relative">
             <div className="flex items-center gap-2 mb-3">
@@ -218,11 +225,13 @@ export default function ActTwoAnalysis({
               </p>
             </div>
             <h3 className="text-xl font-bold text-white mb-1">{chosen.role}</h3>
-            <p className="text-[40px] font-black text-blue-400/90 leading-none mb-4">
+            <p className="text-3xl sm:text-[40px] font-black text-blue-400/90 leading-none mb-3 sm:mb-4">
               {chosen.alignment_score}
-              <span className="text-lg font-medium text-blue-400/40">%</span>
+              <span className="text-base sm:text-lg font-medium text-blue-400/40">
+                %
+              </span>
             </p>
-            <div className="space-y-2">
+            <div className="space-y-1.5 sm:space-y-2">
               {[
                 {
                   label: "Salary",
@@ -234,9 +243,14 @@ export default function ActTwoAnalysis({
                 },
                 { label: "Gap", value: chosen.gap_severity },
               ].map((r) => (
-                <div key={r.label} className="flex justify-between text-sm">
+                <div
+                  key={r.label}
+                  className="flex justify-between text-xs sm:text-sm"
+                >
                   <span className="text-zinc-500">{r.label}</span>
-                  <span className="text-zinc-300 font-medium">{r.value}</span>
+                  <span className="text-zinc-300 font-medium truncate ml-2 text-right">
+                    {r.value}
+                  </span>
                 </div>
               ))}
             </div>
@@ -251,17 +265,17 @@ export default function ActTwoAnalysis({
 
       {/* Bridge sentence */}
       {bridgeSentence && (
-        <div className="flex items-center gap-3 px-2">
-          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-zinc-700/40 to-transparent" />
-          <p className="text-[12px] text-zinc-500 italic text-center leading-relaxed max-w-md shrink-0">
+        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 px-2">
+          <div className="hidden sm:block flex-1 h-px bg-gradient-to-r from-transparent via-zinc-700/40 to-transparent" />
+          <p className="text-[11px] sm:text-[12px] text-zinc-500 italic text-center leading-relaxed max-w-md">
             &ldquo;{bridgeSentence}&rdquo;
           </p>
-          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-zinc-700/40 to-transparent" />
+          <div className="hidden sm:block flex-1 h-px bg-gradient-to-r from-transparent via-zinc-700/40 to-transparent" />
         </div>
       )}
 
       {/* ═══ Alignment match bars ══════════════════════════════════════ */}
-      <div className="grid grid-cols-3 gap-2 sm:gap-3">
+      <div className="grid grid-cols-3 gap-1.5 sm:gap-3">
         {[
           {
             label: "Interest",
@@ -287,11 +301,13 @@ export default function ActTwoAnalysis({
         ].map((m) => (
           <div
             key={m.label}
-            className={`relative overflow-hidden rounded-xl border ${m.border} ${m.bg} py-4 px-3 text-center`}
+            className={`relative overflow-hidden rounded-xl border ${m.border} ${m.bg} py-3 px-2 sm:py-4 sm:px-3 text-center`}
           >
-            <p className="text-2xl sm:text-3xl font-bold text-white">
+            <p className="text-xl sm:text-3xl font-bold text-white">
               {m.val}
-              <span className="text-sm font-normal text-zinc-600">%</span>
+              <span className="text-[10px] sm:text-sm font-normal text-zinc-600">
+                %
+              </span>
             </p>
             <p className="text-[10px] sm:text-[11px] text-zinc-500 mt-1">
               {m.label}
@@ -310,25 +326,25 @@ export default function ActTwoAnalysis({
       </div>
 
       {/* ═══ CRI Score — Ring + Sub-indices ═══════════════════════════ */}
-      <div className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-gradient-to-br from-zinc-900/80 to-zinc-950/80 p-5 sm:p-8">
+      <div className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-gradient-to-br from-zinc-900/80 to-zinc-950/80 p-4 sm:p-8">
         <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-64 h-64 bg-blue-600/[0.03] rounded-full blur-3xl" />
 
         <div className="relative">
-          <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-zinc-500 mb-6 text-center">
+          <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-zinc-500 mb-4 sm:mb-6 text-center">
             Career Readiness Index
           </p>
 
           <CRIRing value={cri.cri_total} max={100} />
 
           {/* Sub-index grid */}
-          <div className="grid grid-cols-2 gap-3 mt-6">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3 mt-4 sm:mt-6">
             {SUB.map((s) => {
               const val = cri[s.key];
               const pct = Math.round((val / s.max) * 100);
               return (
                 <div
                   key={s.key}
-                  className={`rounded-xl border ${s.border} bg-gradient-to-br ${s.gradient} p-3 sm:p-3.5`}
+                  className={`rounded-xl border ${s.border} bg-gradient-to-br ${s.gradient} p-2.5 sm:p-3.5`}
                 >
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-[11px] text-zinc-400 font-medium">
@@ -376,8 +392,8 @@ export default function ActTwoAnalysis({
 
       {/* ═══ Market Demand Chart ═══════════════════════════════════════ */}
       {marketChartData.length > 0 && (
-        <div className="rounded-2xl border border-white/[0.04] bg-zinc-900/50 p-5 sm:p-6">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-zinc-500 mb-5">
+        <div className="rounded-2xl border border-white/[0.04] bg-zinc-900/50 p-3.5 sm:p-6">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-zinc-500 mb-3 sm:mb-5">
             Market demand for{" "}
             <span className="text-zinc-300">{chosen.role}</span>
           </p>
@@ -394,8 +410,8 @@ export default function ActTwoAnalysis({
               <YAxis
                 type="category"
                 dataKey="skill"
-                width={90}
-                tick={{ fill: "#a1a1aa", fontSize: 11 }}
+                width={75}
+                tick={{ fill: "#a1a1aa", fontSize: 10 }}
                 axisLine={false}
                 tickLine={false}
               />

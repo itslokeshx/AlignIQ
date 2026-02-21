@@ -448,19 +448,19 @@ export default function HomePage() {
               className="mx-auto max-w-3xl px-4 sm:px-6 pt-3 pb-6 sm:py-10"
             >
               {/* ── Premium Report Header ── */}
-              <div className="mb-10 sm:mb-14">
-                <div className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-gradient-to-br from-zinc-900/80 via-zinc-950/60 to-zinc-900/80 p-5 sm:p-8">
+              <div className="mb-6 sm:mb-14">
+                <div className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-gradient-to-br from-zinc-900/80 via-zinc-950/60 to-zinc-900/80 p-4 sm:p-8">
                   {/* Decorative orbs */}
                   <div className="pointer-events-none absolute -top-20 -left-20 w-48 h-48 bg-blue-600/[0.05] rounded-full blur-3xl" />
                   <div className="pointer-events-none absolute -bottom-16 -right-16 w-40 h-40 bg-violet-600/[0.04] rounded-full blur-3xl" />
 
                   <div className="relative">
-                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-5">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-3 mb-4 sm:mb-5">
                       <div>
                         <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-600 mb-2">
                           Career Intelligence Report
                         </p>
-                        <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                        <h1 className="text-xl sm:text-3xl font-bold text-white tracking-tight">
                           {results.identity.name}
                         </h1>
                       </div>
@@ -470,22 +470,22 @@ export default function HomePage() {
                       </p>
                     </div>
 
-                    <div className="h-px bg-gradient-to-r from-blue-500/20 via-violet-500/20 to-transparent mb-5" />
+                    <div className="h-px bg-gradient-to-r from-blue-500/20 via-violet-500/20 to-transparent mb-3 sm:mb-5" />
 
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                      <div className="flex flex-wrap items-center gap-3 sm:gap-5">
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                          <span className="text-xs text-zinc-500">
+                      <div className="flex flex-wrap items-center gap-2 sm:gap-5">
+                        <div className="flex items-center gap-1.5 sm:gap-2">
+                          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500" />
+                          <span className="text-[11px] sm:text-xs text-zinc-500">
                             Best Fit:{" "}
                             <span className="text-emerald-400 font-semibold">
                               {results.best_fit.role}
                             </span>
                           </span>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-blue-500" />
-                          <span className="text-xs text-zinc-500">
+                        <div className="flex items-center gap-1.5 sm:gap-2">
+                          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-blue-500" />
+                          <span className="text-[11px] sm:text-xs text-zinc-500">
                             Your Goal:{" "}
                             <span className="text-blue-400 font-semibold">
                               {results.chosen_career.role}
@@ -510,7 +510,7 @@ export default function HomePage() {
                 personality={results.interest_profile.personality}
               />
 
-              <div className="h-px bg-gradient-to-r from-transparent via-zinc-800/40 to-transparent my-10 sm:my-14" />
+              <div className="h-px bg-gradient-to-r from-transparent via-zinc-800/40 to-transparent my-8 sm:my-14" />
 
               {/* ── ACT 2 — The Analysis ── */}
               <ActTwoAnalysis
@@ -520,7 +520,7 @@ export default function HomePage() {
                 bridgeSentence={results.bridge_sentence || ""}
               />
 
-              <div className="h-px bg-gradient-to-r from-transparent via-zinc-800/40 to-transparent my-10 sm:my-14" />
+              <div className="h-px bg-gradient-to-r from-transparent via-zinc-800/40 to-transparent my-8 sm:my-14" />
 
               {/* ── ACT 3 — Your Path Forward ── */}
               <ActThreePathForward
@@ -531,11 +531,11 @@ export default function HomePage() {
               />
 
               {/* ── Report Footer ── */}
-              <div className="mt-14 sm:mt-20 pt-6 sm:pt-8 border-t border-zinc-800/20">
-                <div className="text-center space-y-4">
-                  <div className="inline-flex items-center gap-2 rounded-full border border-white/[0.04] bg-white/[0.02] px-4 py-1.5">
+              <div className="mt-10 sm:mt-20 pt-5 sm:pt-8 border-t border-zinc-800/20">
+                <div className="text-center space-y-3 sm:space-y-4">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-white/[0.04] bg-white/[0.02] px-3 sm:px-4 py-1.5">
                     <span className="h-1.5 w-1.5 rounded-full bg-blue-500/50" />
-                    <p className="text-[10px] text-zinc-600">
+                    <p className="text-[9px] sm:text-[10px] text-zinc-600">
                       Powered by ML prediction · cosine alignment · live Adzuna
                       data
                     </p>
