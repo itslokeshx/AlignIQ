@@ -127,8 +127,11 @@ def analyze():
         exp_level,
     )
 
-    # Enrich roadmap actions with curated resources
-    roadmap = enrich_roadmap_with_resources(roadmap, chosen_match["missing_skills"])
+    # Enrich roadmap actions with curated resources + YouTube API
+    roadmap = enrich_roadmap_with_resources(
+        roadmap, chosen_match["missing_skills"],
+        target_role=target_role, target_domain=target_domain,
+    )
 
     # Bridge sentence between best fit and chosen career
     bridge_sentence = generate_bridge_sentence(

@@ -28,6 +28,11 @@ const PLATFORM_COLORS: Record<string, string> = {
   LeetCode: "bg-yellow-900/40 text-yellow-300 border-yellow-900/60",
   freeCodeCamp: "bg-orange-900/40 text-orange-300 border-orange-900/60",
   Practice: "bg-emerald-900/40 text-emerald-300 border-emerald-900/60",
+  Udemy: "bg-purple-900/40 text-purple-300 border-purple-800/60",
+  Skillshare: "bg-teal-900/40 text-teal-300 border-teal-800/60",
+  "LinkedIn Learning": "bg-blue-900/40 text-blue-300 border-blue-800/60",
+  edX: "bg-rose-900/40 text-rose-300 border-rose-800/60",
+  "Khan Academy": "bg-green-900/40 text-green-300 border-green-800/60",
 };
 
 function ResourcePill({ resource }: { resource: Resource }) {
