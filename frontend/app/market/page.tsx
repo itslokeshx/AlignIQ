@@ -14,8 +14,7 @@ import {
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { UNIVERSAL_DOMAINS } from "@/lib/constants";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+import { API_URL } from "@/lib/config";
 
 interface MarketTrends {
   top_skills: [string, number][];

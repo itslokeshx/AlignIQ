@@ -16,6 +16,7 @@ import PersonalityModule from "@/components/input-modules/personality-module";
 import ActOneProfile from "@/components/results/act-one-profile";
 import ActTwoAnalysis from "@/components/results/act-two-analysis";
 import ActThreePathForward from "@/components/results/act-three-path";
+import { API_URL } from "@/lib/config";
 
 import type {
   IdentityProfile,
@@ -29,8 +30,6 @@ import type {
 } from "@/lib/types";
 
 type ViewState = "hero" | "input" | "loading" | "results";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 const STEPS = [
   { num: 1, title: "Who are you?", desc: "Identity & education" },
