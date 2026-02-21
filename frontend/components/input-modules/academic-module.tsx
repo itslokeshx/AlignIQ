@@ -32,7 +32,7 @@ export default function AcademicModule({ data, onChange }: Props) {
       <div className="space-y-2">
         <Label className="text-zinc-300 text-sm font-medium">Full Name</Label>
         <Input
-          placeholder="e.g. Arjun Sharma"
+          placeholder="e.g. Mohan Raj"
           value={data.name}
           onChange={(e) => set("name", e.target.value)}
           className="bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-600 focus:border-blue-500 h-11"
