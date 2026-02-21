@@ -101,21 +101,25 @@ export default function ExperienceModule({ data, onChange }: Props) {
           <button
             type="button"
             onClick={() => set("leadership", !data.leadership)}
-            className={`relative w-10 h-5 rounded-full transition-colors ${data.leadership ? "bg-blue-600" : "bg-zinc-700"}`}
+            className={`relative inline-flex w-10 h-5 flex-shrink-0 rounded-full transition-colors ${data.leadership ? "bg-blue-600" : "bg-zinc-700"}`}
           >
             <span
               className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${data.leadership ? "translate-x-5" : "translate-x-0.5"}`}
             />
           </button>
         </div>
-        {data.leadership && (
-          <Input
-            placeholder="e.g. President, Design Society | Captain, Debate team"
-            value={data.leadership_desc}
-            onChange={(e) => set("leadership_desc", e.target.value)}
-            className="bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-600 focus:border-blue-500 h-10"
-          />
-        )}
+        <div
+          className={`grid transition-all duration-200 ease-in-out ${data.leadership ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
+        >
+          <div className="overflow-hidden">
+            <Input
+              placeholder="e.g. President, Design Society | Captain, Debate team"
+              value={data.leadership_desc}
+              onChange={(e) => set("leadership_desc", e.target.value)}
+              className="bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-600 focus:border-blue-500 h-10"
+            />
+          </div>
+        </div>
       </div>
 
       {/* Volunteer */}
@@ -127,21 +131,25 @@ export default function ExperienceModule({ data, onChange }: Props) {
           <button
             type="button"
             onClick={() => set("volunteer", !data.volunteer)}
-            className={`relative w-10 h-5 rounded-full transition-colors ${data.volunteer ? "bg-blue-600" : "bg-zinc-700"}`}
+            className={`relative inline-flex w-10 h-5 flex-shrink-0 rounded-full transition-colors ${data.volunteer ? "bg-blue-600" : "bg-zinc-700"}`}
           >
             <span
               className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${data.volunteer ? "translate-x-5" : "translate-x-0.5"}`}
             />
           </button>
         </div>
-        {data.volunteer && (
-          <Input
-            placeholder="e.g. Teaching underprivileged kids, Marathon volunteer"
-            value={data.volunteer_desc}
-            onChange={(e) => set("volunteer_desc", e.target.value)}
-            className="bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-600 focus:border-blue-500 h-10"
-          />
-        )}
+        <div
+          className={`grid transition-all duration-200 ease-in-out ${data.volunteer ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
+        >
+          <div className="overflow-hidden">
+            <Input
+              placeholder="e.g. Teaching underprivileged kids, Marathon volunteer"
+              value={data.volunteer_desc}
+              onChange={(e) => set("volunteer_desc", e.target.value)}
+              className="bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-600 focus:border-blue-500 h-10"
+            />
+          </div>
+        </div>
       </div>
 
       {/* Clubs + Awards */}
@@ -179,21 +187,25 @@ export default function ExperienceModule({ data, onChange }: Props) {
           <button
             type="button"
             onClick={() => set("earned_from_skill", !data.earned_from_skill)}
-            className={`relative w-10 h-5 rounded-full transition-colors ${data.earned_from_skill ? "bg-emerald-600" : "bg-zinc-700"}`}
+            className={`relative inline-flex w-10 h-5 flex-shrink-0 rounded-full transition-colors ${data.earned_from_skill ? "bg-emerald-600" : "bg-zinc-700"}`}
           >
             <span
               className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${data.earned_from_skill ? "translate-x-5" : "translate-x-0.5"}`}
             />
           </button>
         </div>
-        {data.earned_from_skill && (
-          <Input
-            placeholder="e.g. Freelance logo design, tutoring, video editing gigs"
-            value={data.earned_desc}
-            onChange={(e) => set("earned_desc", e.target.value)}
-            className="bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-600 focus:border-blue-500 h-10"
-          />
-        )}
+        <div
+          className={`grid transition-all duration-200 ease-in-out ${data.earned_from_skill ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
+        >
+          <div className="overflow-hidden">
+            <Input
+              placeholder="e.g. Freelance logo design, tutoring, video editing gigs"
+              value={data.earned_desc}
+              onChange={(e) => set("earned_desc", e.target.value)}
+              className="bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-600 focus:border-blue-500 h-10"
+            />
+          </div>
+        </div>
       </div>
 
       {/* Readiness slider */}

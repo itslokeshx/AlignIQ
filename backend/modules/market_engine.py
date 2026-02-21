@@ -342,14 +342,45 @@ def calculate_market_match(student_skills: list, job_skill_demand: list) -> dict
 def rank_jobs_by_match(jobs: list, student_skills: list) -> list:
     """
     Rank fetched jobs by how well they match the student's skills.
+    Uses description + title matching with fuzzy substring matching.
     Returns top 5 highest-match jobs.
     """
     ranked = []
     for job in jobs:
-        desc = job.get("description", "").lower()
+        title = job.get("title", "").lower()
+        desc  = job.get("description", "").lower()
+        combined = f"{title} {desc}"
+
         student_lower = [s.lower() for s in student_skills]
-        matches = sum(1 for skill in student_lower if skill in desc)
-        match_pct = round(matches / max(len(student_skills), 1) * 100, 1)
+
+        # Count matches — use substring matching for multi-word skills
+        matches = 0
+        for skill in student_lower:
+            # Direct substring match in combined text
+            if skill in combined:
+                matches += 1
+            else:
+                # Also check individual words of multi-word skills
+                words = skill.split()
+                if len(words) > 1 and any(w in combined for w in words if len(w) > 2):
+                    matches += 0.5
+
+        # Base match from skills
+        skill_pct = matches / max(len(student_skills), 1) * 100
+
+        # Title relevance bonus: if the job title mentions common role keywords
+        # from the search, give a baseline relevance boost
+        title_bonus = 0
+        role_keywords = ["software", "developer", "engineer", "analyst", "designer",
+                         "manager", "data", "frontend", "backend", "full stack",
+                         "devops", "product", "marketing", "consultant", "research",
+                         "content", "creative", "finance", "legal", "medical"]
+        title_lower = title.lower()
+        if any(kw in title_lower for kw in role_keywords):
+            title_bonus = 15  # baseline relevance for role-matching jobs
+
+        match_pct = min(round(skill_pct + title_bonus, 1), 100)
+
         ranked.append({
             "title": job.get("title", "Unknown Role"),
             "company": job.get("company", {}).get("display_name", "N/A"),

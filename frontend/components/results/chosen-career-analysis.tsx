@@ -14,17 +14,6 @@ interface Props {
   data: ChosenCareerAnalysis;
 }
 
-const PHASE_COLORS = [
-  "border-blue-500/40 bg-blue-500/5",
-  "border-violet-500/40 bg-violet-500/5",
-  "border-emerald-500/40 bg-emerald-500/5",
-];
-const PHASE_NUM_COLORS = [
-  "text-blue-400",
-  "text-violet-400",
-  "text-emerald-400",
-];
-
 const GAP_COLORS: Record<string, string> = {
   Minimal: "text-emerald-400 bg-emerald-500/10 border-emerald-500/30",
   Minor: "text-yellow-400  bg-yellow-500/10  border-yellow-500/30",
@@ -80,11 +69,6 @@ function AlignmentVenn({
 }
 
 export default function ChosenCareerCard({ data }: Props) {
-  const roadmapPhases = [
-    data.roadmap?.phase_1,
-    data.roadmap?.phase_2,
-    data.roadmap?.phase_3,
-  ].filter(Boolean);
   const marketChartData = (data.market_data?.top_skills || [])
     .slice(0, 7)
     .map(([skill, count]) => ({ skill, count }));
@@ -238,50 +222,6 @@ export default function ChosenCareerCard({ data }: Props) {
           </p>
         )}
       </div>
-
-      {/* Roadmap */}
-      {roadmapPhases.length > 0 && (
-        <div className="space-y-3">
-          <h4 className="text-sm font-medium text-zinc-300">
-            Your personalised roadmap
-          </h4>
-          <div className="space-y-3">
-            {roadmapPhases.map(
-              (phase, i) =>
-                phase && (
-                  <div
-                    key={i}
-                    className={`rounded-xl border p-4 ${PHASE_COLORS[i]}`}
-                  >
-                    <div className="flex items-center gap-2 mb-2">
-                      <span
-                        className={`text-xs font-bold ${PHASE_NUM_COLORS[i]}`}
-                      >
-                        Phase {i + 1}
-                      </span>
-                      <span className="text-sm font-semibold text-white">
-                        {phase.title}
-                      </span>
-                      <span className="ml-auto text-xs text-zinc-500">
-                        {phase.duration}
-                      </span>
-                    </div>
-                    <ul className="space-y-1">
-                      {phase.actions.map((a, j) => (
-                        <li
-                          key={j}
-                          className="flex items-start gap-2 text-xs text-zinc-400"
-                        >
-                          <span className="text-zinc-600 mt-0.5">›</span> {a}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ),
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

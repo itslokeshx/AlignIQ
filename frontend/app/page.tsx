@@ -20,7 +20,7 @@ import ChosenCareerCard from "@/components/results/chosen-career-analysis";
 import { CRIScore } from "@/components/results/cri-score";
 import { JobOpportunities } from "@/components/results/job-opportunities";
 import ExecutiveSummary from "@/components/results/executive-summary";
-import ActionChecklist from "@/components/results/action-checklist";
+import Roadmap from "@/components/results/roadmap";
 
 import type {
   IdentityProfile,
@@ -529,95 +529,104 @@ export default function HomePage() {
               className="mx-auto max-w-3xl px-6 py-10"
             >
               {/* ── Report Header ── */}
-              <div className="mb-8 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
-                <div className="flex items-start justify-between gap-4">
+              <div className="mb-10 rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900/80 to-zinc-950 p-6 relative overflow-hidden">
+                {/* Subtle gradient accent */}
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-transparent to-violet-500/5 pointer-events-none" />
+                <div className="relative flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-xs text-zinc-600 uppercase tracking-wider mb-1">
+                    <p className="text-[11px] text-zinc-600 uppercase tracking-widest mb-2 font-mono">
                       ALIGNIQ Intelligence Report ·{" "}
                       {results.identity.generated_date}
                     </p>
-                    <h1 className="text-3xl font-bold text-white">
+                    <h1 className="text-3xl font-bold text-white tracking-tight">
                       {results.identity.name}
                     </h1>
-                    <p className="text-zinc-500 text-xs mt-1 font-mono">
+                    <p className="text-zinc-600 text-xs mt-1 font-mono">
                       {results.identity.profile_id}
                     </p>
-                    <div className="flex gap-2 mt-3">
-                      <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+                    <div className="flex flex-wrap gap-2 mt-4">
+                      <span className="text-xs px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 font-medium">
                         Best fit: {results.best_fit.role}
                       </span>
-                      <span className="text-xs px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400">
+                      <span className="text-xs px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/25 text-blue-400 font-medium">
                         Goal: {results.chosen_career.role}
                       </span>
                     </div>
                   </div>
                   <button
                     onClick={handleReset}
-                    className="flex-shrink-0 rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-xs font-medium text-zinc-400 hover:text-white hover:border-zinc-500 transition-colors"
+                    className="flex-shrink-0 rounded-lg border border-zinc-700 bg-zinc-800/80 px-4 py-2 text-xs font-medium text-zinc-400 hover:text-white hover:border-zinc-500 hover:bg-zinc-700 transition-all duration-200"
                   >
                     New Assessment
                   </button>
                 </div>
               </div>
 
-              <div className="space-y-8">
-                {/* Section 1 — Interest Profile */}
-                <InterestProfileCard data={results.interest_profile} />
-
-                {/* Divider */}
-                <div className="border-t border-zinc-800" />
-
-                {/* Section 2 — Best Fit */}
-                <BestFitCareerCard data={results.best_fit} />
-
-                <div className="border-t border-zinc-800" />
-
-                {/* Section 3 — Chosen Career */}
-                <ChosenCareerCard data={results.chosen_career} />
-
-                <div className="border-t border-zinc-800" />
-
-                {/* Section 4 — CRI */}
-                <CRIScore data={results.cri} />
-
-                <div className="border-t border-zinc-800" />
-
-                {/* Section 5 — Jobs */}
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold text-white">
-                    Live Opportunities
-                  </h2>
-                  <p className="text-zinc-500 text-sm">
-                    Active listings closest to your target role and location.
-                  </p>
-                  <JobOpportunities jobs={results.jobs} />
-                </div>
-
-                <div className="border-t border-zinc-800" />
-
-                {/* Section 6 — Executive Summary */}
+              <div className="space-y-10">
+                {/* Section 1 — AI Intelligence Summary (TOP) */}
                 <ExecutiveSummary
                   summary={results.executive_summary}
                   name={results.identity.name}
                 />
 
-                <div className="border-t border-zinc-800" />
+                <div className="border-t border-zinc-800/60" />
 
-                {/* Section 7 — Action Checklist */}
-                <ActionChecklist items={results.action_checklist} />
+                {/* Section 2 — Interest Profile */}
+                <InterestProfileCard data={results.interest_profile} />
 
-                {/* Footer */}
-                <div className="pt-4 text-center">
-                  <p className="text-xs text-zinc-700">
-                    Generated by ALIGNIQ · {results.identity.profile_id} ·{" "}
-                    {results.identity.generated_date}
-                  </p>
-                  <button
-                    onClick={handleReset}
-                    className="mt-3 text-xs text-zinc-500 hover:text-zinc-300 transition-colors underline underline-offset-2"
-                  >
-                    Start a new assessment
-                  </button>
+                <div className="border-t border-zinc-800/60" />
+
+                {/* Section 3 — Best Fit */}
+                <BestFitCareerCard data={results.best_fit} />
+
+                <div className="border-t border-zinc-800/60" />
+
+                {/* Section 4 — Chosen Career */}
+                <ChosenCareerCard data={results.chosen_career} />
+
+                <div className="border-t border-zinc-800/60" />
+
+                {/* Section 5 — CRI */}
+                <CRIScore data={results.cri} />
+
+                <div className="border-t border-zinc-800/60" />
+
+                {/* Section 6 — Personalised Roadmap (combined roadmap + action checklist) */}
+                <Roadmap
+                  roadmap={results.chosen_career.roadmap}
+                  actionChecklist={results.action_checklist}
+                  targetRole={results.chosen_career.role}
+                />
+
+                <div className="border-t border-zinc-800/60" />
+
+                {/* Section 7 — Jobs */}
+                <div className="space-y-4">
+                  <div>
+                    <h2 className="text-xl font-semibold text-white">
+                      Live Opportunities
+                    </h2>
+                    <p className="text-zinc-500 text-sm mt-1">
+                      Active listings closest to your target role and location.
+                    </p>
+                  </div>
+                  <JobOpportunities jobs={results.jobs} />
+                </div>
+
+                {/* Report Footer */}
+                <div className="pt-4 border-t border-zinc-800/60">
+                  <div className="text-center space-y-3">
+                    <p className="text-[11px] text-zinc-700 font-mono">
+                      Generated by ALIGNIQ · {results.identity.profile_id} ·{" "}
+                      {results.identity.generated_date}
+                    </p>
+                    <button
+                      onClick={handleReset}
+                      className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors underline underline-offset-4"
+                    >
+                      Start a new assessment
+                    </button>
+                  </div>
                 </div>
               </div>
             </motion.div>
