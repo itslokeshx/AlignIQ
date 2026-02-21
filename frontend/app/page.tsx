@@ -466,7 +466,7 @@ export default function HomePage() {
                   <button
                     onClick={handleNext}
                     disabled={!canProceed()}
-                    className="flex-1 rounded-xl bg-white/[0.08] py-3 text-sm font-semibold text-white hover:bg-white/[0.12] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                    className="flex-1 rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 py-3 text-sm font-semibold text-white hover:shadow-lg hover:shadow-blue-500/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300"
                   >
                     Continue →
                   </button>
