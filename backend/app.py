@@ -51,6 +51,17 @@ app = Flask(__name__)
 CORS(app)  # Allow all origins — public API
 
 
+# ─── Root (Render health probe + browser visits) ──────────────────────────────
+@app.route("/")
+def root():
+    return jsonify({
+        "service": "AlignIQ Backend API",
+        "version": "2.0",
+        "status": "running",
+        "endpoints": ["/api/health", "/api/analyze", "/api/market-trends"],
+    })
+
+
 # ─── Health ────────────────────────────────────────────────────────────────────
 @app.route("/api/health")
 def health():
