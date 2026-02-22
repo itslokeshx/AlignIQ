@@ -6,6 +6,9 @@ import type { PersonalityScores } from "@/lib/types";
 interface Props {
   summary: string;
   personality: PersonalityScores;
+  name: string;
+  bestFitRole: string;
+  chosenRole: string;
 }
 
 const DIMENSIONS = [
@@ -67,7 +70,15 @@ function getDominantSide(val: number): "left" | "center" | "right" {
   return "center";
 }
 
-export default function ActOneProfile({ summary, personality }: Props) {
+export default function ActOneProfile({
+  summary,
+  personality,
+  name,
+  bestFitRole,
+  chosenRole,
+}: Props) {
+  const firstName = name.split(" ")[0];
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
@@ -75,6 +86,49 @@ export default function ActOneProfile({ summary, personality }: Props) {
       transition={{ duration: 0.5 }}
       className="space-y-6 sm:space-y-8"
     >
+      {/* Personalized greeting */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+        className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-gradient-to-br from-blue-950/40 via-violet-950/30 to-zinc-950/60 p-4 sm:p-6"
+      >
+        <div className="pointer-events-none absolute -top-16 -right-16 w-40 h-40 bg-blue-600/[0.06] rounded-full blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-12 -left-12 w-32 h-32 bg-violet-600/[0.05] rounded-full blur-3xl" />
+        <div className="relative">
+          <h3 className="text-lg sm:text-xl font-bold text-white mb-1.5">
+            Hey {firstName}{" "}
+            <span className="inline-block animate-[wave_1.5s_ease-in-out_infinite]">
+              👋
+            </span>
+          </h3>
+          <p className="text-[12px] sm:text-[13px] text-zinc-400 leading-relaxed">
+            We crunched your data across{" "}
+            <span className="text-blue-400 font-medium">personality</span>,{" "}
+            <span className="text-violet-400 font-medium">skills</span>, and{" "}
+            <span className="text-emerald-400 font-medium">market signals</span>
+            . Your best statistical match is{" "}
+            <span className="text-emerald-400 font-semibold">
+              {bestFitRole}
+            </span>{" "}
+            {bestFitRole.toLowerCase() !== chosenRole.toLowerCase() ? (
+              <>
+                — but you&apos;re aiming for{" "}
+                <span className="text-blue-400 font-semibold">
+                  {chosenRole}
+                </span>
+                . Here&apos;s what the data says about both paths.
+              </>
+            ) : (
+              <>
+                — and that&apos;s exactly where you&apos;re headed. Here&apos;s
+                how ready you are.
+              </>
+            )}
+          </p>
+        </div>
+      </motion.div>
+
       {/* Executive Summary — structured insight cards */}
       <div className="space-y-3 sm:space-y-4">
         <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-zinc-500">

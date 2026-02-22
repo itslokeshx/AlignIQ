@@ -526,6 +526,9 @@ export default function HomePage() {
                 <ActOneProfile
                   summary={results.executive_summary}
                   personality={results.interest_profile.personality}
+                  name={results.identity.name}
+                  bestFitRole={results.best_fit.role}
+                  chosenRole={results.chosen_career.role}
                 />
               </ResultSection>
 

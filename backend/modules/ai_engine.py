@@ -40,7 +40,7 @@ def generate_role_description(role: str, domain: str) -> str:
 def generate_executive_summary(name: str, best_fit: dict, chosen: dict,
                                cri: dict, personality: dict) -> str:
     """Generate a 5–6 sentence analytical executive summary of the student's profile."""
-    prompt = f"""You are a senior career intelligence analyst writing a concise assessment of {name}'s profile.
+    prompt = f"""You are a sharp career intelligence analyst writing a personalized debrief for {name}.
 
 Data:
 - Best fit career: {best_fit.get('role')} ({best_fit.get('score')}%)
@@ -50,28 +50,33 @@ Data:
 - Gap severity: {chosen.get('gap_severity')}
 - Personality: analytical_creative={personality.get('analytical_creative')}, independent_collaborative={personality.get('independent_collaborative')}, theoretical_practical={personality.get('theoretical_practical')}
 
-Return EXACTLY 5 lines, each starting with a label and pipe separator, like:
-Readiness | Your CRI is X/100, which means...
-Alignment | Your chosen role as X shows...
-Best Fit | The data suggests X is your strongest match because...
-Strength | Your personality leans towards...
-Key Gap | The main area to develop is...
+Return EXACTLY 5 lines, each starting with a label and pipe separator.
+Address {name} directly using "you" / "your" — make it feel like a personal debrief, not a third-person report.
+
+Format:
+Readiness | {name}, your CRI sits at X/100 — meaning...
+Alignment | Your chosen path as X has a Y% alignment, which tells us...
+Best Fit | The data points to X as your strongest match because...
+Strength | You lean strongly towards X, which gives you an edge in...
+Key Gap | Your biggest unlock is X — closing this would...
 
 Rules:
-- Each line must be ONE short sentence (under 20 words after the pipe).
-- Be specific — use actual numbers, role names, and traits from the data.
-- Be analytical and objective. No motivation, no fluff, no generic advice.
+- Address {name} by name in at least 2 of the 5 lines.
+- Each line: ONE punchy sentence, under 22 words after the pipe.
+- Use actual numbers, role names, and traits — be specific.
+- Sound like a smart analyst talking directly to {name}, not writing about them.
+- No motivation, no fluff. Sharp, data-backed, slightly provocative insights.
 - Do NOT add numbering, bullet points, or extra formatting.
 - Return ONLY the 5 lines, nothing else."""
     try:
         return _call_groq(prompt)
     except Exception:
         return (
-            f"Readiness | CRI score of {cri.get('cri_total')}/100 indicates a developing career readiness foundation.\n"
-            f"Alignment | {chosen.get('alignment_score')}% alignment with {chosen.get('role')} shows {chosen.get('gap_severity', 'moderate').lower()} gaps to address.\n"
-            f"Best Fit | {best_fit.get('role')} at {best_fit.get('score')}% is the strongest statistical match for your profile.\n"
-            f"Strength | Personality traits show clear directional leanings that support focused career paths.\n"
-            f"Key Gap | Skill match at {chosen.get('skill_match')}% is the primary area needing development."
+            f"Readiness | {name}, your CRI score is {cri.get('cri_total')}/100 — you're building but not ready yet.\n"
+            f"Alignment | Your {chosen.get('alignment_score')}% alignment with {chosen.get('role')} shows {chosen.get('gap_severity', 'moderate').lower()} gaps to close.\n"
+            f"Best Fit | The data says {best_fit.get('role')} at {best_fit.get('score')}% is actually your strongest career match.\n"
+            f"Strength | {name}, your personality traits show clear directional focus that most profiles lack.\n"
+            f"Key Gap | Your skill match at {chosen.get('skill_match')}% is the single biggest unlock for your career."
         )
 
 
