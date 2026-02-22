@@ -14,6 +14,7 @@ import PersonalityModule from "@/components/input-modules/personality-module";
 import ActOneProfile from "@/components/results/act-one-profile";
 import ActTwoAnalysis from "@/components/results/act-two-analysis";
 import ActThreePathForward from "@/components/results/act-three-path";
+import ResultSection from "@/components/results/result-section";
 import { API_URL } from "@/lib/config";
 
 import type {
@@ -509,31 +510,68 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* ── ACT 1 — Who You Are ── */}
-              <ActOneProfile
-                summary={results.executive_summary}
-                personality={results.interest_profile.personality}
-              />
+              {/* ── Section 1 — Your Profile ── */}
+              <ResultSection
+                icon="👤"
+                title="Your Profile"
+                subtitle="Personality traits & intelligence summary"
+                accentFrom="from-blue-600/20"
+                accentTo="to-violet-600/20"
+                accentText="text-blue-400"
+                accentBorder="border-blue-500/10"
+                dividerVia="via-blue-500/20"
+                defaultOpen={true}
+              >
+                <ActOneProfile
+                  summary={results.executive_summary}
+                  personality={results.interest_profile.personality}
+                />
+              </ResultSection>
 
-              <div className="h-px bg-gradient-to-r from-transparent via-zinc-800/40 to-transparent my-8 sm:my-14" />
+              <div className="h-6 sm:h-8" />
 
-              {/* ── ACT 2 — The Analysis ── */}
-              <ActTwoAnalysis
-                bestFit={results.best_fit}
-                chosen={results.chosen_career}
-                cri={results.cri}
-                bridgeSentence={results.bridge_sentence || ""}
-              />
+              {/* ── Section 2 — Career Analysis ── */}
+              <ResultSection
+                icon="📊"
+                title="Career Analysis"
+                subtitle="Readiness score, alignment & market insights"
+                accentFrom="from-emerald-600/20"
+                accentTo="to-blue-600/20"
+                accentText="text-emerald-400"
+                accentBorder="border-emerald-500/10"
+                dividerVia="via-emerald-500/20"
+                defaultOpen={true}
+                badge="CRI"
+              >
+                <ActTwoAnalysis
+                  bestFit={results.best_fit}
+                  chosen={results.chosen_career}
+                  cri={results.cri}
+                  bridgeSentence={results.bridge_sentence || ""}
+                />
+              </ResultSection>
 
-              <div className="h-px bg-gradient-to-r from-transparent via-zinc-800/40 to-transparent my-8 sm:my-14" />
+              <div className="h-6 sm:h-8" />
 
-              {/* ── ACT 3 — Your Path Forward ── */}
-              <ActThreePathForward
-                jobs={results.jobs}
-                roadmap={results.chosen_career.roadmap}
-                actionChecklist={results.action_checklist}
-                targetRole={results.chosen_career.role}
-              />
+              {/* ── Section 3 — Your Roadmap ── */}
+              <ResultSection
+                icon="🚀"
+                title="Your Roadmap"
+                subtitle="Opportunities, learning plan & action steps"
+                accentFrom="from-amber-600/20"
+                accentTo="to-emerald-600/20"
+                accentText="text-amber-400"
+                accentBorder="border-amber-500/10"
+                dividerVia="via-amber-500/20"
+                defaultOpen={true}
+              >
+                <ActThreePathForward
+                  jobs={results.jobs}
+                  roadmap={results.chosen_career.roadmap}
+                  actionChecklist={results.action_checklist}
+                  targetRole={results.chosen_career.role}
+                />
+              </ResultSection>
 
               {/* ── Report Footer ── */}
               <div className="mt-10 sm:mt-20 pt-5 sm:pt-8 border-t border-zinc-800/20">

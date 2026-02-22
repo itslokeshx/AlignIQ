@@ -155,21 +155,6 @@ export default function ActTwoAnalysis({
       transition={{ duration: 0.5, delay: 0.1 }}
       className="space-y-6 sm:space-y-8"
     >
-      {/* Section header */}
-      <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-600/20 to-blue-600/20 border border-emerald-500/10">
-          <span className="text-sm">📊</span>
-        </div>
-        <div>
-          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-400/80">
-            Act II
-          </p>
-          <p className="text-sm font-medium text-zinc-300">
-            Your Career Analysis
-          </p>
-        </div>
-      </div>
-
       {/* ═══ Two Career Tracks ═══════════════════════════════════════ */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         {/* Best Fit */}

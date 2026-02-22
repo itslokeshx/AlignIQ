@@ -75,19 +75,6 @@ export default function ActOneProfile({ summary, personality }: Props) {
       transition={{ duration: 0.5 }}
       className="space-y-6 sm:space-y-8"
     >
-      {/* Section header */}
-      <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600/20 to-violet-600/20 border border-blue-500/10">
-          <span className="text-sm">👤</span>
-        </div>
-        <div>
-          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-blue-400/80">
-            Act I
-          </p>
-          <p className="text-sm font-medium text-zinc-300">Who You Are</p>
-        </div>
-      </div>
-
       {/* Executive Summary — premium glass card */}
       <div className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-gradient-to-br from-zinc-900/80 via-zinc-900/60 to-zinc-950/80 p-4 sm:p-7">
         <div className="pointer-events-none absolute -top-20 -right-20 w-40 h-40 bg-blue-600/[0.06] rounded-full blur-3xl" />

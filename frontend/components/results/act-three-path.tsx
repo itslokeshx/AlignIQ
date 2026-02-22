@@ -121,19 +121,6 @@ export default function ActThreePathForward({
       transition={{ duration: 0.5, delay: 0.2 }}
       className="space-y-6 sm:space-y-8"
     >
-      {/* Section header */}
-      <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-amber-600/20 to-emerald-600/20 border border-amber-500/10">
-          <span className="text-sm">🚀</span>
-        </div>
-        <div>
-          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-amber-400/80">
-            Act III
-          </p>
-          <p className="text-sm font-medium text-zinc-300">Your Path Forward</p>
-        </div>
-      </div>
-
       {/* ═══ Live Opportunities ═══════════════════════════════════════ */}
       {jobs && jobs.length > 0 && (
         <div className="space-y-3">
