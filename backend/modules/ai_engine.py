@@ -40,29 +40,38 @@ def generate_role_description(role: str, domain: str) -> str:
 def generate_executive_summary(name: str, best_fit: dict, chosen: dict,
                                cri: dict, personality: dict) -> str:
     """Generate a 5–6 sentence analytical executive summary of the student's profile."""
-    prompt = f"""You are an unbiased career analyst writing a professional assessment of {name}'s career intelligence profile.
+    prompt = f"""You are a senior career intelligence analyst writing a concise assessment of {name}'s profile.
 
-Key data:
-- Best fit career: {best_fit.get('role')} (score: {best_fit.get('score')}%)
+Data:
+- Best fit career: {best_fit.get('role')} ({best_fit.get('score')}%)
 - Chosen career: {chosen.get('role')} (alignment: {chosen.get('alignment_score')}%)
 - CRI score: {cri.get('cri_total')}/100
-- Interest match for chosen role: {chosen.get('interest_match')}%
-- Skill match: {chosen.get('skill_match')}%
-- Experience match: {chosen.get('experience_match')}%
+- Interest match: {chosen.get('interest_match')}% | Skill match: {chosen.get('skill_match')}% | Experience match: {chosen.get('experience_match')}%
 - Gap severity: {chosen.get('gap_severity')}
 - Personality: analytical_creative={personality.get('analytical_creative')}, independent_collaborative={personality.get('independent_collaborative')}, theoretical_practical={personality.get('theoretical_practical')}
 
-Write 5–6 analytical sentences about this person's career intelligence. Focus on what the data shows. Be objective—neither overly positive nor negative. Do NOT use motivational language. No bullet points. Return only the paragraph text."""
+Return EXACTLY 5 lines, each starting with a label and pipe separator, like:
+Readiness | Your CRI is X/100, which means...
+Alignment | Your chosen role as X shows...
+Best Fit | The data suggests X is your strongest match because...
+Strength | Your personality leans towards...
+Key Gap | The main area to develop is...
+
+Rules:
+- Each line must be ONE short sentence (under 20 words after the pipe).
+- Be specific — use actual numbers, role names, and traits from the data.
+- Be analytical and objective. No motivation, no fluff, no generic advice.
+- Do NOT add numbering, bullet points, or extra formatting.
+- Return ONLY the 5 lines, nothing else."""
     try:
         return _call_groq(prompt)
     except Exception:
         return (
-            f"{name}'s career intelligence profile reveals a CRI score of {cri.get('cri_total')}/100, "
-            f"reflecting a solid but developing readiness foundation. "
-            f"The alignment between their interest profile and their chosen path as a {chosen.get('role')} "
-            f"stands at {chosen.get('alignment_score')}%, indicating {chosen.get('gap_severity', 'moderate').lower()} gaps that require deliberate action. "
-            f"Their best statistical fit is {best_fit.get('role')}, driven by personality and activity pattern convergence. "
-            f"The primary development area lies in skill depth—bridging the gap between {chosen.get('skill_match')}% current match and full role competency."
+            f"Readiness | CRI score of {cri.get('cri_total')}/100 indicates a developing career readiness foundation.\n"
+            f"Alignment | {chosen.get('alignment_score')}% alignment with {chosen.get('role')} shows {chosen.get('gap_severity', 'moderate').lower()} gaps to address.\n"
+            f"Best Fit | {best_fit.get('role')} at {best_fit.get('score')}% is the strongest statistical match for your profile.\n"
+            f"Strength | Personality traits show clear directional leanings that support focused career paths.\n"
+            f"Key Gap | Skill match at {chosen.get('skill_match')}% is the primary area needing development."
         )
 
 

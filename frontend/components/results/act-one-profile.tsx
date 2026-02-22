@@ -75,19 +75,190 @@ export default function ActOneProfile({ summary, personality }: Props) {
       transition={{ duration: 0.5 }}
       className="space-y-6 sm:space-y-8"
     >
-      {/* Executive Summary — premium glass card */}
-      <div className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-gradient-to-br from-zinc-900/80 via-zinc-900/60 to-zinc-950/80 p-4 sm:p-7">
-        <div className="pointer-events-none absolute -top-20 -right-20 w-40 h-40 bg-blue-600/[0.06] rounded-full blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-20 -left-20 w-40 h-40 bg-violet-600/[0.04] rounded-full blur-3xl" />
+      {/* Executive Summary — structured insight cards */}
+      <div className="space-y-3 sm:space-y-4">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-zinc-500">
+          Intelligence Summary
+        </p>
 
-        <div className="relative">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-zinc-500 mb-3 sm:mb-4">
-            Intelligence Summary
-          </p>
-          <p className="text-[13px] sm:text-[15px] text-zinc-300 leading-[1.8] sm:leading-[1.85] font-light">
-            {summary}
-          </p>
-        </div>
+        {(() => {
+          const INSIGHT_STYLES: Record<
+            string,
+            { icon: string; accent: string; border: string; bg: string }
+          > = {
+            readiness: {
+              icon: "📈",
+              accent: "text-blue-400",
+              border: "border-blue-500/15",
+              bg: "from-blue-500/[0.04]",
+            },
+            alignment: {
+              icon: "🎯",
+              accent: "text-violet-400",
+              border: "border-violet-500/15",
+              bg: "from-violet-500/[0.04]",
+            },
+            "best fit": {
+              icon: "⭐",
+              accent: "text-emerald-400",
+              border: "border-emerald-500/15",
+              bg: "from-emerald-500/[0.04]",
+            },
+            strength: {
+              icon: "💡",
+              accent: "text-amber-400",
+              border: "border-amber-500/15",
+              bg: "from-amber-500/[0.04]",
+            },
+            "key gap": {
+              icon: "🔧",
+              accent: "text-rose-400",
+              border: "border-rose-500/15",
+              bg: "from-rose-500/[0.04]",
+            },
+          };
+          const DEFAULT_STYLE = {
+            icon: "📌",
+            accent: "text-zinc-400",
+            border: "border-zinc-700/20",
+            bg: "from-zinc-500/[0.04]",
+          };
+
+          // Parse structured "Label | Text" lines, or fall back to paragraph
+          const lines = summary.split("\n").filter((l: string) => l.trim());
+          const parsed = lines
+            .map((line: string) => {
+              const pipeIdx = line.indexOf("|");
+              if (pipeIdx > 0) {
+                return {
+                  label: line.slice(0, pipeIdx).trim(),
+                  text: line.slice(pipeIdx + 1).trim(),
+                };
+              }
+              return null;
+            })
+            .filter(Boolean) as { label: string; text: string }[];
+
+          // If the LLM didn't return structured format, split sentences into cards
+          if (parsed.length < 3) {
+            // Split paragraph into sentences for readability
+            const sentences = summary
+              .split(/(?<=[.!?])\s+/)
+              .filter((s: string) => s.trim().length > 10);
+
+            const SENTENCE_STYLES = [
+              {
+                icon: "📈",
+                accent: "text-blue-400",
+                border: "border-blue-500/15",
+                bg: "from-blue-500/[0.04]",
+                label: "Overview",
+              },
+              {
+                icon: "🎯",
+                accent: "text-violet-400",
+                border: "border-violet-500/15",
+                bg: "from-violet-500/[0.04]",
+                label: "Alignment",
+              },
+              {
+                icon: "⭐",
+                accent: "text-emerald-400",
+                border: "border-emerald-500/15",
+                bg: "from-emerald-500/[0.04]",
+                label: "Best Fit",
+              },
+              {
+                icon: "💡",
+                accent: "text-amber-400",
+                border: "border-amber-500/15",
+                bg: "from-amber-500/[0.04]",
+                label: "Insight",
+              },
+              {
+                icon: "🔧",
+                accent: "text-rose-400",
+                border: "border-rose-500/15",
+                bg: "from-rose-500/[0.04]",
+                label: "Key Gap",
+              },
+              {
+                icon: "📌",
+                accent: "text-cyan-400",
+                border: "border-cyan-500/15",
+                bg: "from-cyan-500/[0.04]",
+                label: "Takeaway",
+              },
+            ];
+
+            return (
+              <div className="grid gap-2 sm:gap-2.5">
+                {sentences.slice(0, 6).map((sentence, idx) => {
+                  const style = SENTENCE_STYLES[idx % SENTENCE_STYLES.length];
+                  return (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.35, delay: idx * 0.07 }}
+                      className={`rounded-xl border ${style.border} bg-gradient-to-r ${style.bg} to-transparent px-3.5 py-2.5 sm:px-4 sm:py-3`}
+                    >
+                      <div className="flex items-start gap-2.5">
+                        <span className="text-sm mt-0.5 shrink-0">
+                          {style.icon}
+                        </span>
+                        <div className="min-w-0">
+                          <span
+                            className={`text-[10px] font-bold uppercase tracking-[0.12em] ${style.accent}`}
+                          >
+                            {style.label}
+                          </span>
+                          <p className="text-[12px] sm:text-[13px] text-zinc-300 leading-relaxed mt-0.5">
+                            {sentence.trim()}
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            );
+          }
+
+          return (
+            <div className="grid gap-2 sm:gap-2.5">
+              {parsed.map((item, idx) => {
+                const style =
+                  INSIGHT_STYLES[item.label.toLowerCase()] || DEFAULT_STYLE;
+                return (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.35, delay: idx * 0.07 }}
+                    className={`rounded-xl border ${style.border} bg-gradient-to-r ${style.bg} to-transparent px-3.5 py-2.5 sm:px-4 sm:py-3`}
+                  >
+                    <div className="flex items-start gap-2.5">
+                      <span className="text-sm mt-0.5 shrink-0">
+                        {style.icon}
+                      </span>
+                      <div className="min-w-0">
+                        <span
+                          className={`text-[10px] font-bold uppercase tracking-[0.12em] ${style.accent}`}
+                        >
+                          {item.label}
+                        </span>
+                        <p className="text-[12px] sm:text-[13px] text-zinc-300 leading-relaxed mt-0.5">
+                          {item.text}
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          );
+        })()}
       </div>
 
       {/* ─── Personality Spectrum — Clean Visual Layout ─────────────── */}
