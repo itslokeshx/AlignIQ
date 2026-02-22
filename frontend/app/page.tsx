@@ -554,17 +554,17 @@ export default function HomePage() {
 
               <div className="h-6 sm:h-8" />
 
-              {/* ── Section 3 — Live Opportunities ── */}
+              {/* ── Section 3 — Job Opportunities ── */}
               <ResultSection
                 icon="💼"
-                title="Live Opportunities"
+                title="Job Opportunities"
                 subtitle="Real job openings matched to your profile"
                 accentFrom="from-cyan-600/20"
                 accentTo="to-blue-600/20"
                 accentText="text-cyan-400"
                 accentBorder="border-cyan-500/10"
                 dividerVia="via-cyan-500/20"
-                defaultOpen={true}
+                defaultOpen={false}
                 badge="LIVE"
               >
                 <LiveJobsSection
@@ -585,7 +585,7 @@ export default function HomePage() {
                 accentText="text-amber-400"
                 accentBorder="border-amber-500/10"
                 dividerVia="via-amber-500/20"
-                defaultOpen={true}
+                defaultOpen={false}
               >
                 <RoadmapSection
                   roadmap={results.chosen_career.roadmap}
