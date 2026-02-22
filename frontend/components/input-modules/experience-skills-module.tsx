@@ -73,11 +73,10 @@ export default function ExperienceSkillsModule({
               key={skill}
               type="button"
               onClick={() => toggleSkill(skill)}
-              className={`px-3 py-1.5 rounded-full text-sm border transition-all ${
-                data.selected_skills.includes(skill)
+              className={`px-3 py-1.5 rounded-full text-sm border transition-all ${data.selected_skills.includes(skill)
                   ? "border-blue-500 bg-blue-500/15 text-blue-300"
                   : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-zinc-500"
-              }`}
+                }`}
             >
               {skill}
             </button>
@@ -94,11 +93,10 @@ export default function ExperienceSkillsModule({
               key={skill}
               type="button"
               onClick={() => toggleSkill(skill)}
-              className={`px-3 py-1.5 rounded-full text-sm border transition-all ${
-                data.selected_skills.includes(skill)
+              className={`px-3 py-1.5 rounded-full text-sm border transition-all ${data.selected_skills.includes(skill)
                   ? "border-violet-500 bg-violet-500/15 text-violet-300"
                   : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-zinc-500"
-              }`}
+                }`}
             >
               {skill}
             </button>
@@ -127,7 +125,7 @@ export default function ExperienceSkillsModule({
       {/* Languages */}
       <div className="space-y-3">
         <Label className="text-zinc-300 text-sm font-medium">
-          Programming languages
+          Known languages
         </Label>
         <div className="flex flex-wrap gap-2">
           {KNOWN_LANGUAGES.map((lang) => (
@@ -135,11 +133,10 @@ export default function ExperienceSkillsModule({
               key={lang}
               type="button"
               onClick={() => toggleLang(lang)}
-              className={`px-3 py-1.5 rounded-full text-sm border transition-all ${
-                data.languages_known.includes(lang)
+              className={`px-3 py-1.5 rounded-full text-sm border transition-all ${data.languages_known.includes(lang)
                   ? "border-emerald-500 bg-emerald-500/15 text-emerald-300"
                   : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:border-zinc-500"
-              }`}
+                }`}
             >
               {lang}
             </button>
@@ -167,11 +164,10 @@ export default function ExperienceSkillsModule({
                 onClick={() =>
                   set("internships", n === "4+" ? 4 : (n as number))
                 }
-                className={`w-9 h-8 rounded-lg text-xs font-medium border transition-all ${
-                  data.internships === (n === "4+" ? 4 : n)
+                className={`w-9 h-8 rounded-lg text-xs font-medium border transition-all ${data.internships === (n === "4+" ? 4 : n)
                     ? "border-blue-500 bg-blue-500/10 text-blue-300"
                     : "border-zinc-700 bg-zinc-900 text-zinc-400"
-                }`}
+                  }`}
               >
                 {n}
               </button>
@@ -188,11 +184,10 @@ export default function ExperienceSkillsModule({
                 key={n}
                 type="button"
                 onClick={() => set("projects", n === "4+" ? 4 : (n as number))}
-                className={`w-9 h-8 rounded-lg text-xs font-medium border transition-all ${
-                  data.projects === (n === "4+" ? 4 : n)
+                className={`w-9 h-8 rounded-lg text-xs font-medium border transition-all ${data.projects === (n === "4+" ? 4 : n)
                     ? "border-blue-500 bg-blue-500/10 text-blue-300"
                     : "border-zinc-700 bg-zinc-900 text-zinc-400"
-                }`}
+                  }`}
               >
                 {n}
               </button>
@@ -232,11 +227,10 @@ export default function ExperienceSkillsModule({
               key={key}
               type="button"
               onClick={() => set(key, !data[key])}
-              className={`rounded-lg border px-3 py-2.5 text-xs font-medium text-left transition-all ${
-                data[key]
+              className={`rounded-lg border px-3 py-2.5 text-xs font-medium text-left transition-all ${data[key]
                   ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-300"
                   : "border-zinc-700 bg-zinc-900 text-zinc-500 hover:border-zinc-600"
-              }`}
+                }`}
             >
               <span className="mr-1.5">{data[key] ? "✓" : "○"}</span>
               {label}
