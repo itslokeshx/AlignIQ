@@ -13,7 +13,8 @@ import PersonalityModule from "@/components/input-modules/personality-module";
 // ── Result components ─────────────────────────────────────────────────────────
 import ActOneProfile from "@/components/results/act-one-profile";
 import ActTwoAnalysis from "@/components/results/act-two-analysis";
-import ActThreePathForward from "@/components/results/act-three-path";
+import LiveJobsSection from "@/components/results/live-jobs-section";
+import RoadmapSection from "@/components/results/roadmap-section";
 import ResultSection from "@/components/results/result-section";
 import { API_URL } from "@/lib/config";
 
@@ -553,11 +554,32 @@ export default function HomePage() {
 
               <div className="h-6 sm:h-8" />
 
-              {/* ── Section 3 — Your Roadmap ── */}
+              {/* ── Section 3 — Live Opportunities ── */}
               <ResultSection
-                icon="🚀"
-                title="Your Roadmap"
-                subtitle="Opportunities, learning plan & action steps"
+                icon="💼"
+                title="Live Opportunities"
+                subtitle="Real job openings matched to your profile"
+                accentFrom="from-cyan-600/20"
+                accentTo="to-blue-600/20"
+                accentText="text-cyan-400"
+                accentBorder="border-cyan-500/10"
+                dividerVia="via-cyan-500/20"
+                defaultOpen={true}
+                badge="LIVE"
+              >
+                <LiveJobsSection
+                  jobs={results.jobs}
+                  targetRole={results.chosen_career.role}
+                />
+              </ResultSection>
+
+              <div className="h-6 sm:h-8" />
+
+              {/* ── Section 4 — Learning Roadmap ── */}
+              <ResultSection
+                icon="🗺️"
+                title="Learning Roadmap"
+                subtitle="Step-by-step plan with resources & action items"
                 accentFrom="from-amber-600/20"
                 accentTo="to-emerald-600/20"
                 accentText="text-amber-400"
@@ -565,8 +587,7 @@ export default function HomePage() {
                 dividerVia="via-amber-500/20"
                 defaultOpen={true}
               >
-                <ActThreePathForward
-                  jobs={results.jobs}
+                <RoadmapSection
                   roadmap={results.chosen_career.roadmap}
                   actionChecklist={results.action_checklist}
                   targetRole={results.chosen_career.role}
