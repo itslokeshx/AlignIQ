@@ -482,7 +482,7 @@ ROLE_SPECIFIC_MOCKS: dict[str, list[str]] = {
 def fetch_jobs(role: str, location: str = "India", count: int = 10) -> list:
     """
     Fetch jobs from Adzuna API for a given role.
-    Returns raw job listings that we then process for skill extraction.
+    Retries up to 3 times on transient errors before falling back to mock data.
     """
     app_id = os.getenv("ADZUNA_APP_ID")
     app_key = os.getenv("ADZUNA_APP_KEY")
@@ -500,17 +500,37 @@ def fetch_jobs(role: str, location: str = "India", count: int = 10) -> list:
         "content-type": "application/json",
     }
 
-    try:
-        response = requests.get(
-            "https://api.adzuna.com/v1/api/jobs/in/search/1",
-            params=params,
-            timeout=10,
-        )
-        response.raise_for_status()
-        return response.json().get("results", [])
-    except Exception as e:
-        print(f"[Market] Adzuna API error: {e}. Using mock data.")
-        return _mock_jobs(role)
+    url = "https://api.adzuna.com/v1/api/jobs/in/search/1"
+    max_retries = 3
+    retry_delay = 1.5
+
+    for attempt in range(1, max_retries + 1):
+        try:
+            response = requests.get(url, params=params, timeout=15)
+            status = response.status_code
+
+            if status == 200:
+                return response.json().get("results", [])
+            elif status in (429, 503, 504):
+                # Rate-limited or server error — retry with backoff
+                print(f"[Market] Adzuna returned {status} (attempt {attempt}/{max_retries}). Retrying in {retry_delay}s…")
+            elif status in (401, 403):
+                print(f"[Market] Adzuna auth error {status} — check your ADZUNA_APP_ID / ADZUNA_APP_KEY")
+                break  # no point retrying auth failures
+            else:
+                print(f"[Market] Adzuna returned status {status} (attempt {attempt}/{max_retries}). Retrying…")
+
+        except requests.exceptions.Timeout:
+            print(f"[Market] Adzuna request timed out (attempt {attempt}/{max_retries}). Retrying…")
+        except Exception as e:
+            print(f"[Market] Adzuna request error: {e} (attempt {attempt}/{max_retries}). Retrying…")
+
+        if attempt < max_retries:
+            time.sleep(retry_delay)
+            retry_delay *= 2  # exponential backoff
+
+    print(f"[Market] All {max_retries} attempts failed. Using mock data for '{role}'.")
+    return _mock_jobs(role)
 
 
 def _strip_html(text: str) -> str:
